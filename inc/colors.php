@@ -1,0 +1,366 @@
+<?php
+/**
+ * Dynamic Color System
+ * Reads admin Color & Branding settings and injects CSS custom properties +
+ * targeted override rules so that every hardcoded gold value on the frontend
+ * is replaced by whatever colour the admin has set — without rebuilding CSS.
+ *
+ * @package DT_Ecommerce_Theme
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+/**
+ * Sanitise a stored hex colour value and return a safe default if invalid.
+ */
+function dt_sanitize_color( string $value, string $default ): string {
+    $value = trim( $value );
+    if ( preg_match( '/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/', $value ) ) {
+        return strtolower( $value );
+    }
+    return strtolower( $default );
+}
+
+/**
+ * Convert a 3- or 6-digit hex colour to an "R, G, B" string suitable for use
+ * inside rgba() — e.g. "200, 164, 106".
+ */
+function dt_hex_to_rgb_string( string $hex ): string {
+    $hex = ltrim( $hex, '#' );
+    if ( strlen( $hex ) === 3 ) {
+        $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+    }
+    $r = hexdec( substr( $hex, 0, 2 ) );
+    $g = hexdec( substr( $hex, 2, 2 ) );
+    $b = hexdec( substr( $hex, 4, 2 ) );
+    return "$r, $g, $b";
+}
+
+// ── Main injection function ───────────────────────────────────────────────────
+
+/**
+ * Output a <style> block with CSS custom properties and targeted overrides.
+ * Hooked at priority 200 so it runs AFTER Tailwind and the main stylesheet.
+ */
+function dt_output_color_styles(): void {
+
+    // ── 1. Read admin settings with defaults ─────────────────────────────────
+    $c_primary       = dt_sanitize_color( dt_get_theme_option( 'color_primary',       '' ), '#C8A46A' );
+    $c_primary_dark  = dt_sanitize_color( dt_get_theme_option( 'color_primary_dark',  '' ), '#b08d55' );
+    $c_primary_light = dt_sanitize_color( dt_get_theme_option( 'color_primary_light', '' ), '#d8ba82' );
+
+    $c_bg_main   = dt_sanitize_color( dt_get_theme_option( 'color_bg_main',   '' ), '#000000' );
+    $c_bg_card   = dt_sanitize_color( dt_get_theme_option( 'color_bg_card',   '' ), '#111111' );
+    $c_bg_header = dt_sanitize_color( dt_get_theme_option( 'color_bg_header', '' ), '#000000' );
+    $c_bg_footer = dt_sanitize_color( dt_get_theme_option( 'color_bg_footer', '' ), '#000000' );
+
+    $c_text_primary   = dt_sanitize_color( dt_get_theme_option( 'color_text_primary',   '' ), '#F7F4EE' );
+    $c_text_secondary = dt_sanitize_color( dt_get_theme_option( 'color_text_secondary', '' ), '#a3a3a3' );
+    $c_text_heading   = dt_sanitize_color( dt_get_theme_option( 'color_text_heading',   '' ), '#ffffff' );
+
+    $c_btn_bg   = dt_sanitize_color( dt_get_theme_option( 'color_btn_bg',   '' ), $c_primary );
+    $c_btn_text = dt_sanitize_color( dt_get_theme_option( 'color_btn_text', '' ), '#000000' );
+
+    $c_ann_bg   = dt_sanitize_color( dt_get_theme_option( 'color_announcement_bg',   '' ), $c_primary );
+    $c_ann_text = dt_sanitize_color( dt_get_theme_option( 'color_announcement_text', '' ), '#000000' );
+
+    // Pre-compute RGB triplets for rgba() usage
+    $rgb          = dt_hex_to_rgb_string( $c_primary );
+    $rgb_dark     = dt_hex_to_rgb_string( $c_primary_dark );
+    $rgb_light    = dt_hex_to_rgb_string( $c_primary_light );
+    $rgb_bg_card  = dt_hex_to_rgb_string( $c_bg_card );
+
+    // If admin hasn't customised colours from defaults, skip the big override
+    // block to keep things fast — just emit the variables.
+    $all_defaults = (
+        $c_primary       === '#c8a46a' &&
+        $c_primary_dark  === '#b08d55' &&
+        $c_primary_light === '#d8ba82'
+    );
+
+    ?>
+<style id="dt-dynamic-colors">
+/* ═══════════════════════════════════════════════════════════════════════════
+   DT Theme · Dynamic Colour System
+   Generated: <?php echo gmdate( 'Y-m-d H:i:s' ); ?> UTC
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── CSS Custom Properties ─────────────────────────────────────────────────── */
+:root {
+  --dt-primary:          <?php echo $c_primary; ?>;
+  --dt-primary-rgb:      <?php echo $rgb; ?>;
+  --dt-primary-dark:     <?php echo $c_primary_dark; ?>;
+  --dt-primary-dark-rgb: <?php echo $rgb_dark; ?>;
+  --dt-primary-light:    <?php echo $c_primary_light; ?>;
+  --dt-primary-light-rgb:<?php echo $rgb_light; ?>;
+
+  --dt-bg-main:    <?php echo $c_bg_main; ?>;
+  --dt-bg-card:    <?php echo $c_bg_card; ?>;
+  --dt-bg-header:  <?php echo $c_bg_header; ?>;
+  --dt-bg-footer:  <?php echo $c_bg_footer; ?>;
+
+  --dt-text-primary:   <?php echo $c_text_primary; ?>;
+  --dt-text-secondary: <?php echo $c_text_secondary; ?>;
+  --dt-text-heading:   <?php echo $c_text_heading; ?>;
+
+  --dt-btn-bg:   <?php echo $c_btn_bg; ?>;
+  --dt-btn-text: <?php echo $c_btn_text; ?>;
+}
+
+<?php if ( ! $all_defaults ) : ?>
+/* ── Tailwind arbitrary-value class overrides ──────────────────────────────── */
+/* These are generated by Tailwind with the hardcoded hex value in the class
+   name, so we can't rename them — we override their properties instead.      */
+
+/* ·· Text colour ·· */
+.text-\[\#C8A46A\],
+.text-\[\#c8a46a\],
+.hover\:text-\[\#C8A46A\]:hover,
+.hover\:text-\[\#c8a46a\]:hover,
+.group-hover\:text-\[\#C8A46A\]:hover,
+.group-hover\:text-\[\#c8a46a\]:hover { color: <?php echo $c_primary; ?> !important; }
+
+.text-\[\#C8A46A\]\/40,
+.text-\[\#C8A46A\]\/50,
+.text-\[\#C8A46A\]\/60,
+.text-\[\#C8A46A\]\/70,
+.text-\[\#C8A46A\]\/80,
+.hover\:text-\[\#C8A46A\]\/50:hover    { color: var(--dt-primary) !important; }
+
+/* ·· Background colour ·· */
+.bg-\[\#C8A46A\],
+.bg-\[\#c8a46a\]                        { background-color: <?php echo $c_primary; ?> !important; }
+.bg-\[\#C8A46A\]\/5                     { background-color: rgba(<?php echo $rgb; ?>, .05)  !important; }
+.bg-\[\#C8A46A\]\/10                    { background-color: rgba(<?php echo $rgb; ?>, .10)  !important; }
+.bg-\[\#C8A46A\]\/20                    { background-color: rgba(<?php echo $rgb; ?>, .20)  !important; }
+.bg-\[\#C8A46A\]\/30                    { background-color: rgba(<?php echo $rgb; ?>, .30)  !important; }
+.bg-\[\#C8A46A\]\/50                    { background-color: rgba(<?php echo $rgb; ?>, .50)  !important; }
+
+.hover\:bg-\[\#C8A46A\]:hover           { background-color: <?php echo $c_primary; ?> !important; }
+.hover\:bg-\[\#C8A46A\]\/10:hover       { background-color: rgba(<?php echo $rgb; ?>, .10)  !important; }
+.hover\:bg-\[\#d8ba82\]:hover           { background-color: <?php echo $c_primary_light; ?> !important; }
+
+.bg-\[radial-gradient\(circle_at_20\%_50\%\,\#C8A46A_0\%\,transparent_60\%\)\] {
+  background-image: radial-gradient(circle at 20% 50%, <?php echo $c_primary; ?> 0%, transparent 60%) !important;
+}
+
+/* ·· Border colour ·· */
+.border-\[\#C8A46A\],
+.border-\[\#c8a46a\]                    { border-color: <?php echo $c_primary; ?> !important; }
+.border-\[\#C8A46A\]\/10               { border-color: rgba(<?php echo $rgb; ?>, .10) !important; }
+.border-\[\#C8A46A\]\/20               { border-color: rgba(<?php echo $rgb; ?>, .20) !important; }
+.border-\[\#C8A46A\]\/30               { border-color: rgba(<?php echo $rgb; ?>, .30) !important; }
+.border-\[\#C8A46A\]\/40               { border-color: rgba(<?php echo $rgb; ?>, .40) !important; }
+.border-\[\#C8A46A\]\/50               { border-color: rgba(<?php echo $rgb; ?>, .50) !important; }
+.border-l-\[\#C8A46A\]                 { border-left-color:  <?php echo $c_primary; ?> !important; }
+.border-y-\[\#C8A46A\]\/20 {
+  border-top-color:    rgba(<?php echo $rgb; ?>, .20) !important;
+  border-bottom-color: rgba(<?php echo $rgb; ?>, .20) !important;
+}
+.border-r-\[\#C8A46A\]\/20             { border-right-color: rgba(<?php echo $rgb; ?>, .20) !important; }
+
+.hover\:border-\[\#C8A46A\]:hover      { border-color: <?php echo $c_primary; ?> !important; }
+.hover\:border-\[\#C8A46A\]\/20:hover  { border-color: rgba(<?php echo $rgb; ?>, .20) !important; }
+.hover\:border-\[\#C8A46A\]\/30:hover  { border-color: rgba(<?php echo $rgb; ?>, .30) !important; }
+.hover\:border-\[\#C8A46A\]\/40:hover  { border-color: rgba(<?php echo $rgb; ?>, .40) !important; }
+.hover\:border-\[\#C8A46A\]\/50:hover  { border-color: rgba(<?php echo $rgb; ?>, .50) !important; }
+.hover\:border-\[\#C8A46A\]\/70:hover  { border-color: rgba(<?php echo $rgb; ?>, .70) !important; }
+
+.group-hover\:border-\[\#C8A46A\]:hover     { border-color: <?php echo $c_primary; ?> !important; }
+.group-hover\:border-\[\#C8A46A\]\/30:hover { border-color: rgba(<?php echo $rgb; ?>, .30) !important; }
+.group-hover\:border-\[\#C8A46A\]\/50:hover { border-color: rgba(<?php echo $rgb; ?>, .50) !important; }
+
+.focus\:border-\[\#C8A46A\]:focus          { border-color: <?php echo $c_primary; ?> !important; }
+.focus\:border-\[\#C8A46A\]\/50:focus      { border-color: rgba(<?php echo $rgb; ?>, .50) !important; }
+.focus-within\:border-\[\#C8A46A\]:focus-within { border-color: <?php echo $c_primary; ?> !important; }
+
+/* ·· Ring (focus outline) ·· */
+.ring-\[\#C8A46A\]                         { --tw-ring-color: <?php echo $c_primary; ?> !important; }
+.ring-\[\#C8A46A\]\/20                     { --tw-ring-color: rgba(<?php echo $rgb; ?>, .20) !important; }
+.ring-\[\#C8A46A\]\/30                     { --tw-ring-color: rgba(<?php echo $rgb; ?>, .30) !important; }
+.focus\:ring-\[\#C8A46A\]:focus            { --tw-ring-color: <?php echo $c_primary; ?> !important; }
+.focus-within\:ring-\[\#C8A46A\]:focus-within { --tw-ring-color: <?php echo $c_primary; ?> !important; }
+
+/* ·· Gradient stops ·· */
+.from-\[\#C8A46A\]\/10   { --tw-gradient-from: rgba(<?php echo $rgb; ?>, .10) !important; }
+.from-\[\#b08d55\]       { --tw-gradient-from: <?php echo $c_primary_dark;  ?> !important; }
+.via-\[\#C8A46A\]        { --tw-gradient-via:  <?php echo $c_primary;        ?> !important; }
+.to-\[\#C8A46A\]\/40     { --tw-gradient-to:   rgba(<?php echo $rgb; ?>, .40) !important; }
+.to-\[\#d8ba82\]         { --tw-gradient-to:   <?php echo $c_primary_light;  ?> !important; }
+
+/* ·· SVG fill ·· */
+.fill-\[\#C8A46A\]      { fill: <?php echo $c_primary; ?> !important; }
+
+/* ·· Accent (range inputs etc.) ·· */
+.accent-\[\#C8A46A\]   { accent-color: <?php echo $c_primary; ?> !important; }
+
+/* ·· Box shadow ·· */
+.shadow-\[0_0_8px_\#C8A46A\] {
+  --tw-shadow: 0 0 8px <?php echo $c_primary; ?>;
+  box-shadow: var(--tw-ring-offset-shadow,0 0 #0000), var(--tw-ring-shadow,0 0 #0000), var(--tw-shadow) !important;
+}
+
+/* ·· Selection ·· */
+.selection\:bg-\[\#C8A46A\]::selection,
+::selection {
+  background-color: rgba(<?php echo $rgb; ?>, .35) !important;
+}
+
+/* ·· Pseudo-element backgrounds ·· */
+.after\:bg-\[\#C8A46A\]::after { background-color: <?php echo $c_primary; ?> !important; }
+
+/* ── Custom (non-Tailwind) gold selectors ──────────────────────────────────── */
+
+/* Shimmer buttons */
+.btn-gold-shimmer,
+.btn-gold-shimmer:not(:hover) {
+  background: linear-gradient(110deg,
+    <?php echo $c_primary_dark;  ?> 0%,
+    <?php echo $c_primary_light; ?> 25%,
+    <?php echo $c_primary;       ?> 50%,
+    <?php echo $c_primary_light; ?> 75%,
+    <?php echo $c_primary_dark;  ?> 100%) !important;
+  background-size: 200% auto !important;
+}
+.btn-gold-shimmer:hover {
+  animation: dt-shimmer-primary 2.5s linear infinite !important;
+}
+@keyframes dt-shimmer-primary {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+/* Gold border glow on hover */
+.gold-border-glow:hover { border-color: <?php echo $c_primary; ?> !important; }
+
+/* Animated gradient text / decorations */
+.animate-gold-gradient {
+  background: linear-gradient(90deg,
+    <?php echo $c_primary_dark;  ?>,
+    <?php echo $c_primary;       ?>,
+    <?php echo $c_primary_light; ?>,
+    <?php echo $c_primary;       ?>,
+    <?php echo $c_primary_dark;  ?>) !important;
+}
+
+/* General gold text / border helpers used outside Tailwind */
+[class*="text-gold"],
+[class*="gold-text"]   { color:         <?php echo $c_primary; ?> !important; }
+[class*="bg-gold"],
+[class*="gold-bg"]     { background-color: <?php echo $c_primary; ?> !important; }
+[class*="border-gold"],
+[class*="gold-border"] { border-color:  <?php echo $c_primary; ?> !important; }
+
+/* ── Inline / arbitrary CSS that still uses the raw hex value ─────────────── */
+
+/* Override inline style="color: #C8A46A" etc. is impossible via CSS alone,
+   but we handle the known hand-coded stylesheet selectors below. */
+
+/* Price slider range */
+.dt-price-slider::-webkit-slider-thumb { background: <?php echo $c_primary; ?> !important; }
+.dt-price-slider::-moz-range-thumb     { background: <?php echo $c_primary; ?> !important; }
+
+/* WooCommerce star ratings */
+.star-rating span::before,
+.woocommerce-product-rating .star-rating span::before { color: <?php echo $c_primary; ?> !important; }
+
+/* Scroll-to-top button */
+#scrollToTop, .scroll-to-top { background: <?php echo $c_primary; ?> !important; }
+
+/* Announcement bar */
+#dt-announcement-bar,
+.dt-announcement-bar {
+  background-color: <?php echo $c_ann_bg;   ?> !important;
+  color:            <?php echo $c_ann_text; ?> !important;
+}
+#dt-announcement-bar *,
+.dt-announcement-bar * { color: <?php echo $c_ann_text; ?> !important; }
+
+/* Range / filter accent */
+input[type=range]::-webkit-slider-thumb { accent-color: <?php echo $c_primary; ?>; }
+
+<?php endif; /* !$all_defaults */ ?>
+
+/* ── Background & text colours (always applied) ────────────────────────────── */
+<?php if ( $c_bg_main !== '#000000' ) : ?>
+body, .bg-black, [class*="bg-\[#000000\]"] { background-color: <?php echo $c_bg_main; ?> !important; }
+<?php endif; ?>
+<?php if ( $c_bg_header !== '#000000' ) : ?>
+header, .site-header, nav.dt-header,
+#masthead, #dt-header                      { background-color: <?php echo $c_bg_header; ?> !important; }
+<?php endif; ?>
+<?php if ( $c_bg_footer !== '#000000' ) : ?>
+footer, .site-footer, #colophon,
+#dt-footer                                 { background-color: <?php echo $c_bg_footer; ?> !important; }
+<?php endif; ?>
+<?php if ( $c_bg_card !== '#111111' ) : ?>
+.product-card, .dt-card-bg,
+.bg-\[\#111111\], .bg-\[\#111\]            { background-color: <?php echo $c_bg_card; ?> !important; }
+<?php endif; ?>
+<?php if ( $c_text_heading !== '#ffffff' ) : ?>
+h1, h2, h3, h4, h5, h6 { color: <?php echo $c_text_heading; ?> !important; }
+<?php endif; ?>
+
+/* ── Primary button overrides (always applied) ─────────────────────────────── */
+.btn-primary, .dt-btn-primary,
+.woocommerce .button.alt, .woocommerce button[type=submit],
+.woocommerce-cart .wc-proceed-to-checkout a.checkout-button,
+.dt-add-to-cart, [data-action="add-to-cart"],
+.quick-view-btn, .dt-quick-view {
+  background-color: <?php echo $c_btn_bg;   ?> !important;
+  color:            <?php echo $c_btn_text; ?> !important;
+  border-color:     <?php echo $c_btn_bg;   ?> !important;
+}
+.btn-primary:hover, .dt-btn-primary:hover,
+.woocommerce .button.alt:hover              {
+  background-color: <?php echo $c_primary_dark; ?> !important;
+  border-color:     <?php echo $c_primary_dark; ?> !important;
+}
+
+</style>
+    <?php
+}
+add_action( 'wp_head', 'dt_output_color_styles', 200 );
+
+
+// ── Dynamic Tailwind config (inline script) ───────────────────────────────────
+
+/**
+ * Output a small <script> that overwrites the Tailwind config's `gold` colour
+ * with the value from admin settings. Must run AFTER the Tailwind CDN script.
+ */
+function dt_output_tailwind_color_config(): void {
+    $primary = dt_sanitize_color( dt_get_theme_option( 'color_primary', '' ), '#C8A46A' );
+    $light   = dt_sanitize_color( dt_get_theme_option( 'color_primary_light', '' ), '#d8ba82' );
+    $dark    = dt_sanitize_color( dt_get_theme_option( 'color_primary_dark',  '' ), '#b08d55' );
+
+    // Only output if changed from defaults
+    if ( $primary === '#c8a46a' && $light === '#d8ba82' && $dark === '#b08d55' ) {
+        return;
+    }
+    ?>
+<script id="dt-tailwind-color-override">
+/* DT: Update Tailwind gold colour from admin settings */
+(function () {
+  function applyColors() {
+    if (typeof tailwind === 'undefined' || !tailwind.config) { return; }
+    var cfg = tailwind.config;
+    if (!cfg.theme) cfg.theme = {};
+    if (!cfg.theme.extend) cfg.theme.extend = {};
+    if (!cfg.theme.extend.colors) cfg.theme.extend.colors = {};
+    cfg.theme.extend.colors.gold       = '<?php echo esc_js( $primary ); ?>';
+    cfg.theme.extend.colors['gold-dark']  = '<?php echo esc_js( $dark ); ?>';
+    cfg.theme.extend.colors['gold-light'] = '<?php echo esc_js( $light ); ?>';
+  }
+  /* Try immediately and also after Tailwind initialises */
+  applyColors();
+  document.addEventListener('DOMContentLoaded', applyColors);
+})();
+</script>
+    <?php
+}
+add_action( 'wp_head', 'dt_output_tailwind_color_config', 5 );

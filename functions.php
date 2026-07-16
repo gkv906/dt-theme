@@ -22,6 +22,7 @@ require_once get_template_directory() . '/inc/performance.php';
 require_once get_template_directory() . '/inc/popups.php';
 require_once get_template_directory() . '/inc/customizer.php';
 require_once get_template_directory() . '/inc/typography.php';
+require_once get_template_directory() . '/inc/colors.php';
 require_once get_template_directory() . '/setup/demo-import.php';
 
 // Theme Setup
@@ -70,11 +71,24 @@ function dt_enqueue_scripts() {
     // Tailwind CSS Play CDN
     wp_enqueue_script( 'dt-tailwind-cdn', 'https://cdn.tailwindcss.com', array(), null, false );
 
-    // Tailwind config (must come after CDN)
+    // Tailwind config — gold colour is set dynamically by dt_output_tailwind_color_config() in inc/colors.php
+    $primary_color  = function_exists( 'dt_sanitize_color' )
+        ? dt_sanitize_color( dt_get_theme_option( 'color_primary', '' ), '#C8A46A' )
+        : '#C8A46A';
+    $primary_dark   = function_exists( 'dt_sanitize_color' )
+        ? dt_sanitize_color( dt_get_theme_option( 'color_primary_dark', '' ), '#b08d55' )
+        : '#b08d55';
+    $primary_light  = function_exists( 'dt_sanitize_color' )
+        ? dt_sanitize_color( dt_get_theme_option( 'color_primary_light', '' ), '#d8ba82' )
+        : '#d8ba82';
     $tailwind_config = "tailwind.config = {
         theme: {
             extend: {
-                colors: { gold: '#C8A46A' },
+                colors: {
+                    gold:          '" . esc_js( $primary_color )  . "',
+                    'gold-dark':   '" . esc_js( $primary_dark )   . "',
+                    'gold-light':  '" . esc_js( $primary_light )  . "'
+                },
                 fontFamily: {
                     sans: ['Inter', 'sans-serif'],
                     serif: ['Cormorant Garamond', 'serif']
