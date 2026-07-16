@@ -336,33 +336,48 @@ ob_start();
             
             <div class="flex overflow-x-auto md:justify-center gap-8 md:gap-12 pb-8 no-scrollbar snap-x px-4 -mx-4 md:px-0 md:mx-0 reveal-on-scroll">
                 <?php
+                // Build list of term IDs to exclude (Uncategorized / default category)
+                $cat_exclude_ids = array();
+                $default_cat_id  = (int) get_option( 'default_product_cat', 0 );
+                if ( $default_cat_id ) {
+                    $cat_exclude_ids[] = $default_cat_id;
+                }
+                $uncategorized_term = get_term_by( 'slug', 'uncategorized', 'product_cat' );
+                if ( $uncategorized_term && ! is_wp_error( $uncategorized_term ) ) {
+                    $cat_exclude_ids[] = $uncategorized_term->term_id;
+                }
+                $cat_exclude_ids = array_unique( array_filter( $cat_exclude_ids ) );
+
                 $categories = get_terms( array(
                     'taxonomy'   => 'product_cat',
                     'hide_empty' => false,
-                    'exclude'    => get_option( 'default_product_cat', 0 ),
-                    'slug__not_in' => array( 'uncategorized' ),
+                    'exclude'    => $cat_exclude_ids,
+                    'orderby'    => 'name',
+                    'order'      => 'ASC',
                 ) );
-                // Fallback images keyed by common category slug patterns
-                $cat_fallback_images = array(
-                    'silk'      => get_template_directory_uri() . '/assets/images/category-silk.jpg',
-                    'banarasi'  => get_template_directory_uri() . '/assets/images/category-banarasi.jpg',
-                    'bandhani'  => get_template_directory_uri() . '/assets/images/category-bandhani.jpg',
-                    'organza'   => get_template_directory_uri() . '/assets/images/category-organza.jpg',
+
+                // Fallback images — rotate through all available category images
+                $cat_fallback_pool = array(
+                    get_template_directory_uri() . '/assets/images/category-silk.jpg',
+                    get_template_directory_uri() . '/assets/images/category-banarasi.jpg',
+                    get_template_directory_uri() . '/assets/images/category-bandhani.jpg',
+                    get_template_directory_uri() . '/assets/images/category-organza.jpg',
+                    get_template_directory_uri() . '/assets/images/saree-1.jpg',
+                    get_template_directory_uri() . '/assets/images/saree-2.jpg',
+                    get_template_directory_uri() . '/assets/images/saree-3.jpg',
+                    get_template_directory_uri() . '/assets/images/saree-4.jpg',
                 );
+                $cat_fallback_count = count( $cat_fallback_pool );
+                $cat_idx = 0;
+
                 if ( ! is_wp_error( $categories ) && ! empty( $categories ) ) :
                     foreach ( $categories as $cat ) :
                         $thumbnail_id = get_term_meta( $cat->term_id, 'thumbnail_id', true );
-                        $image_url = wp_get_attachment_url( $thumbnail_id );
+                        $image_url    = $thumbnail_id ? wp_get_attachment_url( $thumbnail_id ) : '';
                         if ( ! $image_url ) {
-                            // Try to find a matching fallback by slug keyword
-                            $slug_lower = strtolower( $cat->slug );
-                            $image_url  = get_template_directory_uri() . '/assets/images/category-silk.jpg';
-                            foreach ( $cat_fallback_images as $key => $fb_url ) {
-                                if ( false !== strpos( $slug_lower, $key ) ) {
-                                    $image_url = $fb_url;
-                                    break;
-                                }
-                            }
+                            // Cycle through the fallback pool so each category shows a distinct image
+                            $image_url = $cat_fallback_pool[ $cat_idx % $cat_fallback_count ];
+                            $cat_idx++;
                         }
                         ?>
                         <div onclick="window.location.href='<?php echo esc_url( get_term_link( $cat ) ); ?>'" class="snap-center shrink-0 group cursor-pointer flex flex-col items-center gap-5 relative">
