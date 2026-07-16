@@ -602,6 +602,83 @@
     box-shadow: 0 0 0 3px rgba(200, 164, 106, 0.15) !important;
 }
 
+/* ── Section containers inside tab panels ───────────────────────────────── */
+.dt-section {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.dt-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+.dt-section-title {
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #C8A46A;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(200, 164, 106, 0.15);
+}
+
+/* ── WP Color Picker Override ───────────────────────────────────────────── */
+.dt-color-picker + .wp-picker-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.wp-picker-container .wp-color-result {
+    border: 1px solid rgba(200, 164, 106, 0.3) !important;
+    border-radius: 2px !important;
+    height: 36px !important;
+    width: 36px !important;
+}
+.wp-picker-container .wp-color-result:after {
+    display: none;
+}
+.wp-picker-container .wp-picker-input-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.wp-picker-container .wp-picker-input-wrap input[type="text"] {
+    background: #111 !important;
+    border: 1px solid rgba(200,164,106,0.2) !important;
+    color: #F7F4EE !important;
+    border-radius: 2px !important;
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+    height: 32px !important;
+    box-sizing: border-box !important;
+}
+.wp-picker-container .wp-picker-input-wrap .button {
+    background: rgba(200,164,106,0.1) !important;
+    border: 1px solid rgba(200,164,106,0.3) !important;
+    color: #C8A46A !important;
+    height: 32px !important;
+    line-height: 30px !important;
+    padding: 0 10px !important;
+    font-size: 11px !important;
+    border-radius: 2px !important;
+}
+.wp-picker-container .wp-picker-open .wp-color-result,
+.wp-picker-open .wp-color-result {
+    border-color: #C8A46A !important;
+}
+/* Iris (color picker widget) dark theme */
+.iris-picker,
+.iris-picker .iris-square,
+.iris-picker .iris-strip {
+    border-radius: 2px !important;
+}
+.iris-picker {
+    background: #1a1a1a !important;
+    border: 1px solid rgba(200,164,106,0.2) !important;
+}
+
 @media (max-width: 960px) {
     .dt-options-container {
         flex-direction: column;

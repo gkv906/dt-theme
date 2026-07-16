@@ -62,18 +62,49 @@ function dt_theme_options_menu(): void {
         58
     );
     
-    // Submenus matching tabs for direct link integration
-    add_submenu_page( 'dt-theme-options', __( 'General Settings', 'dt-ecommerce-theme' ),   __( 'General Settings',   'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-options', 'dt_render_theme_options_page' );
-    add_submenu_page( 'dt-theme-options', __( 'Header Builder',  'dt-ecommerce-theme' ),   __( 'Header Builder',    'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-options&tab=header', '__return_false' );
-    add_submenu_page( 'dt-theme-options', __( 'Footer Builder',  'dt-ecommerce-theme' ),   __( 'Footer Builder',    'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-options&tab=footer', '__return_false' );
-    add_submenu_page( 'dt-theme-options', __( 'Section Manager',  'dt-ecommerce-theme' ),  __( 'Section Manager',    'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-options&tab=homepage', '__return_false' );
-    add_submenu_page( 'dt-theme-options', __( 'Typography Settings','dt-ecommerce-theme' ),__( 'Typography Settings','dt-ecommerce-theme' ), 'manage_options', 'dt-theme-options&tab=typography', '__return_false' );
-    add_submenu_page( 'dt-theme-options', __( 'WooCommerce Controls','dt-ecommerce-theme' ),__( 'WooCommerce Controls','dt-ecommerce-theme' ), 'manage_options', 'dt-theme-options&tab=woocommerce', '__return_false' );
-    add_submenu_page( 'dt-theme-options', __( 'Performance Settings','dt-ecommerce-theme' ),__( 'Performance Settings','dt-ecommerce-theme' ), 'manage_options', 'dt-theme-options&tab=performance', '__return_false' );
-    add_submenu_page( 'dt-theme-options', __( 'Custom Code',    'dt-ecommerce-theme' ),   __( 'Custom Code', 'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-options&tab=code', '__return_false' );
-    add_submenu_page( 'dt-theme-options', __( 'Import & Export',  'dt-ecommerce-theme' ),  __( 'Import & Export',    'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-options&tab=backup', '__return_false' );
+    // Submenus — all correctly use 'dt-theme-options' slug so WordPress resolves them properly.
+    // Tab switching is handled client-side via URL hash + JS; GET ?tab= is also supported server-side.
+    add_submenu_page( 'dt-theme-options', __( 'General Settings',    'dt-ecommerce-theme' ), __( 'General Settings',    'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-options',          'dt_render_theme_options_page' );
+    add_submenu_page( 'dt-theme-options', __( 'Colors & Branding',   'dt-ecommerce-theme' ), __( 'Colors & Branding',   'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-tab-colors',       'dt_render_theme_tab_redirect' );
+    add_submenu_page( 'dt-theme-options', __( 'Header Builder',      'dt-ecommerce-theme' ), __( 'Header Builder',      'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-tab-header',       'dt_render_theme_tab_redirect' );
+    add_submenu_page( 'dt-theme-options', __( 'Footer Builder',      'dt-ecommerce-theme' ), __( 'Footer Builder',      'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-tab-footer',       'dt_render_theme_tab_redirect' );
+    add_submenu_page( 'dt-theme-options', __( 'Section Manager',     'dt-ecommerce-theme' ), __( 'Section Manager',     'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-tab-homepage',     'dt_render_theme_tab_redirect' );
+    add_submenu_page( 'dt-theme-options', __( 'Typography',          'dt-ecommerce-theme' ), __( 'Typography',          'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-tab-typography',   'dt_render_theme_tab_redirect' );
+    add_submenu_page( 'dt-theme-options', __( 'WooCommerce Controls','dt-ecommerce-theme' ), __( 'WooCommerce Controls','dt-ecommerce-theme' ), 'manage_options', 'dt-theme-tab-woocommerce',  'dt_render_theme_tab_redirect' );
+    add_submenu_page( 'dt-theme-options', __( 'Popups & Notifications','dt-ecommerce-theme' ),__( 'Popups & Notifications','dt-ecommerce-theme' ), 'manage_options', 'dt-theme-tab-popups',   'dt_render_theme_tab_redirect' );
+    add_submenu_page( 'dt-theme-options', __( 'Social & Contact',    'dt-ecommerce-theme' ), __( 'Social & Contact',    'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-tab-social',       'dt_render_theme_tab_redirect' );
+    add_submenu_page( 'dt-theme-options', __( 'SEO Settings',        'dt-ecommerce-theme' ), __( 'SEO Settings',        'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-tab-seo',          'dt_render_theme_tab_redirect' );
+    add_submenu_page( 'dt-theme-options', __( 'Role Manager',        'dt-ecommerce-theme' ), __( 'Role Manager',        'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-tab-roles',        'dt_render_theme_tab_redirect' );
+    add_submenu_page( 'dt-theme-options', __( 'Analytics & Tracking','dt-ecommerce-theme' ), __( 'Analytics & Tracking','dt-ecommerce-theme' ), 'manage_options', 'dt-theme-tab-analytics',    'dt_render_theme_tab_redirect' );
+    add_submenu_page( 'dt-theme-options', __( 'Performance',         'dt-ecommerce-theme' ), __( 'Performance',         'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-tab-performance',  'dt_render_theme_tab_redirect' );
+    add_submenu_page( 'dt-theme-options', __( 'Custom Code',         'dt-ecommerce-theme' ), __( 'Custom Code',         'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-tab-code',         'dt_render_theme_tab_redirect' );
+    add_submenu_page( 'dt-theme-options', __( 'Import & Export',     'dt-ecommerce-theme' ), __( 'Import & Export',     'dt-ecommerce-theme' ), 'manage_options', 'dt-theme-tab-backup',       'dt_render_theme_tab_redirect' );
 }
 add_action( 'admin_menu', 'dt_theme_options_menu' );
+
+// ── Tab redirect helper: submenu entries point here and redirect with #hash ──
+function dt_render_theme_tab_redirect(): void {
+    $page    = isset( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : '';
+    $tab_map = array(
+        'dt-theme-tab-colors'      => 'colors',
+        'dt-theme-tab-header'      => 'header',
+        'dt-theme-tab-footer'      => 'footer',
+        'dt-theme-tab-homepage'    => 'homepage',
+        'dt-theme-tab-typography'  => 'typography',
+        'dt-theme-tab-woocommerce' => 'woocommerce',
+        'dt-theme-tab-popups'      => 'popups',
+        'dt-theme-tab-social'      => 'social',
+        'dt-theme-tab-seo'         => 'seo',
+        'dt-theme-tab-roles'       => 'roles',
+        'dt-theme-tab-analytics'   => 'analytics',
+        'dt-theme-tab-performance' => 'performance',
+        'dt-theme-tab-code'        => 'code',
+        'dt-theme-tab-backup'      => 'backup',
+    );
+    $tab = $tab_map[ $page ] ?? 'general';
+    wp_safe_redirect( admin_url( 'admin.php?page=dt-theme-options&tab=' . $tab ) );
+    exit;
+}
 
 // ── AJAX Save ───────────────────────────────────────────────────────────────
 function dt_ajax_save_theme_options(): void {
@@ -130,15 +161,21 @@ function dt_render_theme_options_page(): void {
     $opts       = get_option( 'dt_theme_options', array() );
 
     $tabs = array(
-        'general'     => array( 'label' => 'General Settings',   'icon' => 'settings' ),
-        'header'      => array( 'label' => 'Header Builder',     'icon' => 'layout-template' ),
-        'footer'      => array( 'label' => 'Footer Builder',     'icon' => 'layout-panel-bottom' ),
-        'homepage'    => array( 'label' => 'Section Manager',    'icon' => 'home' ),
-        'typography'  => array( 'label' => 'Typography Settings','icon' => 'type' ),
-        'woocommerce' => array( 'label' => 'WooCommerce Controls','icon' => 'shopping-bag' ),
-        'performance' => array( 'label' => 'Performance Settings','icon' => 'zap' ),
-        'code'        => array( 'label' => 'Custom Code',        'icon' => 'code-2' ),
-        'backup'      => array( 'label' => 'Import & Export',    'icon' => 'database' ),
+        'general'     => array( 'label' => 'General',           'icon' => 'settings' ),
+        'colors'      => array( 'label' => 'Colors & Brand',    'icon' => 'palette' ),
+        'header'      => array( 'label' => 'Header',            'icon' => 'layout-template' ),
+        'footer'      => array( 'label' => 'Footer',            'icon' => 'layout-panel-bottom' ),
+        'homepage'    => array( 'label' => 'Sections',          'icon' => 'home' ),
+        'typography'  => array( 'label' => 'Typography',        'icon' => 'type' ),
+        'woocommerce' => array( 'label' => 'WooCommerce',       'icon' => 'shopping-bag' ),
+        'popups'      => array( 'label' => 'Popups',            'icon' => 'bell' ),
+        'social'      => array( 'label' => 'Social & Contact',  'icon' => 'share-2' ),
+        'seo'         => array( 'label' => 'SEO',               'icon' => 'search' ),
+        'roles'       => array( 'label' => 'Role Manager',      'icon' => 'users' ),
+        'analytics'   => array( 'label' => 'Analytics',         'icon' => 'bar-chart-2' ),
+        'performance' => array( 'label' => 'Performance',       'icon' => 'zap' ),
+        'code'        => array( 'label' => 'Custom Code',       'icon' => 'code-2' ),
+        'backup'      => array( 'label' => 'Import & Export',   'icon' => 'database' ),
     );
     ?>
     <div id="dt-admin-page" class="dt-admin-page">
@@ -481,6 +518,233 @@ function dt_render_theme_options_page(): void {
                             </div>
                         </div>
 
+                        <!-- ==================== TAB: COLORS & BRANDING ==================== -->
+                        <div class="dt-tab-content <?php echo ( $active_tab === 'colors' ) ? '' : 'hidden'; ?>" id="dt-tab-colors">
+                            <div class="dt-section">
+                                <div class="dt-section-title">🎨 Primary Brand Colors</div>
+                                <?php dt_option_color( 'color_primary',    'Primary Gold Color',     'Main accent/brand color used for buttons, icons, borders (default: #C8A46A)', $opts ); ?>
+                                <?php dt_option_color( 'color_primary_dark','Primary Dark Shade',    'Darker variation of primary color used in hover states (default: #b08d55)', $opts ); ?>
+                                <?php dt_option_color( 'color_primary_light','Primary Light Shade',  'Lighter variation of primary color for hover glows (default: #d8ba82)', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">🖤 Background & Surface Colors</div>
+                                <?php dt_option_color( 'color_bg_main',   'Main Background Color',   'Primary page background color (default: #000000)', $opts ); ?>
+                                <?php dt_option_color( 'color_bg_card',   'Card Background Color',   'Background color for product cards and panels (default: #111111)', $opts ); ?>
+                                <?php dt_option_color( 'color_bg_header', 'Header Background Color', 'Header/navigation bar background (default: #000000)', $opts ); ?>
+                                <?php dt_option_color( 'color_bg_footer', 'Footer Background Color', 'Footer section background (default: #000000)', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">✍️ Text Colors</div>
+                                <?php dt_option_color( 'color_text_primary',   'Primary Text Color',   'Main body text color (default: #F7F4EE)', $opts ); ?>
+                                <?php dt_option_color( 'color_text_secondary', 'Secondary Text Color', 'Muted/description text (default: #a3a3a3)', $opts ); ?>
+                                <?php dt_option_color( 'color_text_heading',   'Heading Text Color',   'H1-H6 heading elements color (default: #FFFFFF)', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">🔲 Button Styles</div>
+                                <?php dt_option_color( 'color_btn_bg',   'Primary Button Background', 'Background of main CTA buttons (default: #C8A46A)', $opts ); ?>
+                                <?php dt_option_color( 'color_btn_text', 'Primary Button Text Color', 'Text color on main CTA buttons (default: #000000)', $opts ); ?>
+                                <?php dt_option_select( 'btn_border_radius', 'Button Border Radius', 'Corner rounding style for all buttons', array( '0' => 'Sharp (0px)', '2px' => 'Subtle (2px)', '4px' => 'Rounded (4px)', '8px' => 'More Rounded (8px)', '9999px' => 'Pill / Full Rounded' ), $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">🎴 Announcement Bar</div>
+                                <?php dt_option_color( 'color_announcement_bg',   'Announcement Bar Background', 'Background color of the top rotating announcement strip', $opts ); ?>
+                                <?php dt_option_color( 'color_announcement_text', 'Announcement Bar Text Color', 'Text color inside the announcement strip', $opts ); ?>
+                            </div>
+                        </div>
+
+                        <!-- ==================== TAB: POPUPS & NOTIFICATIONS ==================== -->
+                        <div class="dt-tab-content <?php echo ( $active_tab === 'popups' ) ? '' : 'hidden'; ?>" id="dt-tab-popups">
+                            <div class="dt-section">
+                                <div class="dt-section-title">📨 Newsletter Popup</div>
+                                <?php dt_option_checkbox( 'popup_newsletter_enabled', 'Enable Newsletter Popup',    'Show email capture popup to visitors after delay', $opts ); ?>
+                                <?php dt_option_row(      'popup_newsletter_delay',   'Popup Delay (seconds)',      'Seconds after page load to show popup (default: 5)', 'number', $opts ); ?>
+                                <?php dt_option_row(      'popup_title',              'Popup Headline',             'Main heading text inside the newsletter popup', 'text', $opts ); ?>
+                                <?php dt_option_textarea( 'popup_desc',               'Popup Description',          'Short persuasive description shown below the headline', $opts ); ?>
+                                <?php dt_option_media(    'popup_bg_image',           'Popup Background Image',     'Optional decorative background for the popup panel', $opts ); ?>
+                                <?php dt_option_row(      'popup_cookie_days',        'Cookie Expiry (days)',        'Days before showing the popup again to the same visitor (default: 7)', 'number', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">🏷️ Offer / Coupon Popup</div>
+                                <?php dt_option_checkbox( 'popup_offer_enabled', 'Enable Offer Popup',      'Show discount coupon popup to first-time visitors', $opts ); ?>
+                                <?php dt_option_row(      'popup_offer_delay',   'Offer Popup Delay (sec)', 'Seconds after load to show the offer popup (default: 8)', 'number', $opts ); ?>
+                                <?php dt_option_row(      'popup_offer_text',    'Offer Text',              'Headline for the offer popup (e.g. Get 10% OFF your first order!)', 'text', $opts ); ?>
+                                <?php dt_option_row(      'popup_offer_code',    'Coupon Code',             'Discount code displayed in the offer popup (e.g. ARSHMAN10)', 'text', $opts ); ?>
+                                <?php dt_option_media(    'popup_offer_image',   'Offer Popup Image',       'Decorative image/banner for the offer popup', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">🚪 Exit Intent Popup</div>
+                                <?php dt_option_checkbox( 'popup_exit_enabled', 'Enable Exit Intent Popup',  'Show popup when user moves cursor toward the browser top bar', $opts ); ?>
+                                <?php dt_option_row(      'popup_exit_title',   'Exit Intent Headline',      'Heading text (e.g. Wait - Don\'t Leave Yet!)', 'text', $opts ); ?>
+                                <?php dt_option_row(      'popup_exit_code',    'Exit Coupon Code',          'Special coupon code shown on exit intent (optional)', 'text', $opts ); ?>
+                                <?php dt_option_textarea( 'popup_exit_desc',    'Exit Intent Description',   'Short message to keep visitor on site', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">📧 Newsletter Subscribers</div>
+                                <?php
+                                $subscribers = get_option( 'dt_newsletter_subscribers', array() );
+                                $count = is_array( $subscribers ) ? count( $subscribers ) : 0;
+                                ?>
+                                <div class="dt-form-row">
+                                    <div class="dt-form-label">Subscriber Count<small>Total emails collected via newsletter forms</small></div>
+                                    <div>
+                                        <span style="font-size:28px;font-family:'Cormorant Garamond',serif;color:#C8A46A;font-weight:700;"><?php echo esc_html( $count ); ?></span>
+                                        <span style="color:#666;font-size:11px;margin-left:8px;">subscribers</span>
+                                        <?php if ( $count > 0 ) : ?>
+                                            <div style="margin-top:12px;max-height:180px;overflow-y:auto;border:1px solid rgba(200,164,106,0.1);padding:10px;background:#0a0a0a;">
+                                                <?php foreach ( array_keys( $subscribers ) as $email ) : ?>
+                                                    <div style="font-size:11px;color:#a3a3a3;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.03);"><?php echo esc_html( $email ); ?></div>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== TAB: SOCIAL & CONTACT ==================== -->
+                        <div class="dt-tab-content <?php echo ( $active_tab === 'social' ) ? '' : 'hidden'; ?>" id="dt-tab-social">
+                            <div class="dt-section">
+                                <div class="dt-section-title">📲 Social Media Links</div>
+                                <?php dt_option_row( 'facebook_url',   'Facebook Page URL',    'Full URL to your Facebook brand page', 'url', $opts ); ?>
+                                <?php dt_option_row( 'instagram_url',  'Instagram Profile URL','Full URL to your Instagram brand profile', 'url', $opts ); ?>
+                                <?php dt_option_row( 'twitter_url',    'Twitter/X Profile URL','Full URL to your Twitter/X profile', 'url', $opts ); ?>
+                                <?php dt_option_row( 'youtube_url',    'YouTube Channel URL',  'Full URL to your YouTube channel', 'url', $opts ); ?>
+                                <?php dt_option_row( 'pinterest_url',  'Pinterest Profile URL','Full URL to your Pinterest profile (optional)', 'url', $opts ); ?>
+                                <?php dt_option_row( 'whatsapp_url',   'WhatsApp Business URL','wa.me API link for direct WhatsApp contact (e.g. https://wa.me/911234567890)', 'url', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">📍 Contact Information</div>
+                                <?php dt_option_row(      'contact_email',   'Store Email Address',  'Primary email shown in footer and contact page', 'email', $opts ); ?>
+                                <?php dt_option_row(      'contact_phone',   'Store Phone Number',   'Phone number with country code (e.g. +91 98765 43210)', 'text', $opts ); ?>
+                                <?php dt_option_textarea( 'contact_address', 'Store Address',        'Full physical address of your store or atelier', $opts ); ?>
+                                <?php dt_option_row(      'contact_hours',   'Business Hours',       'Operating hours (e.g. Mon–Sat, 10:00am – 7:00pm IST)', 'text', $opts ); ?>
+                                <?php dt_option_textarea( 'google_maps_embed','Google Maps Embed',   'Paste the full Google Maps iframe embed code here', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">📰 Newsletter & Footer</div>
+                                <?php dt_option_checkbox( 'newsletter_enabled', 'Show Footer Newsletter Block', 'Display email subscription section in footer', $opts ); ?>
+                                <?php dt_option_row(      'newsletter_title',   'Newsletter Headline',           'Heading shown above footer newsletter form', 'text', $opts ); ?>
+                                <?php dt_option_textarea( 'newsletter_desc',    'Newsletter Description',        'Short description encouraging sign-ups', $opts ); ?>
+                            </div>
+                        </div>
+
+                        <!-- ==================== TAB: SEO SETTINGS ==================== -->
+                        <div class="dt-tab-content <?php echo ( $active_tab === 'seo' ) ? '' : 'hidden'; ?>" id="dt-tab-seo">
+                            <div class="dt-section">
+                                <div class="dt-section-title">🔍 Global SEO Defaults</div>
+                                <?php dt_option_row( 'seo_site_title_suffix', 'Title Tag Suffix',        'Text appended to page titles (e.g. | Arshman Designs)', 'text', $opts ); ?>
+                                <?php dt_option_textarea( 'seo_default_description', 'Default Meta Description', 'Global fallback meta description used when no specific one is set (160 chars max)', $opts ); ?>
+                                <?php dt_option_media( 'seo_og_image', 'Default OG Social Share Image', 'Default Open Graph image shown when pages are shared on social media (1200×630px recommended)', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">🌐 Indexing & Robots</div>
+                                <?php dt_option_checkbox( 'seo_noindex_search',   'Noindex Search Result Pages', 'Prevent search result pages from being indexed by Google', $opts ); ?>
+                                <?php dt_option_checkbox( 'seo_noindex_account',  'Noindex Account Pages',       'Prevent My Account, Cart, Checkout pages from appearing in search', $opts ); ?>
+                                <?php dt_option_row(      'seo_robots_txt_extra', 'Extra robots.txt Rules',      'Additional directives appended to robots.txt (one per line)', 'text', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">📊 Schema & Structured Data</div>
+                                <?php dt_option_checkbox( 'seo_product_schema',  'Enable Product JSON-LD Schema',  'Outputs WooCommerce product schema for rich results in Google', $opts ); ?>
+                                <?php dt_option_checkbox( 'seo_breadcrumb_schema','Enable Breadcrumb Schema',       'Output breadcrumb structured data for search results', $opts ); ?>
+                                <?php dt_option_checkbox( 'seo_org_schema',       'Enable Organization Schema',     'Output brand/organization schema markup in site header', $opts ); ?>
+                                <?php dt_option_row( 'seo_twitter_handle', 'Twitter/X @Handle', 'Your brand Twitter handle without @ (used for Twitter card meta tags)', 'text', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">🔗 Canonical & URLs</div>
+                                <?php dt_option_checkbox( 'seo_canonical_enabled', 'Output Canonical Tags',  'Add canonical link tags to prevent duplicate content issues', $opts ); ?>
+                                <?php dt_option_select( 'seo_trailing_slash', 'Trailing Slash Preference', 'How URLs are normalized (requires permalink flush after change)', array( 'default' => 'WordPress Default', 'always' => 'Always Add Trailing Slash', 'never' => 'Never Add Trailing Slash' ), $opts ); ?>
+                            </div>
+                        </div>
+
+                        <!-- ==================== TAB: ROLE MANAGER ==================== -->
+                        <div class="dt-tab-content <?php echo ( $active_tab === 'roles' ) ? '' : 'hidden'; ?>" id="dt-tab-roles">
+                            <div class="dt-section">
+                                <div class="dt-section-title">👥 User Role Overview</div>
+                                <?php
+                                $role_list = array(
+                                    'dt_customer'   => array( 'label' => 'Customer (Retail)',  'desc' => 'Standard retail buyers paying full price', 'color' => '#4ade80' ),
+                                    'dt_reseller'   => array( 'label' => 'Reseller',           'desc' => 'Sells products to end users at markup',    'color' => '#60a5fa' ),
+                                    'dt_retailer'   => array( 'label' => 'Retailer',           'desc' => 'Bulk buyer for small retail shops',         'color' => '#f59e0b' ),
+                                    'dt_wholesaler' => array( 'label' => 'Wholesaler',         'desc' => 'Large bulk buyer, lowest price tier',       'color' => '#a78bfa' ),
+                                );
+                                foreach ( $role_list as $role_key => $role_data ) :
+                                    $user_count = count( get_users( array( 'role' => $role_key, 'fields' => 'ID' ) ) );
+                                    ?>
+                                    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+                                        <div style="display:flex;align-items:center;gap:12px;">
+                                            <div style="width:8px;height:8px;border-radius:50%;background:<?php echo esc_attr( $role_data['color'] ); ?>;flex-shrink:0;"></div>
+                                            <div>
+                                                <div style="font-size:13px;font-weight:600;color:#F7F4EE;"><?php echo esc_html( $role_data['label'] ); ?></div>
+                                                <div style="font-size:11px;color:#666;margin-top:2px;"><?php echo esc_html( $role_data['desc'] ); ?></div>
+                                            </div>
+                                        </div>
+                                        <div style="text-align:right;">
+                                            <div style="font-size:20px;font-family:'Cormorant Garamond',serif;color:<?php echo esc_attr( $role_data['color'] ); ?>;font-weight:700;"><?php echo esc_html( $user_count ); ?></div>
+                                            <div style="font-size:10px;color:#555;letter-spacing:0.05em;text-transform:uppercase;">users</div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">💰 Role-Based Discount Configuration</div>
+                                <p style="color:#666;font-size:12px;margin-bottom:16px;">Set a global percentage discount applied automatically to each role's prices. Individual product override prices can be set per-product in the WooCommerce product editor.</p>
+                                <?php dt_option_row( 'reseller_discount',    'Reseller Global Discount %',    'Percentage off regular price for all resellers (e.g. 15)', 'number', $opts ); ?>
+                                <?php dt_option_row( 'retailer_discount',    'Retailer Global Discount %',    'Percentage off regular price for all retailers (e.g. 20)', 'number', $opts ); ?>
+                                <?php dt_option_row( 'wholesaler_discount',  'Wholesaler Global Discount %',  'Percentage off regular price for all wholesalers (e.g. 30)', 'number', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">📦 Minimum Order Quantities (MOQ)</div>
+                                <?php dt_option_row( 'reseller_moq',   'Reseller MOQ',   'Minimum quantity per order for resellers (e.g. 5)',   'number', $opts ); ?>
+                                <?php dt_option_row( 'retailer_moq',   'Retailer MOQ',   'Minimum quantity per order for retailers (e.g. 3)',   'number', $opts ); ?>
+                                <?php dt_option_row( 'wholesaler_moq', 'Wholesaler MOQ', 'Minimum quantity per order for wholesalers (e.g. 10)', 'number', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">⚙️ Role Display Options</div>
+                                <?php dt_option_checkbox( 'role_show_badge',      'Show Role Badge on My Account', 'Display the user\'s role as a badge in the My Account dashboard', $opts ); ?>
+                                <?php dt_option_checkbox( 'role_show_price_label','Show Role Price Label',          'Display "Your special price" label next to discounted prices', $opts ); ?>
+                                <?php dt_option_checkbox( 'role_registration_field','Show Role Selector on Register Form', 'Display account type selector on WooCommerce registration form', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">👤 User Management Quick Access</div>
+                                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">
+                                    <a href="<?php echo esc_url( admin_url( 'users.php?role=dt_customer' ) ); ?>" class="button button-secondary" target="_blank">View Customers</a>
+                                    <a href="<?php echo esc_url( admin_url( 'users.php?role=dt_reseller' ) ); ?>" class="button button-secondary" target="_blank">View Resellers</a>
+                                    <a href="<?php echo esc_url( admin_url( 'users.php?role=dt_retailer' ) ); ?>" class="button button-secondary" target="_blank">View Retailers</a>
+                                    <a href="<?php echo esc_url( admin_url( 'users.php?role=dt_wholesaler' ) ); ?>" class="button button-secondary" target="_blank">View Wholesalers</a>
+                                    <a href="<?php echo esc_url( admin_url( 'user-new.php' ) ); ?>" class="button button-primary" target="_blank">Add New User</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== TAB: ANALYTICS & TRACKING ==================== -->
+                        <div class="dt-tab-content <?php echo ( $active_tab === 'analytics' ) ? '' : 'hidden'; ?>" id="dt-tab-analytics">
+                            <div class="dt-section">
+                                <div class="dt-section-title">📊 Google Analytics</div>
+                                <?php dt_option_checkbox( 'ga_enabled', 'Enable Google Analytics', 'Inject GA4 tracking script into all pages', $opts ); ?>
+                                <?php dt_option_row( 'ga_measurement_id', 'GA4 Measurement ID', 'Your Google Analytics 4 Measurement ID (e.g. G-XXXXXXXXXX)', 'text', $opts ); ?>
+                                <?php dt_option_checkbox( 'ga_anonymize_ip', 'Anonymize IP Addresses', 'Enable IP anonymization for GDPR compliance', $opts ); ?>
+                                <?php dt_option_checkbox( 'ga_exclude_admin', 'Exclude Admin Users from Tracking', 'Do not track logged-in administrator sessions', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">📘 Facebook / Meta Pixel</div>
+                                <?php dt_option_checkbox( 'fb_pixel_enabled', 'Enable Facebook Pixel',      'Inject Meta/Facebook Pixel tracking on all pages', $opts ); ?>
+                                <?php dt_option_row( 'fb_pixel_id',           'Facebook Pixel ID',           'Your 15-digit Meta Pixel ID', 'text', $opts ); ?>
+                                <?php dt_option_checkbox( 'fb_pixel_purchase', 'Track Purchase Events',       'Fire Purchase event on WooCommerce order completion', $opts ); ?>
+                                <?php dt_option_checkbox( 'fb_pixel_view',     'Track ViewContent Events',    'Fire ViewContent event on WooCommerce product pages', $opts ); ?>
+                                <?php dt_option_checkbox( 'fb_pixel_cart',     'Track AddToCart Events',      'Fire AddToCart event when product is added to cart', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">🎯 Google Tag Manager</div>
+                                <?php dt_option_checkbox( 'gtm_enabled', 'Enable Google Tag Manager',  'Inject GTM container script on all pages', $opts ); ?>
+                                <?php dt_option_row( 'gtm_container_id',  'GTM Container ID',          'Your GTM Container ID (e.g. GTM-XXXXXXX)', 'text', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
+                                <div class="dt-section-title">🔍 Search Console & Verification</div>
+                                <?php dt_option_row( 'google_site_verification',  'Google Site Verification',  'Google Search Console verification meta content value', 'text', $opts ); ?>
+                                <?php dt_option_row( 'bing_site_verification',    'Bing Webmaster Verification','Bing Webmaster Tools verification meta content value', 'text', $opts ); ?>
+                            </div>
+                        </div>
+
                     </div><!-- end card -->
 
                     <!-- Save Button sticky bar -->
@@ -577,6 +841,18 @@ function dt_option_select( string $key, string $label, string $desc, array $opti
     <?php
 }
 
+function dt_option_color( string $key, string $label, string $desc, array $opts = [] ): void {
+    $val = $opts[ $key ] ?? '';
+    ?>
+    <div class="dt-form-row">
+        <div class="dt-form-label"><?php echo esc_html( $label ); ?><small><?php echo wp_kses_post( $desc ); ?></small></div>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <input type="text" id="dt_<?php echo esc_attr( $key ); ?>" name="dt_options[<?php echo esc_attr( $key ); ?>]" value="<?php echo esc_attr( $val ); ?>" class="dt-input dt-color-picker" style="max-width:200px;" data-default-color="<?php echo esc_attr( $val ?: '#C8A46A' ); ?>">
+        </div>
+    </div>
+    <?php
+}
+
 function dt_option_media( string $key, string $label, string $desc, array $opts = [] ): void {
     $val = $opts[ $key ] ?? '';
     $preview_id = 'preview_' . esc_attr( $key );
@@ -595,8 +871,138 @@ function dt_option_media( string $key, string $label, string $desc, array $opts 
                     Remove
                 </button>
             </div>
-            <img id="<?php echo $preview_id; ?>" src="<?php echo esc_url( $val ); ?>" class="dt-upload-preview <?php echo $hidden_class; ?>" style="max-height:80px;border:1px solid #333;padding:4px;background:#111;">
+            <img id="<?php echo esc_attr( $preview_id ); ?>" src="<?php echo esc_url( $val ); ?>" class="dt-upload-preview <?php echo esc_attr( $hidden_class ); ?>" style="max-height:80px;border:1px solid #333;padding:4px;background:#111;">
         </div>
     </div>
     <?php
 }
+
+// ── Default theme options ───────────────────────────────────────────────────
+function dt_set_default_theme_options(): void {
+    $defaults = array(
+        // General / Brand
+        'logo_height'              => '40',
+        'announcement_messages'    => 'Free Shipping on orders above ₹999,Premium Quality Sarees,Direct from Manufacturer',
+        'contact_email'            => 'atelier@arshmandesigns.com',
+        'contact_phone'            => '+91 12345 67890',
+        'contact_address'          => 'Arshman Atelier, Rathyatra Crossing, Varanasi 221010, UP',
+        'contact_hours'            => 'Mon–Sat, 10:00am – 7:00pm IST',
+        'whatsapp_url'             => 'https://wa.me/911234567890',
+        // Colors
+        'color_primary'            => '#C8A46A',
+        'color_primary_dark'       => '#b08d55',
+        'color_primary_light'      => '#d8ba82',
+        'color_bg_main'            => '#000000',
+        'color_bg_card'            => '#111111',
+        'color_bg_header'          => '#000000',
+        'color_bg_footer'          => '#000000',
+        'color_text_primary'       => '#F7F4EE',
+        'color_text_secondary'     => '#a3a3a3',
+        'color_text_heading'       => '#FFFFFF',
+        'color_btn_bg'             => '#C8A46A',
+        'color_btn_text'           => '#000000',
+        // Header
+        'sticky_header'            => '1',
+        'header_transparent'       => '1',
+        'header_top_bar'           => '1',
+        'header_search'            => '1',
+        'header_account'           => '1',
+        'header_wishlist'          => '1',
+        'header_cart'              => '1',
+        'header_tagline'           => 'Banarasi Elegance',
+        'header_location'          => 'Mumbai 400001',
+        // Footer
+        'footer_copyright'         => '© ' . gmdate( 'Y' ) . ' ARSHMAN DESIGNS. All rights reserved.',
+        'footer_about'             => 'We weave your dreams into reality - curating heirloom silks and modern drapes from India\'s finest looms, since 2010.',
+        'newsletter_enabled'       => '1',
+        'newsletter_title'         => 'Join The Atelier',
+        'newsletter_desc'          => 'Receive priority access to bridal collections, insider styling notes, and a 10% welcome discount on your first drape.',
+        'footer_social'            => '1',
+        'footer_payment_badges'    => '1',
+        // Social
+        'instagram_url'            => '#',
+        'facebook_url'             => '#',
+        'twitter_url'              => '#',
+        'youtube_url'              => '#',
+        // Homepage sections
+        'hero_heading'             => 'Banarasi Elegance',
+        'hero_subtext'             => 'Discover our curated collection of handcrafted silk sarees.',
+        'show_new_arrivals'        => '1',
+        'show_top_sellers'         => '1',
+        'show_reviews'             => '1',
+        'show_instagram_feed'      => '1',
+        // WooCommerce
+        'shop_products_per_page'   => '12',
+        'woo_quick_view'           => '1',
+        'woo_hover_zoom'           => '1',
+        // Popups
+        'popup_newsletter_enabled' => '1',
+        'popup_newsletter_delay'   => '5',
+        'popup_offer_enabled'      => '1',
+        'popup_offer_delay'        => '8',
+        'popup_offer_text'         => 'Get 10% OFF your first order!',
+        'popup_offer_code'         => 'ARSHMAN10',
+        'popup_exit_enabled'       => '1',
+        'popup_title'              => 'Join The Heritage Circle',
+        'popup_desc'               => 'Subscribe and be the first to receive exclusive collections, weave stories, and member-only offers.',
+        'popup_exit_title'         => 'Wait - Don\'t Leave Yet!',
+        'popup_cookie_days'        => '7',
+        // Performance
+        'lazy_load_images'         => '1',
+        'disable_gutenberg_css'    => '1',
+        'remove_emoji_scripts'     => '1',
+        // SEO
+        'seo_product_schema'       => '1',
+        'seo_canonical_enabled'    => '1',
+        // Role Manager
+        'reseller_discount'        => '15',
+        'retailer_discount'        => '20',
+        'wholesaler_discount'      => '30',
+        'reseller_moq'             => '5',
+        'retailer_moq'             => '3',
+        'wholesaler_moq'           => '10',
+        'role_show_badge'          => '1',
+        'role_registration_field'  => '1',
+    );
+    update_option( 'dt_theme_options', $defaults );
+}
+
+// ── AJAX: Save theme options ────────────────────────────────────────────────
+function dt_ajax_save_theme_options(): void {
+    check_ajax_referer( 'dt_admin_nonce', 'nonce' );
+    if ( ! current_user_can( 'manage_options' ) ) {
+        wp_send_json_error( 'Insufficient permissions.' );
+    }
+
+    // Parse the form-serialized data
+    $form_data = array();
+    if ( ! empty( $_POST['data'] ) ) {
+        wp_parse_str( wp_unslash( $_POST['data'] ), $form_data );
+    }
+
+    $opts      = isset( $form_data['dt_options'] ) ? (array) $form_data['dt_options'] : array();
+    $sanitized = dt_sanitize_theme_options( $opts );
+    $existing  = get_option( 'dt_theme_options', array() );
+    update_option( 'dt_theme_options', array_merge( $existing, $sanitized ) );
+
+    wp_send_json_success( array( 'message' => __( 'Settings saved successfully!', 'dt-ecommerce-theme' ) ) );
+}
+add_action( 'wp_ajax_dt_save_theme_options', 'dt_ajax_save_theme_options' );
+
+// ── AJAX: Run setup wizard ──────────────────────────────────────────────────
+function dt_ajax_run_setup_wizard(): void {
+    check_ajax_referer( 'dt_admin_nonce', 'nonce' );
+    if ( ! current_user_can( 'manage_options' ) ) {
+        wp_send_json_error( 'Insufficient permissions.' );
+    }
+
+    if ( function_exists( 'dt_run_one_click_setup' ) ) {
+        dt_run_one_click_setup();
+    }
+    if ( function_exists( 'dt_set_default_theme_options' ) ) {
+        dt_set_default_theme_options();
+    }
+
+    wp_send_json_success( array( 'message' => __( 'Setup wizard completed!', 'dt-ecommerce-theme' ) ) );
+}
+add_action( 'wp_ajax_dt_run_setup_wizard', 'dt_ajax_run_setup_wizard' );

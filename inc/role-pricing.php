@@ -9,36 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-// 1. Register Custom User Roles on Theme Activation/Initialization
-function dt_register_custom_user_roles() {
-    $roles = array(
-        'reseller' => array(
-            'name' => __( 'Reseller', 'dt-ecommerce-theme' ),
-            'capabilities' => array(
-                'read' => true,
-            ),
-        ),
-        'retailer' => array(
-            'name' => __( 'Retailer', 'dt-ecommerce-theme' ),
-            'capabilities' => array(
-                'read' => true,
-            ),
-        ),
-        'wholesaler' => array(
-            'name' => __( 'Wholesaler', 'dt-ecommerce-theme' ),
-            'capabilities' => array(
-                'read' => true,
-            ),
-        ),
-    );
-
-    foreach ( $roles as $role_key => $role_data ) {
-        if ( ! get_role( $role_key ) ) {
-            add_role( $role_key, $role_data['name'], $role_data['capabilities'] );
-        }
-    }
-}
-add_action( 'init', 'dt_register_custom_user_roles' );
+// Note: Custom user roles (dt_customer, dt_reseller, dt_retailer, dt_wholesaler) are
+// registered by inc/roles.php. No duplicate registration here.
 
 // 2. Add Role Price Fields to WooCommerce Product Editor
 function dt_add_role_price_fields() {

@@ -125,6 +125,64 @@ function dt_enqueue_scripts() {
 }
 add_action( 'wp_enqueue_scripts', 'dt_enqueue_scripts' );
 
+// ── Enqueue Admin Scripts & Styles ──────────────────────────────────────────
+function dt_enqueue_admin_scripts( string $hook ): void {
+    // Only load on DT admin pages
+    $screen = get_current_screen();
+    if ( ! $screen ) return;
+    $is_dt_page = (
+        strpos( $hook, 'dt-theme' ) !== false ||
+        strpos( $hook, 'dt_theme' ) !== false ||
+        ( isset( $_GET['page'] ) && strpos( sanitize_key( $_GET['page'] ), 'dt-theme' ) !== false )
+    );
+    if ( ! $is_dt_page ) return;
+
+    // Google fonts for admin
+    wp_enqueue_style( 'dt-admin-google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap', array(), null );
+
+    // Color picker
+    wp_enqueue_style( 'wp-color-picker' );
+
+    // Admin CSS
+    wp_enqueue_style(
+        'dt-admin-style',
+        get_template_directory_uri() . '/admin/admin.css',
+        array( 'wp-color-picker' ),
+        filemtime( get_template_directory() . '/admin/admin.css' )
+    );
+
+    // WP media uploader
+    wp_enqueue_media();
+
+    // Code editor (for custom CSS/JS fields)
+    if ( function_exists( 'wp_enqueue_code_editor' ) ) {
+        wp_enqueue_code_editor( array( 'type' => 'text/css' ) );
+    }
+
+    // Admin JS
+    wp_enqueue_script(
+        'dt-admin-js',
+        get_template_directory_uri() . '/admin/admin.js',
+        array( 'jquery', 'wp-color-picker', 'jquery-ui-sortable', 'media-upload' ),
+        filemtime( get_template_directory() . '/admin/admin.js' ),
+        true
+    );
+
+    // Lucide icons in admin
+    wp_enqueue_script( 'dt-lucide-admin', 'https://unpkg.com/lucide@latest', array(), null, true );
+
+    // Localize vars for admin JS
+    wp_localize_script( 'dt-admin-js', 'dtAdminVars', array(
+        'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
+        'nonce'      => wp_create_nonce( 'dt_admin_nonce' ),
+        'adminUrl'   => admin_url(),
+        'mediaTitle' => esc_html__( 'Select Image', 'dt-ecommerce-theme' ),
+        'savedText'  => esc_html__( 'Settings saved!', 'dt-ecommerce-theme' ),
+        'savingText' => esc_html__( 'Saving...', 'dt-ecommerce-theme' ),
+    ) );
+}
+add_action( 'admin_enqueue_scripts', 'dt_enqueue_admin_scripts' );
+
 // Register Widget areas
 function dt_widgets_init() {
     register_sidebar( array(
@@ -280,39 +338,21 @@ function dt_save_customer_address() {
         return;
     }
 
-    // Let's log the attempt to the WordPress uploads directory (guaranteed writable)
-    $upload_dir = wp_upload_dir();
-    $log_file = $upload_dir['basedir'] . '/save_address_debug.log';
-    $log_data = "\n--- Save Attempt: " . date('Y-m-d H:i:s') . " ---\n";
-    $log_data .= "POST: " . print_r($_POST, true) . "\n";
-    $log_data .= "User Logged In: " . (is_user_logged_in() ? 'YES' : 'NO') . "\n";
-    $log_data .= "Current User ID: " . get_current_user_id() . "\n";
-    
-    // Also log to standard PHP error log as fallback
-    error_log("DT Save Address Attempt: User ID " . get_current_user_id());
-
     if ( ! is_user_logged_in() ) {
-        $log_data .= "EXIT: User not logged in\n";
-        @file_put_contents($log_file, $log_data, FILE_APPEND);
         wc_add_notice( __( 'You must be logged in to save an address.', 'dt-ecommerce-theme' ), 'error' );
         return;
     }
 
     $user_id = get_current_user_id();
     if ( ! $user_id ) {
-        $log_data .= "EXIT: No user ID\n";
-        @file_put_contents($log_file, $log_data, FILE_APPEND);
         return;
     }
 
     // Verify nonce
-    $nonce = isset( $_POST['dt_address_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['dt_address_nonce'] ) ) : '';
+    $nonce          = isset( $_POST['dt_address_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['dt_address_nonce'] ) ) : '';
     $nonce_verified = wp_verify_nonce( $nonce, 'dt_save_address_' . $user_id );
-    $log_data .= "Nonce: $nonce, Verified: " . ($nonce_verified ? 'YES' : 'NO') . "\n";
 
     if ( ! $nonce_verified ) {
-        $log_data .= "EXIT: Nonce verification failed\n";
-        @file_put_contents($log_file, $log_data, FILE_APPEND);
         wc_add_notice( __( 'Security check failed. Please refresh and try again.', 'dt-ecommerce-theme' ), 'error' );
         return;
     }
@@ -345,8 +385,6 @@ function dt_save_customer_address() {
     if ( ! in_array( $type, array( 'billing', 'shipping' ), true ) ) {
         $type = 'billing';
     }
-    $log_data .= "Address Type: $type\n";
-
     // Get the submitted country (to generate correct field list for that country)
     $country_key       = $type . '_country';
     $short_country_key = '_country';
@@ -355,11 +393,9 @@ function dt_save_customer_address() {
     if ( empty( $country ) ) {
         $country = WC()->countries->get_base_country();
     }
-    $log_data .= "Country: $country\n";
 
     // Get WooCommerce address field definitions for this country + type
     $address_fields = WC()->countries->get_address_fields( $country, $type . '_' );
-    $log_data .= "Fields: " . print_r(array_keys($address_fields), true) . "\n";
 
     $errors = array();
 
@@ -399,8 +435,6 @@ function dt_save_customer_address() {
 
     // If there are validation errors, show them and stop
     if ( ! empty( $errors ) ) {
-        $log_data .= "EXIT: Validation errors: " . print_r($errors, true) . "\n";
-        @file_put_contents($log_file, $log_data, FILE_APPEND);
         foreach ( $errors as $error ) {
             wc_add_notice( $error, 'error' );
         }
@@ -459,8 +493,6 @@ function dt_save_customer_address() {
     do_action( 'woocommerce_customer_save_address', $user_id, $type );
 
     $redirect = wc_get_endpoint_url( 'edit-address', $type, wc_get_page_permalink( 'myaccount' ) );
-    $log_data .= "SUCCESS: Address saved. Redirecting to $redirect\n";
-    @file_put_contents($log_file, $log_data, FILE_APPEND);
 
     // ── Redirect with success notice ────────────────────────────────────────
     wc_add_notice( __( 'Address saved successfully.', 'dt-ecommerce-theme' ) );
@@ -475,4 +507,106 @@ add_filter( 'woocommerce_account_menu_items', function( $items ) {
     }
     return $items;
 } );
+
+// ── Output dynamic CSS variables from saved Colors options ──────────────────
+function dt_output_color_css_variables(): void {
+    $primary        = dt_get_theme_option( 'color_primary',          '#C8A46A' );
+    $primary_dark   = dt_get_theme_option( 'color_primary_dark',     '#b08d55' );
+    $primary_light  = dt_get_theme_option( 'color_primary_light',    '#d8ba82' );
+    $bg_main        = dt_get_theme_option( 'color_bg_main',          '#000000' );
+    $bg_card        = dt_get_theme_option( 'color_bg_card',          '#111111' );
+    $bg_header      = dt_get_theme_option( 'color_bg_header',        '#000000' );
+    $bg_footer      = dt_get_theme_option( 'color_bg_footer',        '#000000' );
+    $text_primary   = dt_get_theme_option( 'color_text_primary',     '#F7F4EE' );
+    $text_secondary = dt_get_theme_option( 'color_text_secondary',   '#a3a3a3' );
+    $text_heading   = dt_get_theme_option( 'color_text_heading',     '#FFFFFF' );
+    $btn_bg         = dt_get_theme_option( 'color_btn_bg',           '#C8A46A' );
+    $btn_text       = dt_get_theme_option( 'color_btn_text',         '#000000' );
+    $btn_radius     = dt_get_theme_option( 'btn_border_radius',      '0' );
+    $ann_bg         = dt_get_theme_option( 'color_announcement_bg',  '' );
+    $ann_text       = dt_get_theme_option( 'color_announcement_text','#F7F4EE' );
+
+    $css = "<style id='dt-color-variables'>\n:root {\n";
+    $css .= "  --dt-gold: " . esc_attr( $primary ) . ";\n";
+    $css .= "  --dt-gold-dark: " . esc_attr( $primary_dark ) . ";\n";
+    $css .= "  --dt-gold-light: " . esc_attr( $primary_light ) . ";\n";
+    $css .= "  --dt-bg: " . esc_attr( $bg_main ) . ";\n";
+    $css .= "  --dt-bg-card: " . esc_attr( $bg_card ) . ";\n";
+    $css .= "  --dt-text: " . esc_attr( $text_primary ) . ";\n";
+    $css .= "  --dt-text-muted: " . esc_attr( $text_secondary ) . ";\n";
+    $css .= "}\n";
+    if ( $bg_header !== '#000000' && $bg_header !== '' ) {
+        $css .= "header, .site-header, #site-header { background-color: " . esc_attr( $bg_header ) . " !important; }\n";
+    }
+    if ( $bg_footer !== '#000000' && $bg_footer !== '' ) {
+        $css .= ".footer-luxury, footer { background-color: " . esc_attr( $bg_footer ) . " !important; }\n";
+    }
+    if ( $bg_main !== '#000000' && $bg_main !== '' ) {
+        $css .= "body { background-color: " . esc_attr( $bg_main ) . " !important; }\n";
+    }
+    if ( $text_primary !== '#F7F4EE' && $text_primary !== '' ) {
+        $css .= "body, p { color: " . esc_attr( $text_primary ) . "; }\n";
+    }
+    if ( $text_heading !== '#FFFFFF' && $text_heading !== '' ) {
+        $css .= "h1,h2,h3,h4,h5,h6,.font-serif { color: " . esc_attr( $text_heading ) . "; }\n";
+    }
+    if ( $btn_radius !== '0' && $btn_radius !== '' ) {
+        $css .= ".btn-premium-cart, .dt-btn { border-radius: " . esc_attr( $btn_radius ) . "; }\n";
+    }
+    if ( ! empty( $ann_bg ) ) {
+        $css .= ".announcement-bar, .dt-announcement { background-color: " . esc_attr( $ann_bg ) . " !important; color: " . esc_attr( $ann_text ) . " !important; }\n";
+    }
+    $css .= "</style>\n";
+    echo $css;
+}
+add_action( 'wp_head', 'dt_output_color_css_variables', 5 );
+
+// ── Analytics & Tracking Injection ─────────────────────────────────────────
+function dt_output_analytics_scripts(): void {
+    // Google Analytics 4
+    if ( dt_get_theme_option( 'ga_enabled', '0' ) === '1' ) {
+        $ga_id = dt_get_theme_option( 'ga_measurement_id', '' );
+        if ( ! empty( $ga_id ) ) {
+            $exclude_admin = dt_get_theme_option( 'ga_exclude_admin', '0' ) === '1' && current_user_can( 'manage_options' );
+            if ( ! $exclude_admin ) {
+                echo '<script async src="https://www.googletagmanager.com/gtag/js?id=' . esc_attr( $ga_id ) . '"></script>' . "\n";
+                echo "<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','" . esc_js( $ga_id ) . "');</script>\n";
+            }
+        }
+    }
+    // Google Tag Manager
+    if ( dt_get_theme_option( 'gtm_enabled', '0' ) === '1' ) {
+        $gtm_id = dt_get_theme_option( 'gtm_container_id', '' );
+        if ( ! empty( $gtm_id ) ) {
+            echo "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','" . esc_js( $gtm_id ) . "');\n";
+        }
+    }
+    // Facebook Pixel
+    if ( dt_get_theme_option( 'fb_pixel_enabled', '0' ) === '1' ) {
+        $pixel_id = dt_get_theme_option( 'fb_pixel_id', '' );
+        if ( ! empty( $pixel_id ) ) {
+            echo "!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','" . esc_js( $pixel_id ) . "');fbq('track','PageView');\n";
+        }
+    }
+    // Google Site Verification
+    $gv = dt_get_theme_option( 'google_site_verification', '' );
+    if ( ! empty( $gv ) ) {
+        echo '<meta name="google-site-verification" content="' . esc_attr( $gv ) . '">' . "\n";
+    }
+    $bv = dt_get_theme_option( 'bing_site_verification', '' );
+    if ( ! empty( $bv ) ) {
+        echo '<meta name="msvalidate.01" content="' . esc_attr( $bv ) . '">' . "\n";
+    }
+}
+add_action( 'wp_head', 'dt_output_analytics_scripts', 99 );
+
+// ── Lucide icons init in admin footer ────────────────────────────────────────
+function dt_admin_footer_scripts(): void {
+    $screen = get_current_screen();
+    if ( ! $screen ) return;
+    $page = isset( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : '';
+    if ( strpos( $page, 'dt-theme' ) === false ) return;
+    echo '<script>if(typeof lucide !== "undefined"){ lucide.createIcons(); }</script>' . "\n";
+}
+add_action( 'admin_footer', 'dt_admin_footer_scripts' );
 
