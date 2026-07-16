@@ -1,0 +1,630 @@
+/**
+ * DT Ecommerce Theme – Admin Panel CSS
+ * Premium dark styling for all admin pages
+ *
+ * @package DT_Ecommerce_Theme
+ */
+
+/* ── Typography ─────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;600;700&display=swap');
+
+/* ── Admin Body ─────────────────────────────────────────────────────────── */
+#dt-admin-wrap,
+.dt-admin-page {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #F7F4EE;
+    background: #0a0a0a;
+}
+
+/* ── DT Admin Page Wrapper ───────────────────────────────────────────────── */
+.dt-admin-header {
+    background: linear-gradient(135deg, #0a0a0a 0%, #111 100%);
+    border-bottom: 1px solid rgba(200, 164, 106, 0.2);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.dt-admin-header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #C8A46A;
+    letter-spacing: 0.02em;
+    margin: 0;
+    padding: 0;
+}
+
+.dt-admin-header .dt-version-badge {
+    background: rgba(200, 164, 106, 0.1);
+    border: 1px solid rgba(200, 164, 106, 0.3);
+    color: #C8A46A;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+}
+
+/* ── Tab Navigation ──────────────────────────────────────────────────────── */
+.dt-nav-tabs {
+    display: flex;
+    gap: 2px;
+    border-bottom: 1px solid rgba(200, 164, 106, 0.2);
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+}
+
+.dt-nav-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(247, 244, 238, 0.5);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-decoration: none;
+}
+
+.dt-nav-tab:hover {
+    color: #F7F4EE;
+    background: rgba(200, 164, 106, 0.05);
+}
+
+.dt-nav-tab.active,
+.dt-nav-tab:focus {
+    color: #C8A46A;
+    border-bottom-color: #C8A46A;
+    background: rgba(200, 164, 106, 0.08);
+    box-shadow: none;
+    outline: none;
+}
+
+/* ── Settings Card ───────────────────────────────────────────────────────── */
+.dt-card {
+    background: #111;
+    border: 1px solid rgba(200, 164, 106, 0.15);
+    border-radius: 0;
+    padding: 28px;
+    margin-bottom: 20px;
+}
+
+.dt-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #C8A46A;
+    margin: 0 0 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(200, 164, 106, 0.12);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ── Form Elements ───────────────────────────────────────────────────────── */
+.dt-form-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.dt-form-row:last-child {
+    border-bottom: none;
+}
+
+.dt-form-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(247, 244, 238, 0.6);
+    padding-top: 8px;
+}
+
+.dt-form-label small {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0;
+    text-transform: none;
+    font-weight: 400;
+    color: rgba(247, 244, 238, 0.3);
+    margin-top: 4px;
+}
+
+.dt-input,
+.dt-select,
+.dt-textarea {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(200, 164, 106, 0.2);
+    color: #F7F4EE;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    border-radius: 2px;
+    transition: border-color 0.2s, background 0.2s;
+    box-shadow: none;
+    outline: none;
+}
+
+.dt-input:focus,
+.dt-select:focus,
+.dt-textarea:focus {
+    border-color: #C8A46A;
+    background: rgba(200, 164, 106, 0.05);
+    box-shadow: 0 0 0 3px rgba(200, 164, 106, 0.08);
+}
+
+.dt-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.dt-select option {
+    background: #111;
+    color: #F7F4EE;
+}
+
+/* ── Toggle Switch ───────────────────────────────────────────────────────── */
+.dt-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.dt-toggle input[type="checkbox"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.dt-toggle-track {
+    width: 44px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    position: relative;
+    transition: background 0.25s;
+    border: 1px solid rgba(200, 164, 106, 0.2);
+    flex-shrink: 0;
+}
+
+.dt-toggle input:checked + .dt-toggle-track {
+    background: #C8A46A;
+    border-color: #C8A46A;
+}
+
+.dt-toggle-track::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    transition: left 0.25s;
+}
+
+.dt-toggle input:checked + .dt-toggle-track::after {
+    left: calc(100% - 20px);
+}
+
+.dt-toggle-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(247, 244, 238, 0.7);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.dt-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #C8A46A;
+    color: #000;
+    border: none;
+    padding: 10px 24px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    border-radius: 2px;
+    text-decoration: none;
+}
+
+.dt-btn-primary:hover {
+    background: #b08d55;
+    color: #000;
+    transform: translateY(-1px);
+}
+
+.dt-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #C8A46A;
+    border: 1px solid rgba(200, 164, 106, 0.4);
+    padding: 9px 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+    text-decoration: none;
+}
+
+.dt-btn-secondary:hover {
+    background: rgba(200, 164, 106, 0.1);
+    border-color: #C8A46A;
+    color: #C8A46A;
+}
+
+.dt-btn-danger {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 9px 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+    text-decoration: none;
+}
+
+.dt-btn-danger:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+/* ── Notice / Alert ──────────────────────────────────────────────────────── */
+.dt-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+.dt-notice-success {
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    color: #4ade80;
+}
+
+.dt-notice-error {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #f87171;
+}
+
+.dt-notice-warning {
+    background: rgba(234, 179, 8, 0.08);
+    border: 1px solid rgba(234, 179, 8, 0.25);
+    color: #facc15;
+}
+
+.dt-notice-info {
+    background: rgba(200, 164, 106, 0.08);
+    border: 1px solid rgba(200, 164, 106, 0.25);
+    color: #C8A46A;
+}
+
+/* ── Stats Grid (Dashboard) ──────────────────────────────────────────────── */
+.dt-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.dt-stat-card {
+    background: #111;
+    border: 1px solid rgba(200, 164, 106, 0.15);
+    padding: 20px;
+    text-align: center;
+    border-radius: 2px;
+    transition: border-color 0.2s;
+}
+
+.dt-stat-card:hover {
+    border-color: rgba(200, 164, 106, 0.4);
+}
+
+.dt-stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #C8A46A;
+    line-height: 1;
+    margin-bottom: 6px;
+}
+
+.dt-stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(247, 244, 238, 0.4);
+}
+
+/* ── Data Table ──────────────────────────────────────────────────────────── */
+.dt-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.dt-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(200, 164, 106, 0.7);
+    border-bottom: 1px solid rgba(200, 164, 106, 0.15);
+    background: rgba(200, 164, 106, 0.03);
+}
+
+.dt-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    color: rgba(247, 244, 238, 0.8);
+    vertical-align: middle;
+}
+
+.dt-table tr:hover td {
+    background: rgba(200, 164, 106, 0.03);
+    color: #F7F4EE;
+}
+
+/* ── Color Picker ────────────────────────────────────────────────────────── */
+.dt-color-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dt-color-input {
+    width: 44px;
+    height: 36px;
+    padding: 2px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(200, 164, 106, 0.2);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+/* ── Image Upload ────────────────────────────────────────────────────────── */
+.dt-upload-area {
+    border: 2px dashed rgba(200, 164, 106, 0.25);
+    padding: 20px;
+    text-align: center;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.dt-upload-area:hover {
+    border-color: #C8A46A;
+    background: rgba(200, 164, 106, 0.04);
+}
+
+.dt-upload-preview {
+    max-width: 180px;
+    max-height: 80px;
+    object-fit: contain;
+    margin: 10px auto;
+    display: block;
+}
+
+/* ── Role Pricing Table ──────────────────────────────────────────────────── */
+.dt-role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.dt-role-badge.customer   { background: rgba(34, 197, 94, 0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+.dt-role-badge.reseller   { background: rgba(59, 130, 246, 0.1); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
+.dt-role-badge.retailer   { background: rgba(234, 179, 8, 0.1); color: #facc15; border: 1px solid rgba(234,179,8,0.2); }
+.dt-role-badge.wholesaler { background: rgba(200, 164, 106, 0.1); color: #C8A46A; border: 1px solid rgba(200,164,106,0.2); }
+
+/* ── Activation Screen ───────────────────────────────────────────────────── */
+.dt-activation-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #050505;
+    padding: 20px;
+}
+
+.dt-activation-card {
+    background: #0d0d0d;
+    border: 1px solid rgba(200, 164, 106, 0.3);
+    width: 100%;
+    max-width: 440px;
+    padding: 48px 40px;
+    text-align: center;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6), 0 0 60px rgba(200, 164, 106, 0.04);
+}
+
+.dt-activation-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #C8A46A;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+}
+
+.dt-pin-input {
+    width: 100%;
+    text-align: center;
+    letter-spacing: 0.5em;
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: rgba(200, 164, 106, 0.05);
+    border: 1px solid rgba(200, 164, 106, 0.3);
+    color: #C8A46A;
+    padding: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin: 20px 0;
+}
+
+.dt-pin-input:focus {
+    border-color: #C8A46A;
+    box-shadow: 0 0 0 3px rgba(200, 164, 106, 0.12), 0 0 20px rgba(200, 164, 106, 0.06);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 782px) {
+    .dt-form-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .dt-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dt-admin-header h1 {
+        font-size: 1.5rem;
+    }
+}
+
+/* ── Sidebar Layout for Theme Options ───────────────────────────────────── */
+.dt-options-container {
+    display: flex;
+    gap: 24px;
+    margin-top: 20px;
+    align-items: flex-start;
+}
+
+.dt-options-sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 50px;
+    background: #0d0d0d;
+    border: 1px solid rgba(200, 164, 106, 0.15);
+    padding: 10px;
+}
+
+.dt-options-sidebar .dt-nav-tabs {
+    flex-direction: column;
+    border-bottom: none;
+    margin-bottom: 0;
+    gap: 4px;
+}
+
+.dt-options-sidebar .dt-nav-tab {
+    width: 100%;
+    border-bottom: none;
+    border-left: 3px solid transparent;
+    padding: 12px 16px;
+    justify-content: flex-start;
+    border-radius: 2px;
+    text-align: left;
+}
+
+.dt-options-sidebar .dt-nav-tab.active {
+    border-left-color: #C8A46A;
+    border-bottom-color: transparent;
+    background: rgba(200, 164, 106, 0.08);
+}
+
+.dt-options-main {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.dt-search-container {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.dt-search-input {
+    width: 100%;
+    background: #111 !important;
+    color: #F7F4EE !important;
+    border: 1px solid rgba(200, 164, 106, 0.25) !important;
+    padding: 12px 16px !important;
+    border-radius: 2px;
+    outline: none;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+}
+
+.dt-search-input:focus {
+    border-color: #C8A46A !important;
+    box-shadow: 0 0 0 3px rgba(200, 164, 106, 0.15) !important;
+}
+
+@media (max-width: 960px) {
+    .dt-options-container {
+        flex-direction: column;
+    }
+    
+    .dt-options-sidebar {
+        width: 100%;
+        position: static;
+    }
+    
+    .dt-options-sidebar .dt-nav-tabs {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .dt-options-sidebar .dt-nav-tab {
+        width: auto;
+        border-left: none;
+        border-bottom: 2px solid transparent;
+    }
+    
+    .dt-options-sidebar .dt-nav-tab.active {
+        border-bottom-color: #C8A46A;
+        border-left-color: transparent;
+    }
+}
