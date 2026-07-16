@@ -7927,7 +7927,6 @@ body {
 
 .gallery-img-wrap img[data-gallery-slide].gallery-active {
   opacity: 1;
-  position: relative;
 }
 
 .gallery-dots {
