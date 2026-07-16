@@ -537,6 +537,29 @@ function dt_render_theme_options_page(): void {
                         <!-- ==================== TAB: BACKUP & RESTORE ==================== -->
                         <div class="dt-tab-content <?php echo ( $active_tab === 'backup' ) ? '' : 'hidden'; ?>" id="dt-tab-backup">
 
+                            <!-- Auto-backup status banner -->
+                            <div class="dt-section" style="margin-bottom:20px;padding:14px 20px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #bbf7d0;border-left:4px solid #16a34a;border-radius:8px;">
+                                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+                                    <div style="display:flex;align-items:center;gap:10px;">
+                                        <span style="font-size:20px;">🛡️</span>
+                                        <div>
+                                            <div style="font-weight:600;font-size:13px;color:#15803d;">Auto-Backup Protection Active</div>
+                                            <div id="dt-backup-status-text" style="font-size:11px;color:#166534;margin-top:2px;">
+                                                Your settings are automatically backed up outside the theme folder every time you save — so they survive theme deletions and reinstalls.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex;gap:8px;flex-shrink:0;">
+                                        <button type="button" id="dt-btn-check-backup" class="dt-btn-secondary" style="font-size:11px;padding:6px 14px;">
+                                            Check Backup
+                                        </button>
+                                        <button type="button" id="dt-btn-migrate-keys" class="dt-btn-defaults" style="font-size:11px;padding:6px 14px;" title="Migrate settings from an older theme version">
+                                            Fix Old Settings
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Export & Import side-by-side -->
                             <div class="dt-backup-grid">
 

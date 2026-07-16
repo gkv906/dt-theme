@@ -552,6 +552,72 @@
         });
     }
 
+    /* ── Backup Status & Key Migration ─────────────────────────────────────── */
+    function initBackupTools() {
+
+        /* Check Backup button */
+        $(document).on('click', '#dt-btn-check-backup', function () {
+            var $btn = $(this);
+            $btn.prop('disabled', true).text('Checking…');
+
+            $.post(dtAdminVars.ajaxUrl, {
+                action : 'dt_get_backup_status',
+                nonce  : dtAdminVars.nonce
+            }, function (response) {
+                $btn.prop('disabled', false).text('Check Backup');
+                if (response.success) {
+                    var d = response.data;
+                    var msg;
+                    if (d.exists) {
+                        var t = d.time ? ' · Last saved: ' + d.time.replace('T', ' ').slice(0, 16) + ' UTC' : '';
+                        msg = '✔ Backup file exists at uploads/' + d.path + t;
+                        $('#dt-backup-status-text').text(msg);
+                        dtToast('success', msg, 5000);
+                    } else {
+                        msg = '⚠ No backup file found yet — save your settings once to create it.';
+                        $('#dt-backup-status-text').text(msg);
+                        dtToast('info', msg, 5000);
+                    }
+                } else {
+                    dtToast('error', 'Could not check backup status.');
+                }
+            }).fail(function () {
+                $btn.prop('disabled', false).text('Check Backup');
+                dtToast('error', 'Network error checking backup.');
+            });
+        });
+
+        /* Fix Old Settings (key migration) button */
+        $(document).on('click', '#dt-btn-migrate-keys', function () {
+            var $btn = $(this);
+            if (!confirm(
+                'Fix Old Settings?\n\n' +
+                'This converts settings saved by older theme versions to the current format.\n' +
+                'It is safe to run — existing settings are not deleted.\n\nProceed?'
+            )) return;
+
+            $btn.prop('disabled', true).text('Fixing…');
+
+            $.post(dtAdminVars.ajaxUrl, {
+                action : 'dt_migrate_settings',
+                nonce  : dtAdminVars.nonce
+            }, function (response) {
+                $btn.prop('disabled', false).text('Fix Old Settings');
+                if (response.success) {
+                    dtToast('success', response.data.message, 5000);
+                    if (response.data.updated && response.data.updated.length) {
+                        setTimeout(function () { window.location.reload(); }, 1800);
+                    }
+                } else {
+                    dtToast('error', response.data || 'Migration failed.');
+                }
+            }).fail(function () {
+                $btn.prop('disabled', false).text('Fix Old Settings');
+                dtToast('error', 'Network error during migration.');
+            });
+        });
+    }
+
     /* ── Inject spin keyframe if not already present ────────────────────────── */
     function injectSpinKeyframe() {
         if (!document.getElementById('dt-spin-style')) {
@@ -575,6 +641,7 @@
         initFactoryReset();
         initAjaxImport();
         initExportCopy();
+        initBackupTools();
         initRolePricingWidget();
         initSetupWizard();
         initSettingsSearch();

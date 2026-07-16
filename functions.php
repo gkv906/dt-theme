@@ -23,6 +23,7 @@ require_once get_template_directory() . '/inc/popups.php';
 require_once get_template_directory() . '/inc/customizer.php';
 require_once get_template_directory() . '/inc/typography.php';
 require_once get_template_directory() . '/inc/colors.php';
+require_once get_template_directory() . '/inc/settings-persistence.php';
 require_once get_template_directory() . '/setup/demo-import.php';
 
 // Theme Setup
