@@ -6208,24 +6208,17 @@ body {
 .group:hover .hover-underline::after {
   width: 100%;
 }
-@keyframes gold-shine {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+@keyframes gold-text-shimmer {
+  0%, 100% { color: #b08d55; }
+  50% { color: #d8ba82; }
 }
 .animate-gold-gradient {
-  background: linear-gradient(90deg, #b08d55, #C8A46A, #d8ba82, #C8A46A, #b08d55);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: gold-shine 6s linear infinite;
+  color: #C8A46A;
+  animation: gold-text-shimmer 4s ease-in-out infinite;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
 }
 @property --tw-translate-x {
   syntax: "*";
@@ -7821,20 +7814,14 @@ body {
   transform: translateY(-3px) !important;
 }
 
-/* ── Gold Gradient Animation ───────────────────────────────── */
-@keyframes gold-gradient-flow {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
+/* ── Gold Gradient Animation (color-based, reliable cross-browser) ── */
 .animate-gold-gradient {
-  background: linear-gradient(270deg, #C8A46A, #d8ba82, #b08d55, #C8A46A);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: gold-gradient-flow 4s ease infinite;
+  color: #C8A46A;
+  animation: gold-text-shimmer 4s ease-in-out infinite;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
 }
 
 /* ── Safe Area Bottom (iOS home indicator) ─────────────────── */
