@@ -748,11 +748,11 @@ function dt_render_theme_options_page(): void {
                     </div><!-- end card -->
 
                     <!-- Save Button sticky bar -->
-                    <div style="display:flex;align-items:center;gap:16px;margin-top:18px;background:#111;border:1px solid rgba(200,164,106,0.15);padding:16px 28px;">
+                    <div class="dt-save-bar">
                         <button type="submit" name="dt_options_save" value="1" class="dt-btn-primary">
                             💾 Save Settings
                         </button>
-                        <span style="color:#666;font-size:11px;letter-spacing:0.04em;">All configurations are immediately stored in the theme options database registry.</span>
+                        <span id="dt-save-status" class="dt-save-status">All settings saved to database and reflected on your frontend.</span>
                     </div>
                 </div>
             </div>

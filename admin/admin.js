@@ -6,53 +6,57 @@
 (function ($) {
     'use strict';
 
-    // ── Wait for DOM ────────────────────────────────────────────────────────
     $(document).ready(function () {
 
         // ── Tab Switching ────────────────────────────────────────────────────
         function initTabs() {
-            $('.dt-nav-tab').on('click', function (e) {
+            // On sidebar tab click: switch panel without page reload
+            $('.dt-options-sidebar').on('click', '.dt-nav-tab', function (e) {
                 e.preventDefault();
                 var target = $(this).data('tab');
+                if (!target) return;
 
-                // Update active tab button
                 $('.dt-nav-tab').removeClass('active');
                 $(this).addClass('active');
 
-                // Show/hide tab content
                 $('.dt-tab-content').addClass('hidden').hide();
-                $('#dt-tab-' + target).removeClass('hidden').show();
+                $('#dt-tab-' + target).removeClass('hidden').fadeIn(180);
 
-                // Update URL hash without scroll
-                if (window.history && window.history.pushState) {
-                    history.pushState(null, null, '#' + target);
+                if (window.history && window.history.replaceState) {
+                    var url = new URL(window.location.href);
+                    url.searchParams.set('tab', target);
+                    history.replaceState(null, '', url.toString());
                 }
             });
 
-            // Activate tab from URL hash on load
-            var hash = window.location.hash.replace('#', '');
-            if (hash) {
-                $('.dt-nav-tab[data-tab="' + hash + '"]').trigger('click');
+            // Activate tab from URL ?tab= param or hash on load
+            var urlParams = new URLSearchParams(window.location.search);
+            var initTab   = urlParams.get('tab') || window.location.hash.replace('#', '') || 'general';
+            var $initBtn  = $('.dt-nav-tab[data-tab="' + initTab + '"]');
+            if ($initBtn.length) {
+                $initBtn.trigger('click');
+            } else {
+                $('.dt-nav-tab[data-tab="general"]').trigger('click');
             }
         }
 
         // ── Image Upload via WP Media Uploader ───────────────────────────────
         function initMediaUploaders() {
-            $('[data-media-upload]').on('click', function (e) {
+            $(document).on('click', '[data-media-upload]', function (e) {
                 e.preventDefault();
-                var $btn     = $(this);
-                var inputId  = $btn.data('input');
+                var $btn      = $(this);
+                var inputId   = $btn.data('input');
                 var previewId = $btn.data('preview');
 
                 var frame = wp.media({
-                    title: dtAdminVars.mediaTitle || 'Select Image',
-                    multiple: false,
-                    library: { type: 'image' }
+                    title    : (typeof dtAdminVars !== 'undefined' ? dtAdminVars.mediaTitle : '') || 'Select Image',
+                    multiple : false,
+                    library  : { type: 'image' }
                 });
 
                 frame.on('select', function () {
                     var attachment = frame.state().get('selection').first().toJSON();
-                    $('#' + inputId).val(attachment.url);
+                    $('#' + inputId).val(attachment.url).trigger('input');
                     if (previewId) {
                         $('#' + previewId)
                             .attr('src', attachment.url)
@@ -60,20 +64,15 @@
                             .show();
                     }
                 });
-
                 frame.open();
             });
 
-            // Remove image buttons
-            $('[data-media-remove]').on('click', function (e) {
+            $(document).on('click', '[data-media-remove]', function (e) {
                 e.preventDefault();
-                var $btn      = $(this);
-                var inputId   = $btn.data('input');
-                var previewId = $btn.data('preview');
-                $('#' + inputId).val('');
-                if (previewId) {
-                    $('#' + previewId).attr('src', '').addClass('hidden');
-                }
+                var inputId   = $(this).data('input');
+                var previewId = $(this).data('preview');
+                $('#' + inputId).val('').trigger('input');
+                if (previewId) $('#' + previewId).attr('src', '').addClass('hidden').hide();
             });
         }
 
@@ -91,82 +90,90 @@
             }
         }
 
-        // ── Live Preview for Custom CSS / JS ─────────────────────────────────
+        // ── Code Editors ─────────────────────────────────────────────────────
         function initCodeEditors() {
-            // If CodeMirror is available (WP >= 4.9)
             if (typeof wp !== 'undefined' && wp.codeEditor) {
                 var cssTextarea = document.getElementById('dt-custom-css');
                 var jsTextarea  = document.getElementById('dt-custom-js');
-
-                if (cssTextarea) {
-                    wp.codeEditor.initialize(cssTextarea, {
-                        codemirror: { mode: 'css', lineNumbers: true, theme: 'monokai' }
-                    });
-                }
-                if (jsTextarea) {
-                    wp.codeEditor.initialize(jsTextarea, {
-                        codemirror: { mode: 'javascript', lineNumbers: true, theme: 'monokai' }
-                    });
-                }
+                if (cssTextarea) wp.codeEditor.initialize(cssTextarea, { codemirror: { mode: 'css',        lineNumbers: true, theme: 'default' } });
+                if (jsTextarea)  wp.codeEditor.initialize(jsTextarea,  { codemirror: { mode: 'javascript', lineNumbers: true, theme: 'default' } });
             }
         }
 
-        // ── AJAX Save Settings ───────────────────────────────────────────────
+        // ── Toast Notification ────────────────────────────────────────────────
+        function dtToast(type, message, duration) {
+            duration = duration || 4000;
+            $('.dt-toast').remove();
+
+            var icon = type === 'success' ? '✓' : '✕';
+            var $toast = $(
+                '<div class="dt-toast dt-toast-' + type + '">' +
+                    '<span style="font-size:15px;font-weight:700;">' + icon + '</span>' +
+                    '<span>' + message + '</span>' +
+                '</div>'
+            );
+            $('body').append($toast);
+
+            setTimeout(function () {
+                $toast.addClass('dt-toast-hidden');
+                setTimeout(function () { $toast.remove(); }, 350);
+            }, duration);
+        }
+
+        // ── AJAX Save ────────────────────────────────────────────────────────
         function initAjaxSave() {
             $('#dt-settings-form').on('submit', function (e) {
-                if (!$(this).find('[name="dt_ajax_save"]').length) return; // Let normal submit work
-
                 e.preventDefault();
-                var $form   = $(this);
-                var $btn    = $form.find('[type="submit"]');
-                var origTxt = $btn.text();
 
-                $btn.prop('disabled', true).text(dtAdminVars.savingText || 'Saving…');
+                var $form    = $(this);
+                var $btn     = $form.find('[name="dt_options_save"]');
+                var $status  = $('#dt-save-status');
+                var scrollY  = window.scrollY;
+
+                $btn.prop('disabled', true).text('Saving…');
+                $status.text('').removeClass('saved');
 
                 $.post(
                     dtAdminVars.ajaxUrl,
                     {
-                        action  : 'dt_save_theme_options',
-                        nonce   : dtAdminVars.nonce,
-                        data    : $form.serialize()
+                        action : 'dt_save_theme_options',
+                        nonce  : dtAdminVars.nonce,
+                        data   : $form.serialize()
                     },
                     function (response) {
-                        $btn.prop('disabled', false).text(origTxt);
+                        $btn.prop('disabled', false).text('💾 Save Settings');
+                        window.scrollTo(0, scrollY);
+
                         if (response.success) {
-                            dtShowNotice('success', response.data.message || dtAdminVars.savedText || 'Settings saved!');
+                            dtToast('success', '✔ Settings saved — frontend updated!');
+                            $status.text('Saved ' + dtCurrentTime()).addClass('saved');
                         } else {
-                            dtShowNotice('error', response.data || 'Error saving settings.');
+                            dtToast('error', response.data || 'Error saving. Please try again.');
                         }
                     }
                 ).fail(function () {
-                    $btn.prop('disabled', false).text(origTxt);
-                    dtShowNotice('error', 'Network error. Please try again.');
+                    $btn.prop('disabled', false).text('💾 Save Settings');
+                    dtToast('error', 'Network error — please try again.');
                 });
             });
         }
 
-        // ── Admin Notice Helper ───────────────────────────────────────────────
-        function dtShowNotice(type, message) {
-            var cls = 'notice-' + (type === 'success' ? 'success' : 'error') + ' is-dismissible';
-            var $notice = $('<div class="notice ' + cls + '" style="margin-top:10px;"><p>' + message + '</p></div>');
-            $('.dt-admin-header').after($notice);
-            setTimeout(function () {
-                $notice.fadeOut(400, function () { $(this).remove(); });
-            }, 4000);
+        function dtCurrentTime() {
+            var d = new Date();
+            return 'at ' + d.getHours() + ':' + ('0' + d.getMinutes()).slice(-2);
         }
 
-        // ── Role Pricing Table: quick inline edit ─────────────────────────────
+        // ── Role Pricing Quick Edit ───────────────────────────────────────────
         function initRolePricingWidget() {
             $(document).on('click', '.dt-role-price-edit', function () {
-                var $row    = $(this).closest('tr');
-                var $inputs = $row.find('.dt-role-price-field');
-                $inputs.prop('readonly', false).focus();
+                var $row = $(this).closest('tr');
+                $row.find('.dt-role-price-field').prop('readonly', false).focus();
                 $(this).hide();
                 $row.find('.dt-role-price-save').show();
             });
 
             $(document).on('click', '.dt-role-price-save', function () {
-                var $row = $(this).closest('tr');
+                var $row   = $(this).closest('tr');
                 var postId = $row.data('product-id');
                 var prices = {};
 
@@ -176,14 +183,12 @@
                 });
 
                 $.post(dtAdminVars.ajaxUrl, {
-                    action   : 'dt_save_role_prices',
-                    nonce    : dtAdminVars.nonce,
-                    post_id  : postId,
-                    prices   : prices
+                    action  : 'dt_save_role_prices',
+                    nonce   : dtAdminVars.nonce,
+                    post_id : postId,
+                    prices  : prices
                 }, function (response) {
-                    if (response.success) {
-                        dtShowNotice('success', 'Prices updated.');
-                    }
+                    if (response.success) dtToast('success', 'Prices updated.');
                 });
 
                 $(this).hide();
@@ -191,13 +196,13 @@
             });
         }
 
-        // ── Setup Wizard Steps ────────────────────────────────────────────────
+        // ── Setup Wizard ──────────────────────────────────────────────────────
         function initSetupWizard() {
             var currentStep = 0;
-            var $steps = $('.dt-wizard-step');
-            var $dots  = $('.dt-wizard-dot');
-            var $prev  = $('#dt-wizard-prev');
-            var $next  = $('#dt-wizard-next');
+            var $steps  = $('.dt-wizard-step');
+            var $dots   = $('.dt-wizard-dot');
+            var $prev   = $('#dt-wizard-prev');
+            var $next   = $('#dt-wizard-next');
             var $finish = $('#dt-wizard-finish');
 
             function showStep(n) {
@@ -213,7 +218,6 @@
 
             if ($steps.length) {
                 showStep(0);
-
                 $next.on('click', function () { showStep(Math.min(currentStep + 1, $steps.length - 1)); });
                 $prev.on('click', function () { showStep(Math.max(currentStep - 1, 0)); });
 
@@ -227,65 +231,84 @@
                             window.location.href = dtAdminVars.adminUrl + 'admin.php?page=dt-theme-options&setup=done';
                         } else {
                             $btn.prop('disabled', false).text('Finish Setup');
-                            alert('Setup failed. Please try again.');
+                            dtToast('error', 'Setup failed. Please try again.');
                         }
                     });
                 });
             }
         }
 
-        // ── Settings Search ──────────────────────────────────────────────────
+        // ── Settings Search ───────────────────────────────────────────────────
         function initSettingsSearch() {
-            var $tabsNav = $('.dt-nav-tabs');
-            var $tabContents = $('.dt-tab-content');
-            
+            var $sidebar  = $('.dt-options-sidebar');
+            var $contents = $('.dt-tab-content');
+
             $('#dt-settings-search').on('keyup input', function () {
                 var query = $(this).val().toLowerCase().trim();
-                
+
                 if (query === '') {
-                    // Restore tabs
-                    $tabsNav.show();
-                    $tabContents.addClass('hidden').hide();
-                    
-                    var activeTab = $('.dt-nav-tab.active').data('tab') || 'general';
-                    $('#dt-tab-' + activeTab).removeClass('hidden').show();
-                    
-                    $('.dt-row, .dt-form-row').show();
-                    $('.dt-section').show();
+                    $sidebar.show();
+                    $contents.addClass('hidden').hide();
+                    var active = $('.dt-nav-tab.active').data('tab') || 'general';
+                    $('#dt-tab-' + active).removeClass('hidden').show();
+                    $('.dt-form-row, .dt-section').show();
                     return;
                 }
-                
-                // Hide tab navigation, show all contents for global search
-                $tabsNav.hide();
-                $tabContents.removeClass('hidden').show();
-                
+
+                $sidebar.hide();
+                $contents.removeClass('hidden').show();
+
                 $('.dt-section').each(function () {
                     var $section = $(this);
-                    var visibleRows = 0;
-                    
-                    $section.find('.dt-row, .dt-form-row').each(function () {
-                        var $row = $(this);
-                        var labelText = $row.find('.dt-label, .dt-form-label').text().toLowerCase();
-                        var descText = $row.find('small, .description').text().toLowerCase();
-                        
-                        if (labelText.indexOf(query) !== -1 || descText.indexOf(query) !== -1) {
-                            $row.show();
-                            visibleRows++;
+                    var visible  = 0;
+
+                    $section.find('.dt-form-row').each(function () {
+                        var text = $(this).find('.dt-form-label').text().toLowerCase() +
+                                   $(this).find('small').text().toLowerCase();
+                        if (text.indexOf(query) !== -1) {
+                            $(this).show();
+                            visible++;
                         } else {
-                            $row.hide();
+                            $(this).hide();
                         }
                     });
-                    
-                    if (visibleRows > 0) {
-                        $section.show();
-                    } else {
-                        $section.hide();
-                    }
+
+                    if (visible > 0) $section.show(); else $section.hide();
                 });
+            });
+
+            // Clear search on X key or Escape
+            $(document).on('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    $('#dt-settings-search').val('').trigger('input');
+                }
             });
         }
 
-        // ── Init All ─────────────────────────────────────────────────────────
+        // ── Live color preview on color picker change ─────────────────────────
+        function initLiveColorPreview() {
+            // When a color picker value changes, update the live indicator
+            $(document).on('input', '.dt-color-picker', function () {
+                $('#dt-save-status').text('Unsaved changes').removeClass('saved').css('color', '#d97706');
+            });
+            $(document).on('input change', '.dt-input, .dt-select, .dt-textarea', function () {
+                $('#dt-save-status').text('Unsaved changes').removeClass('saved').css('color', '#d97706');
+            });
+        }
+
+        // ── "Unsaved changes" warning on page leave ───────────────────────────
+        var hasUnsaved = false;
+        $(document).on('input change', '#dt-settings-form .dt-input, #dt-settings-form .dt-textarea, #dt-settings-form .dt-select, #dt-settings-form input[type="checkbox"]', function () {
+            hasUnsaved = true;
+        });
+        $(window).on('beforeunload', function () {
+            if (hasUnsaved) return 'You have unsaved changes. Leave anyway?';
+        });
+        $('#dt-settings-form').on('submit', function () {
+            hasUnsaved = false;
+        });
+
+        // ── Init All ──────────────────────────────────────────────────────────
         initTabs();
         initMediaUploaders();
         initColorPickers();
@@ -294,6 +317,7 @@
         initRolePricingWidget();
         initSetupWizard();
         initSettingsSearch();
+        initLiveColorPreview();
 
     }); // end ready
 

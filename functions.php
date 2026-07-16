@@ -508,56 +508,67 @@ add_filter( 'woocommerce_account_menu_items', function( $items ) {
     return $items;
 } );
 
-// ── Output dynamic CSS variables from saved Colors options ──────────────────
+// ── Output dynamic CSS variables from saved Colors & Branding options ───────
 function dt_output_color_css_variables(): void {
-    $primary        = dt_get_theme_option( 'color_primary',          '#C8A46A' );
-    $primary_dark   = dt_get_theme_option( 'color_primary_dark',     '#b08d55' );
-    $primary_light  = dt_get_theme_option( 'color_primary_light',    '#d8ba82' );
-    $bg_main        = dt_get_theme_option( 'color_bg_main',          '#000000' );
-    $bg_card        = dt_get_theme_option( 'color_bg_card',          '#111111' );
-    $bg_header      = dt_get_theme_option( 'color_bg_header',        '#000000' );
-    $bg_footer      = dt_get_theme_option( 'color_bg_footer',        '#000000' );
-    $text_primary   = dt_get_theme_option( 'color_text_primary',     '#F7F4EE' );
-    $text_secondary = dt_get_theme_option( 'color_text_secondary',   '#a3a3a3' );
-    $text_heading   = dt_get_theme_option( 'color_text_heading',     '#FFFFFF' );
-    $btn_bg         = dt_get_theme_option( 'color_btn_bg',           '#C8A46A' );
-    $btn_text       = dt_get_theme_option( 'color_btn_text',         '#000000' );
-    $btn_radius     = dt_get_theme_option( 'btn_border_radius',      '0' );
-    $ann_bg         = dt_get_theme_option( 'color_announcement_bg',  '' );
-    $ann_text       = dt_get_theme_option( 'color_announcement_text','#F7F4EE' );
+    $primary        = dt_get_theme_option( 'color_primary',           '#C8A46A' );
+    $primary_dark   = dt_get_theme_option( 'color_primary_dark',      '#b08d55' );
+    $primary_light  = dt_get_theme_option( 'color_primary_light',     '#d8ba82' );
+    $bg_main        = dt_get_theme_option( 'color_bg_main',           '#000000' );
+    $bg_card        = dt_get_theme_option( 'color_bg_card',           '#111111' );
+    $bg_header      = dt_get_theme_option( 'color_bg_header',         '#000000' );
+    $bg_footer      = dt_get_theme_option( 'color_bg_footer',         '#000000' );
+    $text_primary   = dt_get_theme_option( 'color_text_primary',      '#F7F4EE' );
+    $text_secondary = dt_get_theme_option( 'color_text_secondary',    '#a3a3a3' );
+    $text_heading   = dt_get_theme_option( 'color_text_heading',      '#FFFFFF' );
+    $btn_bg         = dt_get_theme_option( 'color_btn_bg',            '#C8A46A' );
+    $btn_text       = dt_get_theme_option( 'color_btn_text',          '#000000' );
+    $btn_radius     = dt_get_theme_option( 'btn_border_radius',       '0' );
+    $ann_bg         = dt_get_theme_option( 'color_announcement_bg',   '' );
+    $ann_text       = dt_get_theme_option( 'color_announcement_text', '#F7F4EE' );
 
-    $css = "<style id='dt-color-variables'>\n:root {\n";
-    $css .= "  --dt-gold: " . esc_attr( $primary ) . ";\n";
-    $css .= "  --dt-gold-dark: " . esc_attr( $primary_dark ) . ";\n";
-    $css .= "  --dt-gold-light: " . esc_attr( $primary_light ) . ";\n";
-    $css .= "  --dt-bg: " . esc_attr( $bg_main ) . ";\n";
-    $css .= "  --dt-bg-card: " . esc_attr( $bg_card ) . ";\n";
-    $css .= "  --dt-text: " . esc_attr( $text_primary ) . ";\n";
-    $css .= "  --dt-text-muted: " . esc_attr( $text_secondary ) . ";\n";
+    // Always output CSS variables — every colour option maps to a variable.
+    // Frontend templates use these vars directly, so any admin save is instantly
+    // reflected on the next page load with zero extra code needed in templates.
+    $css  = "<style id='dt-color-variables'>\n";
+    $css .= ":root {\n";
+    $css .= "  --dt-gold:           " . esc_attr( $primary )        . ";\n";
+    $css .= "  --dt-gold-dark:      " . esc_attr( $primary_dark )   . ";\n";
+    $css .= "  --dt-gold-light:     " . esc_attr( $primary_light )  . ";\n";
+    $css .= "  --dt-bg:             " . esc_attr( $bg_main )        . ";\n";
+    $css .= "  --dt-bg-card:        " . esc_attr( $bg_card )        . ";\n";
+    $css .= "  --dt-bg-header:      " . esc_attr( $bg_header )      . ";\n";
+    $css .= "  --dt-bg-footer:      " . esc_attr( $bg_footer )      . ";\n";
+    $css .= "  --dt-text:           " . esc_attr( $text_primary )   . ";\n";
+    $css .= "  --dt-text-muted:     " . esc_attr( $text_secondary ) . ";\n";
+    $css .= "  --dt-text-heading:   " . esc_attr( $text_heading )   . ";\n";
+    $css .= "  --dt-btn-bg:         " . esc_attr( $btn_bg )         . ";\n";
+    $css .= "  --dt-btn-text:       " . esc_attr( $btn_text )       . ";\n";
+    $css .= "  --dt-btn-radius:     " . esc_attr( $btn_radius ?: '0' ) . ";\n";
+    $css .= "  --dt-ann-bg:         " . esc_attr( $ann_bg ?: $bg_main ) . ";\n";
+    $css .= "  --dt-ann-text:       " . esc_attr( $ann_text )       . ";\n";
     $css .= "}\n";
-    if ( $bg_header !== '#000000' && $bg_header !== '' ) {
-        $css .= "header, .site-header, #site-header { background-color: " . esc_attr( $bg_header ) . " !important; }\n";
-    }
-    if ( $bg_footer !== '#000000' && $bg_footer !== '' ) {
-        $css .= ".footer-luxury, footer { background-color: " . esc_attr( $bg_footer ) . " !important; }\n";
-    }
-    if ( $bg_main !== '#000000' && $bg_main !== '' ) {
-        $css .= "body { background-color: " . esc_attr( $bg_main ) . " !important; }\n";
-    }
-    if ( $text_primary !== '#F7F4EE' && $text_primary !== '' ) {
-        $css .= "body, p { color: " . esc_attr( $text_primary ) . "; }\n";
-    }
-    if ( $text_heading !== '#FFFFFF' && $text_heading !== '' ) {
-        $css .= "h1,h2,h3,h4,h5,h6,.font-serif { color: " . esc_attr( $text_heading ) . "; }\n";
-    }
-    if ( $btn_radius !== '0' && $btn_radius !== '' ) {
-        $css .= ".btn-premium-cart, .dt-btn { border-radius: " . esc_attr( $btn_radius ) . "; }\n";
+
+    // Concrete rules so existing Tailwind/inline classes pick up the values.
+    $css .= "body { background-color: " . esc_attr( $bg_main )  . "; color: " . esc_attr( $text_primary ) . "; }\n";
+    $css .= "h1,h2,h3,h4,h5,h6 { color: " . esc_attr( $text_heading ) . "; }\n";
+    $css .= "header, .site-header, #site-header, nav.dt-header { background-color: " . esc_attr( $bg_header ) . " !important; }\n";
+    $css .= ".footer-luxury, footer, .site-footer { background-color: " . esc_attr( $bg_footer ) . " !important; }\n";
+    $css .= ".bg-\[\\#111\], .bg-dt-card, .dt-card-bg { background-color: " . esc_attr( $bg_card ) . " !important; }\n";
+    $css .= "p, .text-body { color: " . esc_attr( $text_primary ) . "; }\n";
+    $css .= ".text-muted, .text-\[\\#a3a3a3\], .text-gray-400 { color: " . esc_attr( $text_secondary ) . " !important; }\n";
+    $css .= ".text-\[\\#C8A46A\], .text-gold, .font-serif.text-gold { color: " . esc_attr( $primary ) . " !important; }\n";
+    $css .= ".bg-\[\\#C8A46A\], .bg-gold, .btn-premium-cart, .dt-btn-primary-front { background-color: " . esc_attr( $btn_bg ) . " !important; color: " . esc_attr( $btn_text ) . " !important; }\n";
+    $css .= ".border-\[\\#C8A46A\], .border-gold { border-color: " . esc_attr( $primary ) . " !important; }\n";
+    if ( ! empty( $btn_radius ) && $btn_radius !== '0' ) {
+        $css .= ".btn-premium-cart, .woocommerce .button, .wc-block-components-button { border-radius: " . esc_attr( $btn_radius ) . " !important; }\n";
     }
     if ( ! empty( $ann_bg ) ) {
-        $css .= ".announcement-bar, .dt-announcement { background-color: " . esc_attr( $ann_bg ) . " !important; color: " . esc_attr( $ann_text ) . " !important; }\n";
+        $css .= ".announcement-bar, .dt-announcement, .dt-top-bar { background-color: " . esc_attr( $ann_bg ) . " !important; color: " . esc_attr( $ann_text ) . " !important; }\n";
+        $css .= ".announcement-bar *, .dt-top-bar * { color: " . esc_attr( $ann_text ) . " !important; }\n";
     }
+
     $css .= "</style>\n";
-    echo $css;
+    echo $css; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 add_action( 'wp_head', 'dt_output_color_css_variables', 5 );
 
