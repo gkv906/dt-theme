@@ -129,12 +129,16 @@ function dt_ajax_restore_default_options(): void {
     if ( ! current_user_can( 'manage_options' ) ) {
         wp_send_json_error( 'Permission denied.' );
     }
-    if ( function_exists( 'dt_set_default_theme_options' ) ) {
-        dt_set_default_theme_options();
+    // dt_reset_theme_options() always writes defaults — no early-return guard.
+    if ( function_exists( 'dt_reset_theme_options' ) ) {
+        dt_reset_theme_options();
+    } elseif ( function_exists( 'dt_get_default_theme_options' ) ) {
+        update_option( 'dt_theme_options', dt_get_default_theme_options() );
     } else {
+        // Fallback: delete the option so dt_get_theme_option() returns code defaults
         delete_option( 'dt_theme_options' );
     }
-    wp_send_json_success( array( 'message' => 'Default settings restored successfully!' ) );
+    wp_send_json_success( array( 'message' => 'All settings restored to factory defaults successfully!' ) );
 }
 add_action( 'wp_ajax_dt_restore_default_options', 'dt_ajax_restore_default_options' );
 

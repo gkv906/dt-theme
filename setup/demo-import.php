@@ -162,43 +162,139 @@ function dt_import_demo_products(): void {
 /**
  * Set sensible default theme options on first setup.
  */
-function dt_set_default_theme_options(): void {
-    $existing = get_option( 'dt_theme_options', array() );
-
-    if ( ! empty( $existing ) ) {
-        return; // Don't overwrite user settings
-    }
-
-    $defaults = array(
-        // General
+/**
+ * Return the complete set of factory-default theme options.
+ * Uses the EXACT same option keys that dt_get_theme_option() reads.
+ */
+function dt_get_default_theme_options(): array {
+    return array(
+        // ── General ──────────────────────────────────────────────────────────
         'site_width'               => '1280',
         'loader_enabled'           => '1',
-        // Header
-        'sticky_header'            => '1',
         'announcement_text'        => 'Free Shipping on orders above ₹999 | Use code ARSHMAN10 for 10% off',
-        // Colors
-        'primary_color'            => '#C8A46A',
-        'bg_color'                 => '#000000',
-        'text_color'               => '#F7F4EE',
-        // Typography
-        'heading_font'             => 'Cormorant Garamond',
-        'body_font'                => 'Inter',
-        // Popup
-        'popup_newsletter_enabled' => '1',
-        'popup_offer_enabled'      => '1',
-        'popup_exit_enabled'       => '1',
-        'popup_newsletter_delay'   => '5',
-        'popup_offer_delay'        => '8',
-        'popup_offer_code'         => 'ARSHMAN10',
-        'popup_offer_text'         => 'Get 10% OFF your first order!',
-        // Footer
-        'footer_copyright'         => '© ' . gmdate( 'Y' ) . ' ARSHMAN DESIGNS. All rights reserved.',
-        // Social
-        'instagram_url'            => 'https://instagram.com/',
-        'facebook_url'             => 'https://facebook.com/',
-    );
+        'sale_banner_text'         => '',
+        'logo_height'              => '40',
 
-    update_option( 'dt_theme_options', $defaults );
+        // ── Header ────────────────────────────────────────────────────────────
+        'sticky_header'            => '1',
+        'header_transparent'       => '1',
+        'header_top_bar'           => '1',
+        'header_search'            => '1',
+        'header_account'           => '1',
+        'header_wishlist'          => '1',
+
+        // ── Colors & Branding ────────────────────────────────────────────────
+        'color_primary'            => '#C8A46A',
+        'color_primary_dark'       => '#b08d55',
+        'color_primary_light'      => '#d8ba82',
+        'color_bg_main'            => '#000000',
+        'color_bg_card'            => '#111111',
+        'color_bg_header'          => '#000000',
+        'color_bg_footer'          => '#000000',
+        'color_text_primary'       => '#F7F4EE',
+        'color_text_secondary'     => '#a3a3a3',
+        'color_text_heading'       => '#FFFFFF',
+        'color_btn_bg'             => '#C8A46A',
+        'color_btn_text'           => '#000000',
+        'btn_border_radius'        => '0',
+        'color_announcement_bg'    => '#C8A46A',
+        'color_announcement_text'  => '#000000',
+
+        // ── Typography ───────────────────────────────────────────────────────
+        'body_font_family'         => 'Inter',
+        'body_font_size'           => '15px',
+        'body_font_weight'         => '400',
+        'headings_font_family'     => 'Cormorant Garamond',
+        'headings_letter_spacing'  => '',
+        'custom_font_url_woff2'    => '',
+        'custom_font_family_name'  => '',
+
+        // ── WooCommerce ───────────────────────────────────────────────────────
+        'shop_products_per_page'   => '12',
+        'hover_zoom_enabled'       => '1',
+        'quick_view_enabled'       => '1',
+        'show_payment_badges'      => '1',
+        'show_social_icons'        => '1',
+
+        // ── Popups ───────────────────────────────────────────────────────────
+        'popup_newsletter_enabled' => '1',
+        'popup_newsletter_delay'   => '5',
+        'popup_title'              => 'Join the ARSHMAN Atelier',
+        'popup_desc'               => 'Be the first to know about new collections, exclusive offers, and artisan stories.',
+        'popup_cookie_days'        => '7',
+        'popup_offer_enabled'      => '1',
+        'popup_offer_delay'        => '8',
+        'popup_offer_text'         => 'Get 10% OFF your first order!',
+        'popup_offer_code'         => 'ARSHMAN10',
+        'popup_exit_enabled'       => '1',
+        'popup_exit_title'         => "Wait — Don't Leave Yet!",
+        'popup_exit_code'          => 'ARSHMAN10',
+
+        // ── Social & Contact ─────────────────────────────────────────────────
+        'instagram_url'            => '',
+        'facebook_url'             => '',
+        'twitter_url'              => '',
+        'youtube_url'              => '',
+        'pinterest_url'            => '',
+        'contact_email'            => '',
+        'contact_phone'            => '',
+        'contact_hours'            => 'Mon–Sat, 10:00am – 7:00pm IST',
+        'whatsapp_url'             => '',
+        'newsletter_enabled'       => '1',
+        'newsletter_title'         => 'Join the Atelier',
+
+        // ── SEO ──────────────────────────────────────────────────────────────
+        'seo_site_title_suffix'    => '| Arshman Designs',
+        'seo_meta_description'     => '',
+        'seo_og_image'             => '',
+        'google_site_verification' => '',
+        'bing_site_verification'   => '',
+
+        // ── Analytics & Tracking ─────────────────────────────────────────────
+        'ga_enabled'               => '0',
+        'ga_measurement_id'        => '',
+        'ga_anonymize_ip'          => '0',
+        'ga_exclude_admin'         => '0',
+        'fb_pixel_enabled'         => '0',
+        'fb_pixel_id'              => '',
+        'fb_pixel_purchase'        => '0',
+        'fb_pixel_view'            => '0',
+        'fb_pixel_cart'            => '0',
+        'gtm_enabled'              => '0',
+        'gtm_container_id'         => '',
+
+        // ── Performance ───────────────────────────────────────────────────────
+        'lazy_load_images'         => '1',
+        'remove_query_strings'     => '0',
+        'remove_emoji_scripts'     => '0',
+        'disable_gutenberg_css'    => '0',
+
+        // ── Custom Code ───────────────────────────────────────────────────────
+        'custom_css'               => '',
+        'custom_js'                => '',
+
+        // ── Footer ────────────────────────────────────────────────────────────
+        'footer_copyright'         => '© ' . gmdate( 'Y' ) . ' ARSHMAN DESIGNS. All rights reserved.',
+    );
+}
+
+/**
+ * Set defaults on FIRST activation (only when no settings exist).
+ */
+function dt_set_default_theme_options(): void {
+    $existing = get_option( 'dt_theme_options', array() );
+    if ( ! empty( $existing ) ) {
+        return; // Don't overwrite existing user settings on first boot
+    }
+    update_option( 'dt_theme_options', dt_get_default_theme_options() );
+}
+
+/**
+ * Full factory reset — ALWAYS overwrites every setting with defaults.
+ * Called by the admin "Reset to Factory Defaults" AJAX button.
+ */
+function dt_reset_theme_options(): void {
+    update_option( 'dt_theme_options', dt_get_default_theme_options() );
 }
 
 /**
