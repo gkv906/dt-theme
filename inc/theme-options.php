@@ -967,28 +967,6 @@ function dt_set_default_theme_options(): void {
     update_option( 'dt_theme_options', $defaults );
 }
 
-// ── AJAX: Save theme options ────────────────────────────────────────────────
-function dt_ajax_save_theme_options(): void {
-    check_ajax_referer( 'dt_admin_nonce', 'nonce' );
-    if ( ! current_user_can( 'manage_options' ) ) {
-        wp_send_json_error( 'Insufficient permissions.' );
-    }
-
-    // Parse the form-serialized data
-    $form_data = array();
-    if ( ! empty( $_POST['data'] ) ) {
-        wp_parse_str( wp_unslash( $_POST['data'] ), $form_data );
-    }
-
-    $opts      = isset( $form_data['dt_options'] ) ? (array) $form_data['dt_options'] : array();
-    $sanitized = dt_sanitize_theme_options( $opts );
-    $existing  = get_option( 'dt_theme_options', array() );
-    update_option( 'dt_theme_options', array_merge( $existing, $sanitized ) );
-
-    wp_send_json_success( array( 'message' => __( 'Settings saved successfully!', 'dt-ecommerce-theme' ) ) );
-}
-add_action( 'wp_ajax_dt_save_theme_options', 'dt_ajax_save_theme_options' );
-
 // ── AJAX: Run setup wizard ──────────────────────────────────────────────────
 function dt_ajax_run_setup_wizard(): void {
     check_ajax_referer( 'dt_admin_nonce', 'nonce' );
