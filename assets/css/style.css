@@ -6188,8 +6188,8 @@ body {
 }
 .group:hover .outer-ring {
   border: 1.5px solid #C8A46A;
-  transform: scale(1.04);
-  box-shadow: 0 0 15px rgba(200, 164, 106, 0.4);
+  animation-duration: 8s;
+  box-shadow: 0 0 20px rgba(200, 164, 106, 0.5);
 }
 .hover-underline {
   position: relative;
@@ -6769,21 +6769,16 @@ body {
   opacity: 0;
   transition: opacity 0.6s ease, background-position 1.4s ease;
   pointer-events: none;
-  z-index: 30;
+  z-index: 8;
 }
 .arrival-card:hover::before {
   opacity: 1;
   background-position: 0% 0%;
 }
 
-/* Product name gradient hover */
+/* Product name color on hover */
 .arrival-card:hover .arrival-title {
-  background: linear-gradient(90deg, #F7F4EE 0%, #C8A46A 50%, #F7F4EE 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer-gold 3s linear infinite;
+  color: #C8A46A;
 }
 
 /* ============================================
@@ -7977,8 +7972,7 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.arrival-title { transition: color 0.2s; }
-.arrival-card:hover .arrival-title { color: #C8A46A; }
+.arrival-title { transition: color 0.3s ease; }
 
 /* ── No Scrollbar ──────────────────────────────────────────── */
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

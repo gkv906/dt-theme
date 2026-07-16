@@ -121,7 +121,7 @@ $render_product_card = function( $post_id, $delay_ms = 0, $is_bestseller = false
     <div onclick="window.location.href='<?php echo esc_url( get_permalink( $post_id ) ); ?>'" class="arrival-card group cursor-pointer flex flex-col gap-4 w-[240px] shrink-0 lg:w-[260px] snap-center" style="animation-delay: <?php echo esc_attr( $delay_ms ); ?>ms;">
       <div class="relative aspect-[3/4] gallery-img-wrap bg-[#111]">
         <?php echo $badge_html; ?>
-        <div class="absolute top-3 right-3 z-20">
+        <div class="absolute top-3 right-3 z-30">
           <button data-wishlist-btn="<?php echo esc_attr( $post_id ); ?>" onclick="event.stopPropagation(); toggleWishlistAction(<?php echo esc_attr( $post_id ); ?>, this)" class="w-8 h-8 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:text-[#C8A46A] transition-all border border-white/10 hover:border-[#C8A46A] hover:scale-110">
             <?php echo $heartIconHTML; ?>
           </button>
@@ -134,7 +134,7 @@ $render_product_card = function( $post_id, $delay_ms = 0, $is_bestseller = false
                 <span data-gallery-dot class="gallery-dot <?php echo 0 === $idx ? 'active' : ''; ?>"></span>
             <?php endforeach; ?>
         </div>
-        <div class="absolute bottom-0 left-0 w-full p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-20 bg-gradient-to-t from-black/95 to-transparent flex flex-col gap-2">
+        <div class="absolute bottom-0 left-0 w-full p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-30 bg-gradient-to-t from-black/95 to-transparent flex flex-col gap-2">
           <button onclick="event.stopPropagation(); window.location.href='<?php echo esc_url( get_permalink( $post_id ) ); ?>'" class="w-full bg-[#111]/80 hover:bg-black text-[#C8A46A] border border-[#C8A46A]/30 py-2.5 text-xs uppercase tracking-widest font-semibold rounded-sm transition-colors">View Details</button>
           <button onclick="event.stopPropagation(); addCartItemAction(<?php echo esc_attr( $post_id ); ?>, this)" class="w-full btn-premium-cart text-black py-2.5 text-xs uppercase tracking-widest font-semibold rounded-sm flex items-center justify-center gap-2">
             <i data-lucide="shopping-bag" class="w-4 h-4 icon-bag"></i> Add to Bag
@@ -225,7 +225,7 @@ $render_product_grid_card = function( $post_id, $delay_ms = 0, $is_bestseller = 
     <div onclick="window.location.href='<?php echo esc_url( get_permalink( $post_id ) ); ?>'" class="arrival-card group cursor-pointer flex flex-col gap-4 w-full" style="animation-delay: <?php echo esc_attr( $delay_ms ); ?>ms;">
       <div class="relative aspect-[3/4] gallery-img-wrap bg-[#111]">
         <?php echo $badge_html; ?>
-        <div class="absolute top-3 right-3 z-20">
+        <div class="absolute top-3 right-3 z-30">
           <button data-wishlist-btn="<?php echo esc_attr( $post_id ); ?>" onclick="event.stopPropagation(); toggleWishlistAction(<?php echo esc_attr( $post_id ); ?>, this)" class="w-8 h-8 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:text-[#C8A46A] transition-all border border-white/10 hover:border-[#C8A46A] hover:scale-110">
             <?php echo $heartIconHTML; ?>
           </button>
@@ -238,7 +238,7 @@ $render_product_grid_card = function( $post_id, $delay_ms = 0, $is_bestseller = 
                 <span data-gallery-dot class="gallery-dot <?php echo 0 === $idx ? 'active' : ''; ?>"></span>
             <?php endforeach; ?>
         </div>
-        <div class="absolute bottom-0 left-0 w-full p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-20 bg-gradient-to-t from-black/95 to-transparent flex flex-col gap-2">
+        <div class="absolute bottom-0 left-0 w-full p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-30 bg-gradient-to-t from-black/95 to-transparent flex flex-col gap-2">
           <button onclick="event.stopPropagation(); window.location.href='<?php echo esc_url( get_permalink( $post_id ) ); ?>'" class="w-full bg-[#111]/80 hover:bg-black text-[#C8A46A] border border-[#C8A46A]/30 py-2.5 text-xs uppercase tracking-widest font-semibold rounded-sm transition-colors">View Details</button>
           <button onclick="event.stopPropagation(); addCartItemAction(<?php echo esc_attr( $post_id ); ?>, this)" class="w-full btn-premium-cart text-black py-2.5 text-xs uppercase tracking-widest font-semibold rounded-sm flex items-center justify-center gap-2">
             <i data-lucide="shopping-bag" class="w-4 h-4 icon-bag"></i> Add to Bag
@@ -339,13 +339,30 @@ ob_start();
                 $categories = get_terms( array(
                     'taxonomy'   => 'product_cat',
                     'hide_empty' => false,
+                    'exclude'    => get_option( 'default_product_cat', 0 ),
+                    'slug__not_in' => array( 'uncategorized' ),
                 ) );
+                // Fallback images keyed by common category slug patterns
+                $cat_fallback_images = array(
+                    'silk'      => get_template_directory_uri() . '/assets/images/category-silk.jpg',
+                    'banarasi'  => get_template_directory_uri() . '/assets/images/category-banarasi.jpg',
+                    'bandhani'  => get_template_directory_uri() . '/assets/images/category-bandhani.jpg',
+                    'organza'   => get_template_directory_uri() . '/assets/images/category-organza.jpg',
+                );
                 if ( ! is_wp_error( $categories ) && ! empty( $categories ) ) :
                     foreach ( $categories as $cat ) :
                         $thumbnail_id = get_term_meta( $cat->term_id, 'thumbnail_id', true );
                         $image_url = wp_get_attachment_url( $thumbnail_id );
                         if ( ! $image_url ) {
-                            $image_url = get_template_directory_uri() . '/assets/images/category-silk.jpg';
+                            // Try to find a matching fallback by slug keyword
+                            $slug_lower = strtolower( $cat->slug );
+                            $image_url  = get_template_directory_uri() . '/assets/images/category-silk.jpg';
+                            foreach ( $cat_fallback_images as $key => $fb_url ) {
+                                if ( false !== strpos( $slug_lower, $key ) ) {
+                                    $image_url = $fb_url;
+                                    break;
+                                }
+                            }
                         }
                         ?>
                         <div onclick="window.location.href='<?php echo esc_url( get_term_link( $cat ) ); ?>'" class="snap-center shrink-0 group cursor-pointer flex flex-col items-center gap-5 relative">
