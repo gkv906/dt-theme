@@ -123,6 +123,21 @@ function dt_ajax_save_theme_options(): void {
 }
 add_action( 'wp_ajax_dt_save_theme_options', 'dt_ajax_save_theme_options' );
 
+// ── AJAX Restore Defaults ────────────────────────────────────────────────────
+function dt_ajax_restore_default_options(): void {
+    check_ajax_referer( 'dt_admin_nonce', 'nonce' );
+    if ( ! current_user_can( 'manage_options' ) ) {
+        wp_send_json_error( 'Permission denied.' );
+    }
+    if ( function_exists( 'dt_set_default_theme_options' ) ) {
+        dt_set_default_theme_options();
+    } else {
+        delete_option( 'dt_theme_options' );
+    }
+    wp_send_json_success( array( 'message' => 'Default settings restored successfully!' ) );
+}
+add_action( 'wp_ajax_dt_restore_default_options', 'dt_ajax_restore_default_options' );
+
 // ── Render Options Page ─────────────────────────────────────────────────────
 function dt_render_theme_options_page(): void {
     if ( ! current_user_can( 'manage_options' ) ) return;
@@ -182,11 +197,20 @@ function dt_render_theme_options_page(): void {
         
         <!-- Dashboard Header -->
         <div class="dt-admin-header">
-            <div>
-                <h1>DT Ecommerce Theme.</h1>
-                <p style="color:#666;font-size:11px;margin:4px 0 0;letter-spacing:0.08em;text-transform:uppercase;">Settings &amp; Configuration Dashboard</p>
+            <div class="dt-admin-header-left">
+                <div>
+                    <h1>DT <span>Ecommerce</span> Theme.</h1>
+                    <p>Settings &amp; Configuration Dashboard</p>
+                </div>
+                <span class="dt-version-badge">v2.0</span>
             </div>
-            <span class="dt-version-badge">v1.1</span>
+            <div class="dt-header-actions">
+                <span class="dt-live-indicator">Live</span>
+                <button type="button" id="dt-btn-header-save" class="dt-btn-save" style="padding:8px 20px;font-size:11px;">
+                    <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Save All
+                </button>
+            </div>
         </div>
 
         <!-- Search Container -->
@@ -492,30 +516,45 @@ function dt_render_theme_options_page(): void {
 
                         <!-- ==================== TAB: BACKUP & RESTORE ==================== -->
                         <div class="dt-tab-content <?php echo ( $active_tab === 'backup' ) ? '' : 'hidden'; ?>" id="dt-tab-backup">
-                            <div class="dt-section">
-                                <div class="dt-section-title">📦 Export Backup Configuration</div>
-                                <p class="description">Copy and download the following configuration JSON object to store a backup copy of your settings.</p>
-                                <textarea readonly onclick="this.select()" class="dt-textarea" style="font-family:monospace;font-size:11px;min-height:140px;width:100%;max-width:520px;margin-top:10px;"><?php echo esc_textarea( wp_json_encode( $opts ) ); ?></textarea>
-                            </div>
-                            <div class="dt-section">
-                                <div class="dt-section-title">📥 Import Restoration Settings</div>
-                                <p class="description">Paste back a previously exported theme settings JSON string object to restore configuration parameters.</p>
-                                <textarea name="dt_import_code" id="dt-import-code" class="dt-textarea" style="font-family:monospace;font-size:11px;min-height:140px;width:100%;max-width:520px;margin-top:10px;" placeholder="Paste JSON settings string here..."></textarea>
-                                <div style="margin-top:12px;">
-                                    <button type="submit" name="dt_options_import" value="1" class="button button-secondary" onclick="return confirm('WARNING: This will overwrite all your current settings. Proceed?');">
-                                        Import Settings Configuration
+
+                            <!-- Export & Import side-by-side -->
+                            <div class="dt-backup-grid">
+
+                                <!-- EXPORT — green button -->
+                                <div class="dt-backup-box">
+                                    <div class="dt-section-title" style="margin-bottom:12px;">📦 Export Configuration</div>
+                                    <p class="description" style="font-size:12px;color:var(--dt-text-muted);margin:0 0 12px;">Copy your current settings as a JSON backup you can save locally.</p>
+                                    <textarea id="dt-export-json" readonly onclick="this.select()" class="dt-textarea" style="font-family:monospace;font-size:11px;min-height:130px;width:100%;max-width:100%;margin-bottom:12px;"><?php echo esc_textarea( wp_json_encode( $opts ) ); ?></textarea>
+                                    <button type="button" id="dt-btn-copy-export" class="dt-btn-export">
+                                        <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                        Copy to Clipboard
+                                    </button>
+                                </div>
+
+                                <!-- IMPORT — purple button -->
+                                <div class="dt-backup-box">
+                                    <div class="dt-section-title" style="margin-bottom:12px;">📥 Import Configuration</div>
+                                    <p class="description" style="font-size:12px;color:var(--dt-text-muted);margin:0 0 12px;">Paste a previously exported JSON string to restore your settings.</p>
+                                    <textarea name="dt_import_code" id="dt-import-code" class="dt-textarea" style="font-family:monospace;font-size:11px;min-height:130px;width:100%;max-width:100%;margin-bottom:12px;" placeholder="Paste JSON settings string here…"></textarea>
+                                    <button type="submit" name="dt_options_import" value="1" class="dt-btn-import"
+                                        onclick="return confirm('WARNING: This will overwrite ALL your current settings with the pasted configuration.\n\nThis cannot be undone. Proceed?');">
+                                        <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                        Import Settings
                                     </button>
                                 </div>
                             </div>
-                            <div class="dt-section">
-                                <div class="dt-section-title" style="color:#d63638;">⚠️ Reset Dashboard Settings</div>
-                                <p class="description">Overwrites and resets all existing settings options parameters to default demo values template.</p>
-                                <div style="margin-top:12px;">
-                                    <button type="submit" name="dt_options_reset" value="1" class="button button-link-delete" onclick="return confirm('Are you sure you want to reset ALL theme settings to defaults? This cannot be undone.');" style="color:#d63638;border: 1px solid rgba(214, 54, 56, 0.3);padding:6px 14px;border-radius:2px;background:rgba(214, 54, 56, 0.05);">
-                                        Reset to Defaults
-                                    </button>
-                                </div>
+
+                            <!-- RESET — red solid, clearly destructive -->
+                            <div class="dt-section" style="margin-top:24px;">
+                                <div class="dt-section-title" style="background:#fef2f2;border-left-color:#dc2626;color:#dc2626;">⚠️ Factory Reset</div>
+                                <p style="font-size:12px;color:var(--dt-text-muted);margin:0 0 16px;">This permanently overwrites <strong>all</strong> current settings with the default demo values. There is no undo — export a backup first if needed.</p>
+                                <button type="submit" name="dt_options_reset" value="1" class="dt-btn-danger-solid"
+                                    onclick="return confirm('FACTORY RESET\n\nThis will permanently delete all your custom settings and restore the theme to its default demo state.\n\nThis CANNOT be undone. Export a backup first!\n\nAre you absolutely sure?');">
+                                    <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.86"/></svg>
+                                    Reset to Factory Defaults
+                                </button>
                             </div>
+
                         </div>
 
                         <!-- ==================== TAB: COLORS & BRANDING ==================== -->
@@ -706,12 +745,12 @@ function dt_render_theme_options_page(): void {
                             </div>
                             <div class="dt-section">
                                 <div class="dt-section-title">👤 User Management Quick Access</div>
-                                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">
-                                    <a href="<?php echo esc_url( admin_url( 'users.php?role=dt_customer' ) ); ?>" class="button button-secondary" target="_blank">View Customers</a>
-                                    <a href="<?php echo esc_url( admin_url( 'users.php?role=dt_reseller' ) ); ?>" class="button button-secondary" target="_blank">View Resellers</a>
-                                    <a href="<?php echo esc_url( admin_url( 'users.php?role=dt_retailer' ) ); ?>" class="button button-secondary" target="_blank">View Retailers</a>
-                                    <a href="<?php echo esc_url( admin_url( 'users.php?role=dt_wholesaler' ) ); ?>" class="button button-secondary" target="_blank">View Wholesalers</a>
-                                    <a href="<?php echo esc_url( admin_url( 'user-new.php' ) ); ?>" class="button button-primary" target="_blank">Add New User</a>
+                                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
+                                    <a href="<?php echo esc_url( admin_url( 'users.php?role=dt_customer' ) ); ?>" class="dt-btn-secondary" target="_blank">View Customers</a>
+                                    <a href="<?php echo esc_url( admin_url( 'users.php?role=dt_reseller' ) ); ?>" class="dt-btn-secondary" target="_blank">View Resellers</a>
+                                    <a href="<?php echo esc_url( admin_url( 'users.php?role=dt_retailer' ) ); ?>" class="dt-btn-secondary" target="_blank">View Retailers</a>
+                                    <a href="<?php echo esc_url( admin_url( 'users.php?role=dt_wholesaler' ) ); ?>" class="dt-btn-secondary" target="_blank">View Wholesalers</a>
+                                    <a href="<?php echo esc_url( admin_url( 'user-new.php' ) ); ?>" class="dt-btn-save" style="padding:8px 18px;font-size:12px;" target="_blank">+ Add New User</a>
                                 </div>
                             </div>
                         </div>
@@ -747,12 +786,31 @@ function dt_render_theme_options_page(): void {
 
                     </div><!-- end card -->
 
-                    <!-- Save Button sticky bar -->
+                    <!-- Save Bar — distinct buttons for every action -->
                     <div class="dt-save-bar">
-                        <button type="submit" name="dt_options_save" value="1" class="dt-btn-primary">
-                            💾 Save Settings
+                        <!-- 1. SAVE — gold gradient, primary action -->
+                        <button type="submit" id="dt-btn-save-main" name="dt_options_save" value="1" class="dt-btn-save" title="Save all settings (Ctrl+S / ⌘S)">
+                            <svg style="width:15px;height:15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                            Save Settings
                         </button>
-                        <span id="dt-save-status" class="dt-save-status">All settings saved to database and reflected on your frontend.</span>
+
+                        <span class="dt-kbd" title="Keyboard shortcut">
+                            <span id="dt-shortcut-key">Ctrl</span>+S
+                        </span>
+
+                        <div class="dt-save-bar-divider"></div>
+
+                        <!-- 2. RESTORE DEFAULTS — blue, calm/reversible feel -->
+                        <button type="button" id="dt-btn-restore-defaults" class="dt-btn-defaults" title="Restore all settings to default demo values">
+                            <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.86"/></svg>
+                            Restore Defaults
+                        </button>
+
+                        <!-- Status indicator (right-aligned) -->
+                        <span id="dt-save-status" class="dt-save-status">
+                            <span class="dt-save-status-dot"></span>
+                            <span>All settings saved.</span>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -779,6 +837,20 @@ function dt_render_theme_options_page(): void {
         </div>
 
     </div><!-- end dt-admin-page -->
+
+    <script>
+    /* Detect Mac and update keyboard shortcut label */
+    (function() {
+        var el = document.getElementById('dt-shortcut-key');
+        if (el && navigator.platform.toUpperCase().indexOf('MAC') >= 0) {
+            el.textContent = '⌘';
+        }
+        /* Init Lucide icons after page render */
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            lucide.createIcons();
+        }
+    })();
+    </script>
     <?php
 }
 

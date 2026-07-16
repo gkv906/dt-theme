@@ -1,6 +1,6 @@
 /**
  * DT Ecommerce Theme – Admin Panel CSS
- * Clean light UI — professional SaaS-style dashboard
+ * Next-Level SaaS-style admin dashboard — v2.0
  *
  * @package DT_Ecommerce_Theme
  */
@@ -25,9 +25,18 @@
     --dt-error:       #dc2626;
     --dt-warning:     #d97706;
     --dt-info:        #C8A46A;
+    --dt-blue:        #2563eb;
+    --dt-blue-light:  #eff6ff;
+    --dt-blue-border: #bfdbfe;
+    --dt-green:       #16a34a;
+    --dt-green-light: #f0fdf4;
+    --dt-purple:      #7c3aed;
+    --dt-purple-light:#f5f3ff;
     --dt-radius:      6px;
+    --dt-radius-lg:   10px;
     --dt-shadow:      0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
     --dt-shadow-md:   0 4px 12px rgba(0,0,0,0.08);
+    --dt-shadow-lg:   0 8px 24px rgba(0,0,0,0.12);
 }
 
 /* ── Page Wrapper ────────────────────────────────────────────────────────── */
@@ -38,6 +47,7 @@
     background: var(--dt-page-bg);
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
+    padding-bottom: 40px;
 }
 
 /* ── Dashboard Header ────────────────────────────────────────────────────── */
@@ -47,9 +57,16 @@
     padding: 18px 28px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 14px;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     box-shadow: var(--dt-shadow);
+}
+
+.dt-admin-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
 }
 
 .dt-admin-header h1 {
@@ -86,6 +103,13 @@
     padding: 3px 9px;
     border-radius: 3px;
     flex-shrink: 0;
+}
+
+/* ── Header Quick Save (top-right) ───────────────────────────────────────── */
+.dt-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 /* ── Options Layout ──────────────────────────────────────────────────────── */
@@ -392,7 +416,210 @@
     font-weight: 600;
 }
 
-/* ── Buttons ─────────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   BUTTONS — every action has its own distinct look
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* — Primary Save: gold gradient, large, prominent — */
+.dt-btn-save {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #d4a96a 0%, #C8A46A 50%, #b8913a 100%);
+    color: #fff;
+    border: none;
+    padding: 11px 28px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: var(--dt-radius);
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 3px 10px rgba(200,164,106,0.45), 0 1px 3px rgba(200,164,106,0.3);
+    position: relative;
+    overflow: hidden;
+}
+.dt-btn-save::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent 60%);
+    pointer-events: none;
+}
+.dt-btn-save:hover {
+    background: linear-gradient(135deg, #e0b870 0%, #d4a960 50%, #c49840 100%);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(200,164,106,0.5), 0 2px 6px rgba(200,164,106,0.35);
+}
+.dt-btn-save:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(200,164,106,0.35);
+}
+.dt-btn-save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* — Default/Reset to defaults: blue outline, calm — */
+.dt-btn-defaults {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--dt-blue-light);
+    color: var(--dt-blue);
+    border: 1.5px solid var(--dt-blue-border);
+    padding: 10px 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    border-radius: var(--dt-radius);
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+}
+.dt-btn-defaults:hover {
+    background: #dbeafe;
+    border-color: var(--dt-blue);
+    color: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(37,99,235,0.15);
+}
+.dt-btn-defaults:active { transform: translateY(0); }
+
+/* — Export: green, outlined — */
+.dt-btn-export {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--dt-green-light);
+    color: var(--dt-green);
+    border: 1.5px solid #bbf7d0;
+    padding: 9px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    border-radius: var(--dt-radius);
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+}
+.dt-btn-export:hover {
+    background: #dcfce7;
+    border-color: var(--dt-green);
+    color: #15803d;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(22,163,74,0.15);
+}
+.dt-btn-export:active { transform: translateY(0); }
+
+/* — Import: purple, outlined — */
+.dt-btn-import {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--dt-purple-light);
+    color: var(--dt-purple);
+    border: 1.5px solid #ddd6fe;
+    padding: 9px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    border-radius: var(--dt-radius);
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+}
+.dt-btn-import:hover {
+    background: #ede9fe;
+    border-color: var(--dt-purple);
+    color: #6d28d9;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(124,58,237,0.15);
+}
+.dt-btn-import:active { transform: translateY(0); }
+
+/* — Danger/Reset: red solid, destructive — */
+.dt-btn-danger-solid {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #dc2626;
+    color: #fff;
+    border: none;
+    padding: 9px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    border-radius: var(--dt-radius);
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 2px 6px rgba(220,38,38,0.3);
+}
+.dt-btn-danger-solid:hover {
+    background: #b91c1c;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220,38,38,0.4);
+}
+.dt-btn-danger-solid:active { transform: translateY(0); }
+
+/* — Secondary (generic neutral outline) — */
+.dt-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #fff;
+    color: var(--dt-text);
+    border: 1px solid var(--dt-border);
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-radius: var(--dt-radius);
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+}
+.dt-btn-secondary:hover {
+    border-color: var(--dt-gold);
+    color: var(--dt-gold-dark);
+    background: #fdf6ea;
+}
+
+/* — Danger outline (light) — */
+.dt-btn-danger {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #fff;
+    color: var(--dt-error);
+    border: 1px solid #fca5a5;
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-radius: var(--dt-radius);
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+}
+.dt-btn-danger:hover {
+    background: #fef2f2;
+    border-color: var(--dt-error);
+    color: var(--dt-error);
+}
+
+/* — Legacy alias for any old usage — */
 .dt-btn-primary {
     display: inline-flex;
     align-items: center;
@@ -411,85 +638,91 @@
     font-family: 'Inter', sans-serif;
     box-shadow: 0 2px 6px rgba(200,164,106,0.4);
 }
-
 .dt-btn-primary:hover {
     background: var(--dt-gold-dark);
     color: #fff;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(200,164,106,0.35);
 }
-
-.dt-btn-primary:active {
-    transform: translateY(0);
-}
-
-.dt-btn-secondary {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    background: #fff;
-    color: var(--dt-text);
-    border: 1px solid var(--dt-border);
-    padding: 8px 18px;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-    border-radius: var(--dt-radius);
-    text-decoration: none;
-    font-family: 'Inter', sans-serif;
-}
-
-.dt-btn-secondary:hover {
-    border-color: var(--dt-gold);
-    color: var(--dt-gold-dark);
-    background: #fdf6ea;
-}
-
-.dt-btn-danger {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    background: #fff;
-    color: var(--dt-error);
-    border: 1px solid #fca5a5;
-    padding: 8px 18px;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-    border-radius: var(--dt-radius);
-    text-decoration: none;
-    font-family: 'Inter', sans-serif;
-}
-
-.dt-btn-danger:hover {
-    background: #fef2f2;
-    border-color: var(--dt-error);
-    color: var(--dt-error);
-}
+.dt-btn-primary:active { transform: translateY(0); }
 
 /* ── Save Bar ────────────────────────────────────────────────────────────── */
 .dt-save-bar {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
     margin-top: 16px;
     background: #fff;
     border: 1px solid var(--dt-border);
-    border-radius: var(--dt-radius);
-    padding: 14px 24px;
-    box-shadow: var(--dt-shadow);
+    border-radius: var(--dt-radius-lg);
+    padding: 16px 24px;
+    box-shadow: var(--dt-shadow-md);
+    position: relative;
+    overflow: hidden;
 }
 
-.dt-save-bar .dt-save-status {
+.dt-save-bar::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--dt-gold), var(--dt-gold-dark));
+    border-radius: 2px 0 0 2px;
+}
+
+.dt-save-bar-divider {
+    width: 1px;
+    height: 28px;
+    background: var(--dt-border);
+    margin: 0 4px;
+    flex-shrink: 0;
+}
+
+.dt-save-status {
     font-size: 12px;
     color: var(--dt-text-muted);
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.dt-save-bar .dt-save-status.saved {
+.dt-save-status.saved {
     color: var(--dt-success);
     font-weight: 600;
+}
+
+.dt-save-status.unsaved {
+    color: var(--dt-warning);
+    font-weight: 600;
+}
+
+.dt-save-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+/* ── Keyboard shortcut badge — */
+.dt-kbd {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 10px;
+    color: var(--dt-text-muted);
+    background: var(--dt-page-bg);
+    border: 1px solid var(--dt-border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: 'Inter', monospace;
+    letter-spacing: 0;
+    font-weight: 500;
 }
 
 /* ── Notices ─────────────────────────────────────────────────────────────── */
@@ -535,18 +768,19 @@
     right: 28px;
     background: #1a1d23;
     color: #fff;
-    padding: 13px 20px;
-    border-radius: var(--dt-radius);
+    padding: 14px 20px;
+    border-radius: var(--dt-radius-lg);
     font-size: 13px;
     font-weight: 500;
     display: flex;
     align-items: center;
     gap: 10px;
     z-index: 99999;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
     transform: translateY(0);
-    transition: all 0.3s ease;
-    max-width: 360px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-width: 380px;
+    min-width: 260px;
 }
 
 .dt-toast.dt-toast-success {
@@ -557,8 +791,12 @@
     border-left: 4px solid #ef4444;
 }
 
+.dt-toast.dt-toast-info {
+    border-left: 4px solid var(--dt-gold);
+}
+
 .dt-toast.dt-toast-hidden {
-    transform: translateY(20px);
+    transform: translateY(80px);
     opacity: 0;
     pointer-events: none;
 }
@@ -896,6 +1134,39 @@
     margin: 20px 0;
 }
 
+/* ── Backup/Import card styling ──────────────────────────────────────────── */
+.dt-backup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 12px;
+}
+
+.dt-backup-box {
+    background: #fafbfc;
+    border: 1px solid var(--dt-border);
+    border-radius: var(--dt-radius);
+    padding: 20px;
+}
+
+.dt-backup-box h4 {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 10px;
+    color: var(--dt-text);
+}
+
+/* ── Unsaved dot pulse animation ─────────────────────────────────────────── */
+@keyframes dt-pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+}
+.dt-pulse {
+    animation: dt-pulse 1.6s ease-in-out infinite;
+}
+
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 960px) {
     .dt-options-container {
@@ -929,6 +1200,14 @@
         border-left: none !important;
         padding-left: 12px !important;
     }
+
+    .dt-backup-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dt-header-actions {
+        display: none;
+    }
 }
 
 @media (max-width: 782px) {
@@ -947,5 +1226,19 @@
 
     .dt-card {
         padding: 18px;
+    }
+
+    .dt-save-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dt-save-bar-divider {
+        display: none;
+    }
+
+    .dt-save-status {
+        margin-left: 0;
+        justify-content: center;
     }
 }
