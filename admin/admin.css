@@ -646,31 +646,34 @@
 }
 .dt-btn-primary:active { transform: translateY(0); }
 
-/* ── Save Bar ────────────────────────────────────────────────────────────── */
+/* ── Fixed Save Bar — always visible at bottom of viewport ───────────────── */
 .dt-save-bar {
+    position: fixed;
+    bottom: 0;
+    /* align with WP admin content area — sidebar is ~160px wide */
+    left: 160px;
+    right: 0;
+    z-index: 99990;
     display: flex;
     align-items: center;
     gap: 12px;
-    flex-wrap: wrap;
-    margin-top: 16px;
     background: #fff;
-    border: 1px solid var(--dt-border);
-    border-radius: var(--dt-radius-lg);
-    padding: 16px 24px;
-    box-shadow: var(--dt-shadow-md);
-    position: relative;
+    border-top: 2px solid var(--dt-gold);
+    padding: 12px 28px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.10);
+    /* Keep items on one line, never wrap onto two rows */
+    flex-wrap: nowrap;
     overflow: hidden;
 }
 
+/* Left accent stripe */
 .dt-save-bar::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background: linear-gradient(180deg, var(--dt-gold), var(--dt-gold-dark));
-    border-radius: 2px 0 0 2px;
+    display: none; /* replaced by top border */
+}
+
+/* Compensate so page content isn't hidden behind fixed bar */
+#dt-admin-page {
+    padding-bottom: 80px;
 }
 
 .dt-save-bar-divider {
@@ -681,6 +684,7 @@
     flex-shrink: 0;
 }
 
+/* ── Save status text (right side) ───────────────────────────────────────── */
 .dt-save-status {
     font-size: 12px;
     color: var(--dt-text-muted);
@@ -688,6 +692,8 @@
     display: flex;
     align-items: center;
     gap: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .dt-save-status.saved {
@@ -701,15 +707,15 @@
 }
 
 .dt-save-status-dot {
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: currentColor;
     display: inline-block;
     flex-shrink: 0;
 }
 
-/* ── Keyboard shortcut badge — */
+/* ── Keyboard shortcut badge ─────────────────────────────────────────────── */
 .dt-kbd {
     display: inline-flex;
     align-items: center;
@@ -723,6 +729,7 @@
     font-family: 'Inter', monospace;
     letter-spacing: 0;
     font-weight: 500;
+    flex-shrink: 0;
 }
 
 /* ── Notices ─────────────────────────────────────────────────────────────── */
@@ -1210,7 +1217,26 @@
     }
 }
 
+/* Fixed save bar responsive — WP sidebar collapses on small screens */
 @media (max-width: 782px) {
+    .dt-save-bar {
+        left: 0;
+        padding: 10px 14px;
+        gap: 8px;
+    }
+
+    .dt-save-bar-divider {
+        display: none;
+    }
+
+    .dt-save-status {
+        display: none; /* hide text on mobile to save space */
+    }
+
+    .dt-kbd {
+        display: none;
+    }
+
     .dt-form-row {
         grid-template-columns: 1fr;
         gap: 6px;
@@ -1227,18 +1253,11 @@
     .dt-card {
         padding: 18px;
     }
+}
 
-    .dt-save-bar {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .dt-save-bar-divider {
-        display: none;
-    }
-
-    .dt-save-status {
-        margin-left: 0;
-        justify-content: center;
+/* WP admin folded sidebar: sidebar becomes 36px icon bar */
+@media (max-width: 960px) {
+    .folded .dt-save-bar {
+        left: 0;
     }
 }

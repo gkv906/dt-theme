@@ -257,44 +257,125 @@
         });
     }
 
-    /* ── Restore Defaults ───────────────────────────────────────────────────── */
+    /* ── Restore Defaults (save bar button) ─────────────────────────────────── */
     function initRestoreDefaults() {
         $(document).on('click', '#dt-btn-restore-defaults', function (e) {
             e.preventDefault();
-
             if (!confirm(
-                'Reset ALL theme settings to default values?\n\n' +
-                'This will overwrite your current configuration. This cannot be undone.\n\n' +
-                'Click OK to continue.'
-            )) {
-                return;
-            }
+                'Restore Default Settings?\n\n' +
+                'This will overwrite your current configuration with the default demo values.\n' +
+                'This cannot be undone.\n\nClick OK to continue.'
+            )) return;
+
+            var $btn     = $(this);
+            var origHtml = $btn.html();
+            $btn.prop('disabled', true).text('Restoring…');
+            dtToast('info', 'Restoring default settings…', 2000);
+
+            $.post(dtAdminVars.ajaxUrl, {
+                action : 'dt_restore_default_options',
+                nonce  : dtAdminVars.nonce
+            }, function (response) {
+                if (response.success) {
+                    dtToast('success', '✔ Defaults restored! Reloading…', 3000);
+                    hasUnsaved = false;
+                    setTimeout(function () { window.location.reload(); }, 1500);
+                } else {
+                    $btn.prop('disabled', false).html(origHtml);
+                    dtToast('error', response.data || 'Reset failed. Please try again.');
+                }
+            }).fail(function () {
+                $btn.prop('disabled', false).html(origHtml);
+                dtToast('error', 'Network error — could not restore defaults.');
+            });
+        });
+    }
+
+    /* ── Factory Reset (backup tab button) ──────────────────────────────────── */
+    function initFactoryReset() {
+        $(document).on('click', '#dt-btn-factory-reset', function (e) {
+            e.preventDefault();
+            if (!confirm(
+                'FACTORY RESET\n\n' +
+                'This will permanently delete ALL your custom settings and restore the theme to its\n' +
+                'default demo state.\n\n' +
+                'This CANNOT be undone. Export a backup first!\n\n' +
+                'Are you absolutely sure?'
+            )) return;
 
             var $btn     = $(this);
             var origHtml = $btn.html();
             $btn.prop('disabled', true).text('Resetting…');
-            dtToast('info', 'Restoring default settings…', 2000);
+            dtToast('info', 'Factory reset in progress…', 2500);
 
-            $.post(
-                dtAdminVars.ajaxUrl,
-                {
-                    action : 'dt_restore_default_options',
-                    nonce  : dtAdminVars.nonce
-                },
-                function (response) {
-                    if (response.success) {
-                        dtToast('success', '✔ Defaults restored! Reloading…', 3000);
-                        setTimeout(function () {
-                            window.location.reload();
-                        }, 1500);
-                    } else {
-                        $btn.prop('disabled', false).html(origHtml);
-                        dtToast('error', response.data || 'Reset failed. Please try again.');
-                    }
+            $.post(dtAdminVars.ajaxUrl, {
+                action : 'dt_restore_default_options',
+                nonce  : dtAdminVars.nonce
+            }, function (response) {
+                if (response.success) {
+                    dtToast('success', '✔ Factory reset complete! Reloading…', 3000);
+                    hasUnsaved = false;
+                    setTimeout(function () { window.location.reload(); }, 1500);
+                } else {
+                    $btn.prop('disabled', false).html(origHtml);
+                    dtToast('error', response.data || 'Reset failed. Please try again.');
                 }
-            ).fail(function () {
+            }).fail(function () {
                 $btn.prop('disabled', false).html(origHtml);
-                dtToast('error', 'Network error — could not reset settings.');
+                dtToast('error', 'Network error — factory reset failed.');
+            });
+        });
+    }
+
+    /* ── AJAX Import (backup tab button) ────────────────────────────────────── */
+    function initAjaxImport() {
+        $(document).on('click', '#dt-btn-import-json', function (e) {
+            e.preventDefault();
+            var json = $('#dt-import-code').val().trim();
+
+            if (!json) {
+                dtToast('error', 'Please paste a JSON configuration string first.');
+                $('#dt-import-code').focus();
+                return;
+            }
+
+            // Validate JSON client-side before sending
+            try {
+                var parsed = JSON.parse(json);
+                if (typeof parsed !== 'object' || Array.isArray(parsed)) {
+                    throw new Error('Not an object');
+                }
+            } catch (err) {
+                dtToast('error', 'Invalid JSON — check the pasted configuration string.');
+                return;
+            }
+
+            if (!confirm(
+                'Import Configuration?\n\n' +
+                'This will overwrite ALL your current settings with the pasted configuration.\n' +
+                'This cannot be undone.\n\nProceed?'
+            )) return;
+
+            var $btn     = $(this);
+            var origHtml = $btn.html();
+            $btn.prop('disabled', true).text('Importing…');
+
+            $.post(dtAdminVars.ajaxUrl, {
+                action      : 'dt_import_theme_options',
+                nonce       : dtAdminVars.nonce,
+                import_json : json
+            }, function (response) {
+                if (response.success) {
+                    dtToast('success', '✔ Settings imported! Reloading…', 3000);
+                    hasUnsaved = false;
+                    setTimeout(function () { window.location.reload(); }, 1500);
+                } else {
+                    $btn.prop('disabled', false).html(origHtml);
+                    dtToast('error', response.data || 'Import failed. Check your JSON.');
+                }
+            }).fail(function () {
+                $btn.prop('disabled', false).html(origHtml);
+                dtToast('error', 'Network error — import failed.');
             });
         });
     }
@@ -491,6 +572,8 @@
         initAjaxSave();
         initKeyboardShortcuts();
         initRestoreDefaults();
+        initFactoryReset();
+        initAjaxImport();
         initExportCopy();
         initRolePricingWidget();
         initSetupWizard();

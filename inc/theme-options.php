@@ -138,6 +138,22 @@ function dt_ajax_restore_default_options(): void {
 }
 add_action( 'wp_ajax_dt_restore_default_options', 'dt_ajax_restore_default_options' );
 
+// ── AJAX Import Settings ─────────────────────────────────────────────────────
+function dt_ajax_import_theme_options(): void {
+    check_ajax_referer( 'dt_admin_nonce', 'nonce' );
+    if ( ! current_user_can( 'manage_options' ) ) {
+        wp_send_json_error( 'Permission denied.' );
+    }
+    $json_raw = isset( $_POST['import_json'] ) ? wp_unslash( $_POST['import_json'] ) : '';
+    $data     = json_decode( $json_raw, true );
+    if ( ! is_array( $data ) || empty( $data ) ) {
+        wp_send_json_error( 'Invalid JSON — paste a valid exported settings string.' );
+    }
+    update_option( 'dt_theme_options', $data );
+    wp_send_json_success( array( 'message' => 'Settings imported successfully!' ) );
+}
+add_action( 'wp_ajax_dt_import_theme_options', 'dt_ajax_import_theme_options' );
+
 // ── Render Options Page ─────────────────────────────────────────────────────
 function dt_render_theme_options_page(): void {
     if ( ! current_user_can( 'manage_options' ) ) return;
@@ -536,8 +552,7 @@ function dt_render_theme_options_page(): void {
                                     <div class="dt-section-title" style="margin-bottom:12px;">📥 Import Configuration</div>
                                     <p class="description" style="font-size:12px;color:var(--dt-text-muted);margin:0 0 12px;">Paste a previously exported JSON string to restore your settings.</p>
                                     <textarea name="dt_import_code" id="dt-import-code" class="dt-textarea" style="font-family:monospace;font-size:11px;min-height:130px;width:100%;max-width:100%;margin-bottom:12px;" placeholder="Paste JSON settings string here…"></textarea>
-                                    <button type="submit" name="dt_options_import" value="1" class="dt-btn-import"
-                                        onclick="return confirm('WARNING: This will overwrite ALL your current settings with the pasted configuration.\n\nThis cannot be undone. Proceed?');">
+                                    <button type="button" id="dt-btn-import-json" class="dt-btn-import">
                                         <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                                         Import Settings
                                     </button>
@@ -548,8 +563,7 @@ function dt_render_theme_options_page(): void {
                             <div class="dt-section" style="margin-top:24px;">
                                 <div class="dt-section-title" style="background:#fef2f2;border-left-color:#dc2626;color:#dc2626;">⚠️ Factory Reset</div>
                                 <p style="font-size:12px;color:var(--dt-text-muted);margin:0 0 16px;">This permanently overwrites <strong>all</strong> current settings with the default demo values. There is no undo — export a backup first if needed.</p>
-                                <button type="submit" name="dt_options_reset" value="1" class="dt-btn-danger-solid"
-                                    onclick="return confirm('FACTORY RESET\n\nThis will permanently delete all your custom settings and restore the theme to its default demo state.\n\nThis CANNOT be undone. Export a backup first!\n\nAre you absolutely sure?');">
+                                <button type="button" id="dt-btn-factory-reset" class="dt-btn-danger-solid">
                                     <svg style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.86"/></svg>
                                     Reset to Factory Defaults
                                 </button>
