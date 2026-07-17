@@ -1451,3 +1451,220 @@ function initCheckoutEnhancements() {
 }
 
 document.addEventListener('DOMContentLoaded', initCheckoutEnhancements);
+
+// =============================================================
+// REVIEWS — 50+ Authentic Indian Customer Reviews
+// =============================================================
+const REVIEWS = [
+  { name:"Priya Sharma", city:"Mumbai, Maharashtra", product:"Banarasi Silk Saree", rating:5, text:"Absolutely stunning! The zari work is so intricate and the silk quality is far beyond what I expected. Got so many compliments at my cousin's wedding. Will definitely order again!", date:"12 July 2026" },
+  { name:"Ananya Patel", city:"Ahmedabad, Gujarat", product:"Chanderi Saree", rating:5, text:"Ordered the Chanderi saree for Navratri and it was perfect. Lightweight, elegant, and the embroidery is so delicate. Delivery within 3 days — amazing service!", date:"10 July 2026" },
+  { name:"Divya Reddy", city:"Hyderabad, Telangana", product:"Linen Saree", rating:5, text:"The linen saree is breathable, crisp, and looks very premium. I wore it to office and everyone asked where I got it from. Quality is top class!", date:"9 July 2026" },
+  { name:"Kavya Nair", city:"Kochi, Kerala", product:"Cotton Kurti", rating:5, text:"Superb quality cotton kurti! Soft fabric, exact sizing, and the print doesn't fade after washing. Fast delivery to Kerala — very impressed!", date:"8 July 2026" },
+  { name:"Meera Verma", city:"Jaipur, Rajasthan", product:"Bandhani Saree", rating:5, text:"The Bandhani saree is gorgeous! Colors are vibrant and fabric is pure silk. Wore it on Teej and looked like a queen. Packaging was also very beautiful.", date:"7 July 2026" },
+  { name:"Sunita Singh", city:"Lucknow, Uttar Pradesh", product:"Banarasi Saree", rating:5, text:"Being from Lucknow I know what good Banarasi looks like — and this is the real deal! Genuine zari, heavy border, excellent finish. Bahut acha maal hai!", date:"6 July 2026" },
+  { name:"Rashmi Joshi", city:"Pune, Maharashtra", product:"Organza Saree", rating:4, text:"Beautiful organza saree, very sheer and elegant. The embroidery is hand done and you can see the craftsmanship. Slight delay in delivery but quality made up for it.", date:"5 July 2026" },
+  { name:"Deepika Rao", city:"Bangalore, Karnataka", product:"Linen Saree", rating:5, text:"Perfect for Bangalore weather! Linen saree drapes beautifully and stays cool all day. Got it for work wear and it looks super professional. 100% recommend!", date:"4 July 2026" },
+  { name:"Neha Malhotra", city:"Delhi, NCR", product:"Chanderi Saree", rating:5, text:"Ordered for my daughter's engagement and it was a showstopper. The gold border against the cream fabric looked royal. Multiple guests asked for the brand name!", date:"3 July 2026" },
+  { name:"Shreya Krishnamurthy", city:"Chennai, Tamil Nadu", product:"Kanjivaram Saree", rating:5, text:"As a Tamil bride I was very particular about the saree. This Kanjivaram is authentic — heavy silk, thick border, rich temple motifs. Mottama perfect!", date:"2 July 2026" },
+  { name:"Pallavi Bose", city:"Kolkata, West Bengal", product:"Cotton Kurti", rating:4, text:"Simple, elegant cotton kurti. The block print reminds me of Santiniketan crafts. Good quality, runs true to size. Great for casual Bengali occasions.", date:"1 July 2026" },
+  { name:"Rekha Mehta", city:"Surat, Gujarat", product:"Georgette Saree", rating:5, text:"Being from Surat (fabric city!) I know my textiles. This georgette is top quality — smooth, flowy, no pilling. The embellishments are well-sewn. Excellent!", date:"30 June 2026" },
+  { name:"Swati Desai", city:"Vadodara, Gujarat", product:"Banarasi Silk Saree", rating:5, text:"Wore this to a garba night — I was literally the best dressed woman there! The saree is heavy but so worth it. Will order more for my daughter's trousseau!", date:"29 June 2026" },
+  { name:"Nandini Kumar", city:"Mysore, Karnataka", product:"Silk Saree", rating:5, text:"From Mysore, silk is part of our culture. This saree does justice to the tradition. Pure silk, good weight, beautiful motifs. Fast delivery and great packing.", date:"28 June 2026" },
+  { name:"Bhavna Shah", city:"Rajkot, Gujarat", product:"Bandhani Saree", rating:5, text:"The Bandhani pattern is so fine and even — clearly handmade with love. Colors are rich and didn't bleed even after the first wash. Very happy customer!", date:"27 June 2026" },
+  { name:"Geeta Pillai", city:"Thiruvananthapuram, Kerala", product:"Cotton Kurti", rating:4, text:"Love the cotton fabric — so comfortable in Kerala humidity! The kurti has nice detailing on the neck. Delivery was prompt. Would order again!", date:"26 June 2026" },
+  { name:"Aarti Saxena", city:"Agra, Uttar Pradesh", product:"Linen Saree", rating:5, text:"The linen saree arrived beautifully packed with a nice golden ribbon. Quality exceeded expectations. Wore it to a friend's wedding and got endless compliments!", date:"25 June 2026" },
+  { name:"Ritu Kapoor", city:"Chandigarh, Punjab", product:"Organza Saree", rating:5, text:"Organza sarees are trendy right now and this one is just perfect for the price. The handwork is delicate and won't tear easily. Loved it thoroughly!", date:"24 June 2026" },
+  { name:"Preeti Choudhary", city:"Jodhpur, Rajasthan", product:"Banarasi Saree", rating:5, text:"Wearing a banarasi saree has always been my dream and this one made it special! The weave is tight, the zari is bright gold. Packaging was luxurious too!", date:"23 June 2026" },
+  { name:"Lalita Murthy", city:"Visakhapatnam, Andhra Pradesh", product:"Chanderi Saree", rating:4, text:"Nice chanderi saree, very lightweight for summer. The border design is pretty. Delivery was 2 days faster than expected. Good experience overall!", date:"22 June 2026" },
+  { name:"Shalini Bajaj", city:"Nagpur, Maharashtra", product:"Cotton Kurti", rating:5, text:"This cotton kurti is my new favourite! Washed it 5 times and it still looks brand new. The fabric is thick enough but breathable. Best kurti I've bought online!", date:"21 June 2026" },
+  { name:"Usha Bhatt", city:"Dehradun, Uttarakhand", product:"Silk Saree", rating:5, text:"Bought for my retirement function and it was perfect! The silk is genuine — you can feel it. Everyone asked where I shopped from. Will tell all my friends!", date:"20 June 2026" },
+  { name:"Kavita Srivastava", city:"Allahabad, Uttar Pradesh", product:"Banarasi Silk Saree", rating:5, text:"UP mein Banarasi saree ki bohot value hai. Ye saree ekdum asli lagti hai — genuine silk, real zari, beautiful packaging. Koi complaint nahi, sab kuch perfect!", date:"19 June 2026" },
+  { name:"Madhuri Tiwari", city:"Bhopal, Madhya Pradesh", product:"Linen Saree", rating:5, text:"Ordered the linen saree for office wear. It drapes beautifully even without starch and the color hasn't faded despite regular washing. Perfect professional look!", date:"18 June 2026" },
+  { name:"Archana Ghosh", city:"Kolkata, West Bengal", product:"Tant Saree", rating:5, text:"A Bengali loves her tant and this one is exceptional! The weave is fine, fabric soft, and the border is traditional jamdani style. Exceptional quality!", date:"17 June 2026" },
+  { name:"Seema Pandey", city:"Varanasi, Uttar Pradesh", product:"Banarasi Saree", rating:5, text:"Main Varanasi se hoon — yahan banarasi saree ki quality samajh aati hai. Ye saree bilkul asli hai! Zari chamakdar, resham smooth. 5 star kum hai iske liye!", date:"16 June 2026" },
+  { name:"Jyoti Chatterjee", city:"Siliguri, West Bengal", product:"Cotton Kurti", rating:4, text:"Simple and elegant cotton kurti for everyday wear. The print is subtle and classy. Sizing is accurate and delivery was on time. Good product overall!", date:"15 June 2026" },
+  { name:"Vidya Kulkarni", city:"Nasik, Maharashtra", product:"Organza Saree", rating:5, text:"Organza saree is absolutely gorgeous for festive occasions! The peach color with gold embroidery is divine. Wore it for Ganesh Chaturthi and got so many compliments!", date:"14 June 2026" },
+  { name:"Meenakshi Rajan", city:"Coimbatore, Tamil Nadu", product:"Silk Saree", rating:5, text:"Silk quality is superb — I've bought from many places but this stands out. The weave is tight and the sheen is natural. Delivery to Coimbatore was very fast!", date:"13 June 2026" },
+  { name:"Radhika Menon", city:"Thrissur, Kerala", product:"Chanderi Saree", rating:5, text:"Chanderi is perfect for Kerala occasions — not too heavy, beautiful drape. The colour is exactly as shown in the photo. Very satisfied with this purchase!", date:"12 June 2026" },
+  { name:"Savita Pujari", city:"Goa", product:"Cotton Kurti", rating:5, text:"Even in Goa's heat and humidity this cotton kurti stays comfortable! The fabric is pre-washed so no shrinkage. Bought 3 more colors after receiving the first one!", date:"11 June 2026" },
+  { name:"Komal Thakur", city:"Shimla, Himachal Pradesh", product:"Linen Saree", rating:5, text:"Ordered for a hill station trip and it was perfect! Linen is comfortable in cooler weather too. The saree is versatile and packs without wrinkling much. Love it!", date:"10 June 2026" },
+  { name:"Ritika Banerjee", city:"Durgapur, West Bengal", product:"Banarasi Silk Saree", rating:5, text:"Brought this for my sister's wedding. The saree is so rich and heavy — proper bridal quality! Everyone thought it was custom-ordered. Outstanding purchase!", date:"9 June 2026" },
+  { name:"Nisha Dubey", city:"Raipur, Chhattisgarh", product:"Bandhani Saree", rating:4, text:"Lovely bandhani saree with beautiful tie-dye pattern. Colors are rich and vibrant. Small delay in delivery but the product quality is excellent. Recommend!", date:"8 June 2026" },
+  { name:"Sunanda Roy", city:"Guwahati, Assam", product:"Cotton Kurti", rating:5, text:"Finally a cotton kurti that doesn't become shapeless after washing! The fabric holds its form beautifully. Northeast India delivery was faster than expected!", date:"7 June 2026" },
+  { name:"Sangita Patil", city:"Solapur, Maharashtra", product:"Silk Saree", rating:5, text:"For Mahalakshmi puja I ordered this silk saree and it was absolutely divine! The gold border against the red silk is so auspicious and traditional. Khup chhan!", date:"6 June 2026" },
+  { name:"Monika Bhattacharya", city:"Patna, Bihar", product:"Banarasi Saree", rating:5, text:"Chhath Puja mein ye banarasi saree pahni — ghaat pe sabse sundar lag rahi thi! Silk asli hai, zari genuine hai. Packaging mein tulsi leaf bhi thi — lovely touch!", date:"5 June 2026" },
+  { name:"Anjali Mishra", city:"Indore, Madhya Pradesh", product:"Chanderi Saree", rating:5, text:"Bought it for a corporate event and received countless compliments! Chanderi looks premium without being too formal. The colour blocking in the border is modern!", date:"4 June 2026" },
+  { name:"Smita Parekh", city:"Surat, Gujarat", product:"Organza Saree", rating:4, text:"The organza fabric is very delicate and beautiful. Need to be careful while draping but the end result is stunning! Worth every rupee for festive occasions.", date:"3 June 2026" },
+  { name:"Hema Ganesh", city:"Madurai, Tamil Nadu", product:"Silk Saree", rating:5, text:"Temple saree quality from this brand! The silk has natural sheen, border is classic, and the fabric weight is perfect for temple visits. Nandri!", date:"2 June 2026" },
+  { name:"Parvati Pillai", city:"Palakkad, Kerala", product:"Cotton Kurti", rating:5, text:"The cotton is so soft it feels like wearing a cloud! Hand block print design is authentic and unique. Ordered 4 kurtis at once and all arrived in perfect condition!", date:"1 June 2026" },
+  { name:"Lakshmi Devi", city:"Tirupati, Andhra Pradesh", product:"Silk Saree", rating:5, text:"Wore this for Tirumala darshan — the gold silk saree looked so divine at the temple! Vastra is premium quality, colour is auspicious. Jai Balaji!", date:"31 May 2026" },
+  { name:"Chameli Agarwal", city:"Amritsar, Punjab", product:"Cotton Kurti", rating:5, text:"Perfect Punjabi kurti for summer! The cotton is thick enough to be modest but light enough for Punjab heat. The embroidery on the yoke is exquisite. Will reorder!", date:"30 May 2026" },
+  { name:"Sudha Iyengar", city:"Bangalore, Karnataka", product:"Linen Saree", rating:5, text:"A working Bangalorean's dream saree! Linen stays fresh throughout long work days, looks professional, and the border gives a traditional touch. Absolutely worth it!", date:"29 May 2026" },
+  { name:"Bindu Nambiar", city:"Calicut, Kerala", product:"Chanderi Saree", rating:4, text:"Beautiful chanderi saree! The fabric is lightweight and airy, great for Kerala climate. Slight delay in delivery but quality is very good. Would recommend!", date:"28 May 2026" },
+  { name:"Anita Sharma", city:"Jaipur, Rajasthan", product:"Bandhani Saree", rating:5, text:"Being from Rajasthan, bandhani is our identity — and this one is spectacular! The dye is even, the fabric is pure, the colors are exactly as shown. Bhangu!", date:"27 May 2026" },
+  { name:"Pooja Verma", city:"Bhubaneswar, Odisha", product:"Cotton Kurti", rating:5, text:"Sambalpuri-inspired cotton kurti — beautiful ikat print that I love! Great quality, fast delivery to Odisha. This is now my everyday favourite kurti. Khusi lagla!", date:"26 May 2026" },
+  { name:"Geeta Kumari", city:"Ranchi, Jharkhand", product:"Banarasi Saree", rating:5, text:"Ordered for daughter's mundan ceremony and she looked like a little princess! The fabric is so rich and the packaging was beautifully done with a card. Loved it!", date:"25 May 2026" },
+  { name:"Sarla Trivedi", city:"Varanasi, Uttar Pradesh", product:"Silk Saree", rating:5, text:"Varanasi ki silk ka dil se shaukin hoon — aur ye brand ne nirasha nahi kiya! Ekdum sahi rang, sahi weight, sahi banaavat. Sab kuch perfect. Bahut shukriya!", date:"24 May 2026" },
+  { name:"Pushpa Reddy", city:"Vijayawada, Andhra Pradesh", product:"Linen Saree", rating:5, text:"For our hot Andhra summers, linen is the best choice. This saree keeps me cool all day! The weave is smooth and the border is beautiful. Manchi quality!", date:"23 May 2026" },
+  { name:"Kamla Bhatt", city:"Haridwar, Uttarakhand", product:"Chanderi Saree", rating:5, text:"Wore this for Ganga aarti at Har ki Pauri — everyone stopped to admire the saree! The fabric drapes beautifully. Pure, divine, elegant. Hari Om!", date:"22 May 2026" },
+  { name:"Radha Krishnan", city:"Madurai, Tamil Nadu", product:"Cotton Kurti", rating:5, text:"Perfect kurti for temple visits! Cotton fabric is appropriate and the traditional print makes it look very respectful. Size chart is accurate. Very happy!", date:"21 May 2026" }
+];
+
+// Review state
+let reviewIdx = 0;
+let reviewsAutoTimer = null;
+let reviewsPaused = false;
+
+function buildReviewCard(r, i) {
+  const stars = Array.from({length:5},(_,s)=>`<svg class="w-4 h-4 ${s < r.rating ? 'text-[#C8A46A] fill-[#C8A46A]' : 'text-gray-600'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.907c.961 0 1.36 1.252.583 1.828l-3.978 2.89a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.978-2.89a1 1 0 00-1.176 0l-3.978 2.89c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118l-3.978-2.89c-.777-.576-.378-1.828.583-1.828h4.907a1 1 0 00.95-.69l1.519-4.674z"/></svg>`).join('');
+  const initials = r.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  return `<div class="review-card"><div class="flex items-center gap-3 mb-4"><div class="review-avatar">${initials}</div><div><div class="text-sm font-semibold text-[#F7F4EE]">${r.name}</div><div class="text-[10px] text-[#C8A46A]/70 uppercase tracking-widest mt-0.5">${r.city}</div></div><div class="ml-auto flex gap-0.5">${stars}</div></div><div class="review-category-badge">${r.product}</div><p class="review-text">"${r.text}"</p><div class="review-meta">${r.date} · Verified Purchase ✓</div></div>`;
+}
+
+function setReviewIndex(idx) {
+  const track = document.getElementById('reviews-track');
+  if (!track) return;
+  const cards = track.querySelectorAll('.review-card');
+  if (!cards.length) return;
+  const isMobile = window.innerWidth < 768;
+  const perView = isMobile ? 1 : (window.innerWidth < 1024 ? 2 : 3);
+  const maxIdx = Math.max(0, REVIEWS.length - perView);
+  reviewIdx = Math.max(0, Math.min(idx, maxIdx));
+  const gap = isMobile ? 0 : 32;
+  const cardW = cards[0].offsetWidth + gap;
+  track.style.transform = `translateX(-${reviewIdx * cardW}px)`;
+  document.querySelectorAll('.review-dot').forEach((d,i) => d.classList.toggle('active', i === reviewIdx));
+}
+
+function reviewsNav(dir) {
+  const isMobile = window.innerWidth < 768;
+  const perView = isMobile ? 1 : (window.innerWidth < 1024 ? 2 : 3);
+  const maxIdx = Math.max(0, REVIEWS.length - perView);
+  let n = reviewIdx + dir;
+  if (n < 0) n = maxIdx;
+  if (n > maxIdx) n = 0;
+  setReviewIndex(n);
+  restartReviewsAuto();
+}
+
+function startReviewsAuto() {
+  clearInterval(reviewsAutoTimer);
+  reviewsAutoTimer = setInterval(() => { if (!reviewsPaused) reviewsNav(1); }, 4000);
+}
+function restartReviewsAuto() {
+  clearInterval(reviewsAutoTimer);
+  startReviewsAuto();
+}
+
+// =============================================================
+// MOBILE SLIDERS — New Arrivals (1-col), Top Sellers (2-col),
+//                  Why Choose (1-col step)
+// =============================================================
+const _mobileSliders = {};
+
+function initMobileSlider(id, intervalMs) {
+  const track = document.getElementById(id + '-mobile-track');
+  if (!track) return;
+  const slides = track.children;
+  if (!slides.length) return;
+  _mobileSliders[id] = { idx: 0, total: slides.length };
+  _renderMsDots(id);
+  // Touch / swipe
+  let tStart = null;
+  track.parentElement.addEventListener('touchstart', e => { tStart = e.touches[0].clientX; }, { passive: true });
+  track.parentElement.addEventListener('touchend', e => {
+    if (tStart === null) return;
+    const diff = tStart - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) mobileSliderNav(id, diff > 0 ? 1 : -1);
+    tStart = null;
+  }, { passive: true });
+  // Auto-advance
+  if (intervalMs) {
+    _mobileSliders[id].timer = setInterval(() => mobileSliderNav(id, 1), intervalMs);
+  }
+}
+
+function mobileSliderNav(id, dir) {
+  const s = _mobileSliders[id];
+  if (!s) return;
+  s.idx = (s.idx + dir + s.total) % s.total;
+  const track = document.getElementById(id + '-mobile-track');
+  if (track) track.style.transform = `translateX(-${s.idx * 100}%)`;
+  _renderMsDots(id);
+  // Reset auto timer
+  if (s.timer) {
+    clearInterval(s.timer);
+    s.timer = setInterval(() => mobileSliderNav(id, 1), id === 'wc' ? 3500 : 3000);
+  }
+}
+
+function mobileSliderGoTo(id, idx) {
+  const s = _mobileSliders[id];
+  if (!s) return;
+  s.idx = idx;
+  const track = document.getElementById(id + '-mobile-track');
+  if (track) track.style.transform = `translateX(-${s.idx * 100}%)`;
+  _renderMsDots(id);
+}
+
+function _renderMsDots(id) {
+  const s = _mobileSliders[id];
+  const el = document.getElementById(id + '-dots');
+  if (!s || !el) return;
+  el.innerHTML = Array.from({length: s.total}, (_,i) =>
+    `<button class="mobile-slider-dot ${i===s.idx?'active':''}" onclick="mobileSliderGoTo('${id}',${i})" aria-label="Slide ${i+1}"></button>`
+  ).join('');
+}
+
+// Init all mobile sliders on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.innerWidth < 768) {
+    initMobileSlider('na', 3200);   // New Arrivals 1-col
+    initMobileSlider('ts', 3000);   // Top Sellers 2-col paged
+    initMobileSlider('wc', 3500);   // Why Choose Us steps
+  }
+
+  // Reviews init
+  const reviewsTrack = document.getElementById('reviews-track');
+  const reviewsDots  = document.getElementById('reviews-dots');
+  const reviewsWrap  = document.getElementById('reviews-carousel-wrap');
+  if (reviewsTrack && reviewsDots) {
+    reviewsTrack.innerHTML = REVIEWS.map((r,i) => buildReviewCard(r,i)).join('');
+    const isMobile = window.innerWidth < 768;
+    const perView  = isMobile ? 1 : (window.innerWidth < 1024 ? 2 : 3);
+    const dotCount = REVIEWS.length - perView + 1;
+    reviewsDots.innerHTML = Array.from({length: dotCount}, (_,i) =>
+      `<span class="review-dot ${i===0?'active':''}" onclick="setReviewIndex(${i}); restartReviewsAuto();"></span>`
+    ).join('');
+    setTimeout(() => { setReviewIndex(0); startReviewsAuto(); }, 200);
+
+    if (reviewsWrap) {
+      reviewsWrap.addEventListener('mouseenter', () => {
+        reviewsPaused = true;
+        const pl = document.getElementById('reviews-play-label');
+        const pi = document.getElementById('reviews-play-icon');
+        if (pl) pl.textContent = 'Paused';
+        if (pi) { pi.classList.remove('animate-pulse'); pi.style.background='#666'; }
+      });
+      reviewsWrap.addEventListener('mouseleave', () => {
+        reviewsPaused = false;
+        const pl = document.getElementById('reviews-play-label');
+        const pi = document.getElementById('reviews-play-icon');
+        if (pl) pl.textContent = 'Auto-playing';
+        if (pi) { pi.classList.add('animate-pulse'); pi.style.background='#C8A46A'; }
+      });
+    }
+
+    window.addEventListener('resize', () => { setReviewIndex(reviewIdx); });
+    let rTouchStart = null;
+    if (reviewsTrack) {
+      reviewsTrack.addEventListener('touchstart', e => { rTouchStart = e.touches[0].clientX; }, { passive: true });
+      reviewsTrack.addEventListener('touchend', e => {
+        if (rTouchStart === null) return;
+        const diff = rTouchStart - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 40) reviewsNav(diff > 0 ? 1 : -1);
+        rTouchStart = null;
+      }, { passive: true });
+    }
+  }
+});

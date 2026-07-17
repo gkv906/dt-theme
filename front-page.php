@@ -440,17 +440,32 @@ if ( $show_new_arrivals ) {
             }
             ?>
 
-            <!-- Mobile: 2-col grid | Desktop: 1-line horizontal slider -->
-            <div id="new-arrivals-grid" class="grid grid-cols-2 gap-x-4 gap-y-10 md:hidden">
-                <?php
-                if ( ! empty( $p_ids ) ) {
-                    $delay = 0;
-                    foreach ( $p_ids as $pid ) {
-                        $render_product_grid_card( $pid, $delay );
-                        $delay += 80;
-                    }
-                }
-                ?>
+            <!-- Mobile: 1-col auto slider | Desktop: 1-line horizontal slider -->
+            <div class="md:hidden" id="na-mobile-wrap">
+                <div class="overflow-hidden rounded-sm">
+                    <div id="na-mobile-track" class="flex" style="transition: transform 0.52s cubic-bezier(0.25,0.46,0.45,0.94); will-change: transform;">
+                        <?php
+                        if ( ! empty( $p_ids ) ) {
+                            $delay = 0;
+                            foreach ( $p_ids as $pid ) {
+                                echo '<div class="na-mobile-slide w-full shrink-0 px-2">';
+                                $render_product_grid_card( $pid, $delay );
+                                echo '</div>';
+                                $delay += 80;
+                            }
+                        }
+                        ?>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between mt-5 px-1">
+                    <button onclick="mobileSliderNav('na', -1)" class="mobile-slider-btn" aria-label="Previous">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <div id="na-dots" class="flex items-center gap-2"></div>
+                    <button onclick="mobileSliderNav('na', 1)" class="mobile-slider-btn" aria-label="Next">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
             </div>
             <div id="new-arrivals-slider" class="hidden md:flex arrivals-slider overflow-x-auto gap-6 pb-6 -mx-4 px-4 no-scrollbar">
                 <?php
@@ -628,17 +643,39 @@ if ( $show_top_sellers ) {
             }
             ?>
 
-            <!-- Mobile: 2-col grid | Desktop: 1-line horizontal slider -->
-            <div id="top-sellers-grid" class="grid grid-cols-2 gap-x-4 gap-y-10 md:hidden">
-                <?php
-                if ( ! empty( $best_ids ) ) {
-                    $delay = 0;
-                    foreach ( $best_ids as $pid ) {
-                        $render_product_grid_card( $pid, $delay, true );
-                        $delay += 80;
-                    }
-                }
-                ?>
+            <!-- Mobile: 2-col paged auto slider | Desktop: 1-line horizontal slider -->
+            <div class="md:hidden" id="ts-mobile-wrap">
+                <div class="overflow-hidden rounded-sm">
+                    <div id="ts-mobile-track" class="flex" style="transition: transform 0.52s cubic-bezier(0.25,0.46,0.45,0.94); will-change: transform;">
+                        <?php
+                        if ( ! empty( $best_ids ) ) {
+                            $delay      = 0;
+                            $pair_idx   = 0;
+                            $best_count = count( $best_ids );
+                            foreach ( $best_ids as $pid ) {
+                                if ( $pair_idx % 2 === 0 ) {
+                                    echo '<div class="ts-mobile-slide w-full shrink-0"><div class="grid grid-cols-2 gap-3 px-1">';
+                                }
+                                $render_product_grid_card( $pid, $delay, true );
+                                $pair_idx++;
+                                if ( $pair_idx % 2 === 0 || $pair_idx === $best_count ) {
+                                    echo '</div></div>';
+                                }
+                                $delay += 80;
+                            }
+                        }
+                        ?>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between mt-5 px-1">
+                    <button onclick="mobileSliderNav('ts', -1)" class="mobile-slider-btn" aria-label="Previous">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <div id="ts-dots" class="flex items-center gap-2"></div>
+                    <button onclick="mobileSliderNav('ts', 1)" class="mobile-slider-btn" aria-label="Next">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
             </div>
             <div id="top-sellers-slider" class="hidden md:flex arrivals-slider overflow-x-auto gap-6 pb-6 -mx-4 px-4 no-scrollbar">
                 <?php
@@ -691,8 +728,44 @@ ob_start();
                 </p>
             </div>
 
-            <!-- Feature Cards Bento Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <!-- Feature Cards: Mobile auto-slider | Desktop 3-col grid -->
+            <!-- Mobile slider -->
+            <div class="md:hidden" id="wc-mobile-wrap">
+                <div class="overflow-hidden">
+                    <div id="wc-mobile-track" class="flex" style="transition: transform 0.52s cubic-bezier(0.25,0.46,0.45,0.94); will-change: transform;">
+                        <div class="wc-mobile-slide w-full shrink-0 px-1">
+                            <div class="wc-card group"><div class="wc-number">01</div><div class="wc-icon-frame"><i data-lucide="gem" class="w-7 h-7"></i></div><h4 class="wc-title">Premium Quality</h4><p class="wc-desc">Handpicked mulberry silks and pure zari, woven under strict quality supervision at every loom.</p><div class="wc-arrow"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></div></div>
+                        </div>
+                        <div class="wc-mobile-slide w-full shrink-0 px-1">
+                            <div class="wc-card group"><div class="wc-number">02</div><div class="wc-icon-frame"><i data-lucide="shield-check" class="w-7 h-7"></i></div><h4 class="wc-title">Direct From Weavers</h4><p class="wc-desc">Zero middlemen. Every ₹ you spend reaches the hands that spun the silk — fair wages, honest pricing.</p><div class="wc-arrow"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></div></div>
+                        </div>
+                        <div class="wc-mobile-slide w-full shrink-0 px-1">
+                            <div class="wc-card group"><div class="wc-number">03</div><div class="wc-icon-frame"><i data-lucide="sparkles" class="w-7 h-7"></i></div><h4 class="wc-title">Timeless Designs</h4><p class="wc-desc">Heritage motifs reimagined for the modern woman — created by an in-house design studio led by NIFT alumni.</p><div class="wc-arrow"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></div></div>
+                        </div>
+                        <div class="wc-mobile-slide w-full shrink-0 px-1">
+                            <div class="wc-card group"><div class="wc-number">04</div><div class="wc-icon-frame"><i data-lucide="truck" class="w-7 h-7"></i></div><h4 class="wc-title">Fast Delivery</h4><p class="wc-desc">Insured DHL Express delivery to 40+ countries — 3-5 business days in India, 5-10 abroad. On us.</p><div class="wc-arrow"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></div></div>
+                        </div>
+                        <div class="wc-mobile-slide w-full shrink-0 px-1">
+                            <div class="wc-card group"><div class="wc-number">05</div><div class="wc-icon-frame"><i data-lucide="refresh-ccw" class="w-7 h-7"></i></div><h4 class="wc-title">7-Day Easy Returns</h4><p class="wc-desc">Hassle-free returns and exchanges within a week — because we know a saree deserves the perfect moment.</p><div class="wc-arrow"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></div></div>
+                        </div>
+                        <div class="wc-mobile-slide w-full shrink-0 px-1">
+                            <div class="wc-card group"><div class="wc-number">06</div><div class="wc-icon-frame"><i data-lucide="award" class="w-7 h-7"></i></div><h4 class="wc-title">Certified Authentic</h4><p class="wc-desc">Every drape ships with a Silk Mark Certificate of Authenticity — signed by the master weaver himself.</p><div class="wc-arrow"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between mt-5 px-1">
+                    <button onclick="mobileSliderNav('wc', -1)" class="mobile-slider-btn" aria-label="Previous">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <div id="wc-dots" class="flex items-center gap-2"></div>
+                    <button onclick="mobileSliderNav('wc', 1)" class="mobile-slider-btn" aria-label="Next">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Desktop 3-col grid -->
+            <div class="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 <div class="wc-card group delay-0">
                     <div class="wc-number">01</div>
                     <div class="wc-icon-frame"><i data-lucide="gem" class="w-7 h-7"></i></div>
@@ -700,7 +773,6 @@ ob_start();
                     <p class="wc-desc">Handpicked mulberry silks and pure zari, woven under strict quality supervision at every loom.</p>
                     <div class="wc-arrow"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></div>
                 </div>
-
                 <div class="wc-card group delay-08">
                     <div class="wc-number">02</div>
                     <div class="wc-icon-frame"><i data-lucide="shield-check" class="w-7 h-7"></i></div>
@@ -708,7 +780,6 @@ ob_start();
                     <p class="wc-desc">Zero middlemen. Every ₹ you spend reaches the hands that spun the silk — fair wages, honest pricing.</p>
                     <div class="wc-arrow"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></div>
                 </div>
-
                 <div class="wc-card group delay-16">
                     <div class="wc-number">03</div>
                     <div class="wc-icon-frame"><i data-lucide="sparkles" class="w-7 h-7"></i></div>
@@ -716,15 +787,13 @@ ob_start();
                     <p class="wc-desc">Heritage motifs reimagined for the modern woman — created by an in-house design studio led by NIFT alumni.</p>
                     <div class="wc-arrow"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></div>
                 </div>
-
                 <div class="wc-card group delay-24">
                     <div class="wc-number">04</div>
                     <div class="wc-icon-frame"><i data-lucide="truck" class="w-7 h-7"></i></div>
-                    <h4 class="wc-title">Free Worldwide Shipping</h4>
+                    <h4 class="wc-title">Fast Delivery</h4>
                     <p class="wc-desc">Insured DHL Express delivery to 40+ countries — 3-5 business days in India, 5-10 abroad. On us.</p>
                     <div class="wc-arrow"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></div>
                 </div>
-
                 <div class="wc-card group delay-32">
                     <div class="wc-number">05</div>
                     <div class="wc-icon-frame"><i data-lucide="refresh-ccw" class="w-7 h-7"></i></div>
@@ -732,7 +801,6 @@ ob_start();
                     <p class="wc-desc">Hassle-free returns and exchanges within a week — because we know a saree deserves the perfect moment.</p>
                     <div class="wc-arrow"><i data-lucide="arrow-up-right" class="w-4 h-4"></i></div>
                 </div>
-
                 <div class="wc-card group delay-40">
                     <div class="wc-number">06</div>
                     <div class="wc-icon-frame"><i data-lucide="award" class="w-7 h-7"></i></div>
@@ -947,47 +1015,7 @@ echo '</main>';
         }, { threshold: 0.3 });
         wcStats.forEach(s => wcObserver.observe(s));
 
-        // Testimonials init
-        const reviewsTrack = document.getElementById('reviews-track');
-        const reviewsDots = document.getElementById('reviews-dots');
-        const reviewsWrap = document.getElementById('reviews-carousel-wrap');
-        if (reviewsTrack && reviewsDots) {
-            reviewsTrack.innerHTML = REVIEWS.map((r, i) => buildReviewCard(r, i)).join('');
-            reviewsDots.innerHTML = REVIEWS.map((_, i) => `<span class="review-dot ${i===0?'active':''}" onclick="setReviewIndex(${i}); restartReviewsAuto();"></span>`).join('');
-
-            setTimeout(() => {
-                setReviewIndex(0);
-                startReviewsAuto();
-            }, 200);
-
-            if (reviewsWrap) {
-                reviewsWrap.addEventListener('mouseenter', () => {
-                    reviewsPaused = true;
-                    document.querySelectorAll('.review-dot.active').forEach(d => d.classList.add('paused'));
-                    document.getElementById('reviews-play-label').textContent = 'Paused';
-                    document.getElementById('reviews-play-icon').classList.remove('animate-pulse');
-                    document.getElementById('reviews-play-icon').style.background = '#666';
-                });
-                reviewsWrap.addEventListener('mouseleave', () => {
-                    reviewsPaused = false;
-                    document.querySelectorAll('.review-dot.active').forEach(d => d.classList.remove('paused'));
-                    document.getElementById('reviews-play-label').textContent = 'Auto-playing';
-                    document.getElementById('reviews-play-icon').classList.add('animate-pulse');
-                    document.getElementById('reviews-play-icon').style.background = '#C8A46A';
-                });
-            }
-
-            window.addEventListener('resize', () => setReviewIndex(reviewIdx));
-
-            let touchStart = null;
-            reviewsTrack.addEventListener('touchstart', (e) => { touchStart = e.touches[0].clientX; }, { passive: true });
-            reviewsTrack.addEventListener('touchend', (e) => {
-                if (touchStart == null) return;
-                const diff = touchStart - e.changedTouches[0].clientX;
-                if (Math.abs(diff) > 40) { reviewsNav(diff > 0 ? 1 : -1); }
-                touchStart = null;
-            }, { passive: true });
-        }
+    // Reviews & mobile sliders are initialized in main.js
     });
 </script>
 
