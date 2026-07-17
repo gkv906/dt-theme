@@ -9875,3 +9875,107 @@ body.woocommerce-checkout .woocommerce-message {
     margin-bottom: 0 !important;
   }
 }
+
+/* ================================================================
+   MOBILE UI IMPROVEMENTS — Gap fixes, performance, smoothness
+   ================================================================ */
+
+/* ── Content Visibility: off-screen sections render lazily ─── */
+.why-choose-section,
+.reviews-section,
+.footer-luxury {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 600px;
+}
+
+/* ── wc-card: tighter padding on mobile ────────────────────── */
+@media (max-width: 767px) {
+  .wc-card {
+    padding: 1.75rem 1.25rem;
+  }
+  .wc-icon-frame {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+  }
+  .wc-number {
+    font-size: 80px;
+  }
+  .wc-title {
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+  }
+  .wc-desc {
+    font-size: 0.8rem;
+    line-height: 1.55;
+  }
+}
+
+/* ── Category circles: tighter gap on mobile ───────────────── */
+@media (max-width: 767px) {
+  .flex.overflow-x-auto.md\:justify-center.gap-8 {
+    gap: 1.25rem;
+  }
+}
+
+/* ── Mobile section heading margins ────────────────────────── */
+@media (max-width: 767px) {
+  .reviews-section .text-center.mb-8 {
+    margin-bottom: 1.5rem;
+  }
+  /* Reduce very large Cormorant number in reviews background */
+  .reviews-section .absolute .font-serif {
+    font-size: 200px !important;
+  }
+}
+
+/* ── Touch targets: fast tap feedback ─────────────────────── */
+.cat-chip,
+.mbn-item,
+.mobile-slider-btn,
+.arrival-card,
+.btn-gold-shimmer {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* ── Mobile slider: smooth momentum scrolling ─────────────── */
+#na-mobile-wrap .overflow-hidden,
+#ts-mobile-wrap .overflow-hidden,
+#wc-mobile-wrap .overflow-hidden {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+/* ── Reduce animation complexity on low-power mobile ──────── */
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  #na-mobile-track,
+  #ts-mobile-track,
+  #wc-mobile-track {
+    will-change: transform;
+  }
+}
+
+/* ── Mobile bottom nav: safe-area normalization ───────────── */
+@media (max-width: 767px) {
+  .mobile-bottom-nav {
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 0px);
+  }
+  .safe-area-bottom {
+    padding-bottom: max(env(safe-area-inset-bottom, 8px), 8px);
+  }
+  /* Body bottom padding matches nav height + safe area */
+  body.pb-24 {
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ── Announcement bar: prevent layout shift ───────────────── */
+#announcement-bar-content {
+  min-height: 2.5rem;
+}
+
+/* ── Image rendering: crisp on high-DPI ───────────────────── */
+.w-full.h-full.object-cover {
+  image-rendering: -webkit-optimize-contrast;
+}

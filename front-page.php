@@ -281,6 +281,8 @@ ob_start();
                 src="<?php echo esc_url( $hero_bg ); ?>" 
                 alt="Luxury Saree" 
                 class="w-full h-full object-cover animate-hero-img opacity-80"
+                fetchpriority="high"
+                decoding="sync"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
             <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/80"></div>
@@ -322,9 +324,9 @@ $sections['hero'] = ob_get_clean();
 ob_start();
 ?>
 <!-- Fabrics Category Slider -->
-    <section class="pt-6 pb-16 border-b border-[#C8A46A]/10 bg-black">
+    <section class="pt-4 pb-10 md:pt-6 md:pb-16 border-b border-[#C8A46A]/10 bg-black">
         <div class="container mx-auto px-4">
-            <div class="text-center mb-10 reveal-on-scroll">
+            <div class="text-center mb-6 md:mb-10 reveal-on-scroll">
                 <span class="text-xs uppercase tracking-[0.35em] text-[#C8A46A]/70 block mb-2 font-medium"><?php esc_html_e( 'Artisan Textures', 'dt-ecommerce-theme' ); ?></span>
                 <h3 class="font-serif text-3xl md:text-5xl font-bold text-[#C8A46A] select-none" style="background:none;-webkit-text-fill-color:#C8A46A;"><?php esc_html_e( 'Shop by Fabric', 'dt-ecommerce-theme' ); ?></h3>
                 <div class="flex items-center justify-center gap-3 mt-4">
@@ -401,9 +403,9 @@ $sections['categories'] = ob_get_clean();
 if ( $show_new_arrivals ) {
     ob_start();
     ?>
-    <section class="py-24 bg-[#050505] overflow-hidden" <?php echo ! empty( $padding_arrivals ) ? 'style="padding-top:' . esc_attr( $padding_arrivals ) . ';padding-bottom:' . esc_attr( $padding_arrivals ) . ';"': ""; ?>>
+    <section class="py-12 md:py-24 bg-[#050505] overflow-hidden" <?php echo ! empty( $padding_arrivals ) ? 'style="padding-top:' . esc_attr( $padding_arrivals ) . ';padding-bottom:' . esc_attr( $padding_arrivals ) . ';"': ""; ?>>
         <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 reveal-on-scroll">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 md:gap-6 mb-6 md:mb-12 reveal-on-scroll">
                 <div class="text-center md:text-left">
                     <span class="text-xs uppercase tracking-[0.35em] text-[#C8A46A]/60 block mb-2 font-medium"><?php esc_html_e( 'Fresh Off The Loom', 'dt-ecommerce-theme' ); ?></span>
                     <h2 class="font-serif text-4xl md:text-5xl text-[#C8A46A] leading-tight" style="background:none;-webkit-text-fill-color:#C8A46A;"><?php esc_html_e( 'New Arrivals', 'dt-ecommerce-theme' ); ?></h2>
@@ -479,7 +481,7 @@ if ( $show_new_arrivals ) {
                 ?>
             </div>
 
-            <div class="mt-14 text-center reveal-on-scroll">
+            <div class="mt-8 md:mt-14 text-center reveal-on-scroll">
                 <a href="<?php echo esc_url( class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : home_url( '/shop/' ) ); ?>" class="inline-flex items-center gap-3 border border-[#C8A46A] text-[#C8A46A] px-10 py-4 uppercase tracking-widest text-sm hover:bg-[#C8A46A] hover:text-black transition-all group">
                     <?php esc_html_e( 'View All Arrivals', 'dt-ecommerce-theme' ); ?>
                     <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
@@ -544,7 +546,7 @@ $sections['ticker'] = ob_get_clean();
 ob_start();
 ?>
 <!-- Premium Banners -->
-    <section class="py-24 bg-[#050505]">
+    <section class="py-8 md:py-24 bg-[#050505]">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 md:h-[70vh]">
                 <!-- Banner 1 -->
@@ -597,9 +599,9 @@ $sections['banners'] = ob_get_clean();
 if ( $show_top_sellers ) {
     ob_start();
     ?>
-    <section class="py-24 border-t border-[#C8A46A]/10 bg-black overflow-hidden" <?php echo ! empty( $padding_topsellers ) ? 'style="padding-top:' . esc_attr( $padding_topsellers ) . ';padding-bottom:' . esc_attr( $padding_topsellers ) . ';"': ""; ?>>
+    <section class="py-12 md:py-24 border-t border-[#C8A46A]/10 bg-black overflow-hidden" <?php echo ! empty( $padding_topsellers ) ? 'style="padding-top:' . esc_attr( $padding_topsellers ) . ';padding-bottom:' . esc_attr( $padding_topsellers ) . ';"': ""; ?>>
         <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 reveal-on-scroll">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 md:gap-6 mb-6 md:mb-12 reveal-on-scroll">
                 <div class="text-center md:text-left">
                     <span class="text-xs uppercase tracking-[0.35em] text-[#C8A46A]/60 block mb-2 font-medium"><?php esc_html_e( 'Atelier Favorites', 'dt-ecommerce-theme' ); ?></span>
                     <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#C8A46A] select-none leading-tight" style="background:none;-webkit-text-fill-color:#C8A46A;"><?php esc_html_e( 'Top Selling Styles', 'dt-ecommerce-theme' ); ?></h2>
@@ -689,7 +691,7 @@ if ( $show_top_sellers ) {
                 ?>
             </div>
 
-            <div class="mt-14 text-center reveal-on-scroll">
+            <div class="mt-8 md:mt-14 text-center reveal-on-scroll">
                 <a href="<?php echo esc_url( class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : home_url( '/shop/' ) ); ?>" class="inline-flex items-center gap-3 border border-[#C8A46A] text-[#C8A46A] px-10 py-4 uppercase tracking-widest text-sm hover:bg-[#C8A46A] hover:text-black transition-all group">
                     <?php esc_html_e( 'Shop All Bestsellers', 'dt-ecommerce-theme' ); ?>
                     <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
@@ -705,7 +707,7 @@ if ( $show_top_sellers ) {
 ob_start();
 ?>
 <!-- Why Choose Us - Redesigned Bento Grid -->
-    <section class="why-choose-section relative py-24 md:py-32 overflow-hidden border-t border-b border-[#C8A46A]/10">
+    <section class="why-choose-section relative py-12 md:py-32 overflow-hidden border-t border-b border-[#C8A46A]/10">
         <div class="absolute inset-0 pointer-events-none">
             <div class="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-[#C8A46A]/[0.03] blur-3xl rounded-full"></div>
             <div class="absolute top-0 right-0 w-80 h-80 bg-[#C8A46A]/[0.02] blur-3xl rounded-full"></div>
@@ -713,7 +715,7 @@ ob_start();
         </div>
 
         <div class="container mx-auto px-4 relative z-10">
-            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16 md:mb-20 reveal-on-scroll">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 md:gap-8 mb-8 md:mb-20 reveal-on-scroll">
                 <div class="max-w-xl">
                     <span class="text-xs uppercase tracking-[0.4em] text-[#C8A46A]/70 block mb-4 font-medium"><?php esc_html_e( 'The Arshman Promise', 'dt-ecommerce-theme' ); ?></span>
                     <h2 class="font-serif text-4xl md:text-6xl leading-[1.05] mb-6">
@@ -811,7 +813,7 @@ ob_start();
             </div>
 
             <!-- Stats Row -->
-            <div class="wc-stats grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 pt-14 border-t border-[#C8A46A]/10 reveal-on-scroll">
+            <div class="wc-stats grid grid-cols-2 md:grid-cols-4 gap-6 mt-10 pt-8 md:mt-16 md:pt-14 border-t border-[#C8A46A]/10 reveal-on-scroll">
                 <div class="text-center wc-stat">
                     <div class="font-serif text-4xl md:text-5xl text-[#C8A46A] mb-2" data-count="15">15+</div>
                     <div class="text-[10px] uppercase tracking-widest text-gray-400">Years of Craft</div>
@@ -838,7 +840,7 @@ $sections['promise'] = ob_get_clean();
 if ( $show_reviews ) {
     ob_start();
     ?>
-    <section class="reviews-section relative py-24 md:py-32 overflow-hidden" <?php echo ! empty( $padding_reviews ) ? 'style="padding-top:' . esc_attr( $padding_reviews ) . ';padding-bottom:' . esc_attr( $padding_reviews ) . ';"': ""; ?>>
+    <section class="reviews-section relative py-12 md:py-32 overflow-hidden" <?php echo ! empty( $padding_reviews ) ? 'style="padding-top:' . esc_attr( $padding_reviews ) . ';padding-bottom:' . esc_attr( $padding_reviews ) . ';"': ""; ?>>
         <div class="absolute inset-0 pointer-events-none">
             <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full bg-[#C8A46A]/[0.04] blur-3xl"></div>
             <div class="absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-[#C8A46A]/[0.03] blur-3xl"></div>
@@ -848,7 +850,7 @@ if ( $show_reviews ) {
         </div>
 
         <div class="container mx-auto px-4 relative z-10">
-            <div class="text-center mb-16 md:mb-20 reveal-on-scroll">
+            <div class="text-center mb-8 md:mb-20 reveal-on-scroll">
                 <span class="text-xs uppercase tracking-[0.4em] text-[#C8A46A]/70 block mb-4 font-medium"><?php esc_html_e( 'Voices from our Atelier', 'dt-ecommerce-theme' ); ?></span>
                 <h2 class="font-serif text-4xl md:text-6xl text-white mb-5 leading-tight"><?php esc_html_e( 'What Our Customers Say', 'dt-ecommerce-theme' ); ?></h2>
                 <div class="flex items-center justify-center gap-3">
@@ -912,9 +914,9 @@ if ( $show_reviews ) {
 if ( $show_instagram_feed ) {
     ob_start();
     ?>
-    <section class="py-24 bg-[#0a0a0a]">
+    <section class="py-10 md:py-24 bg-[#0a0a0a]">
         <div class="container mx-auto px-4">
-            <div class="text-center mb-12 reveal-on-scroll">
+            <div class="text-center mb-6 md:mb-12 reveal-on-scroll">
                 <h2 class="font-serif text-3xl md:text-4xl text-white mb-2"><?php esc_html_e( 'Follow Us', 'dt-ecommerce-theme' ); ?></h2>
                 <p class="text-[#C8A46A] tracking-widest">@ArshmanDesigns</p>
             </div>

@@ -1673,11 +1673,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Mobile product sliders ──────────────────────────────────
   // Always init — CSS (md:hidden) controls visibility per breakpoint
   // setTimeout ensures fonts/images haven't shifted layout yet
-  setTimeout(() => {
-    initMobileSlider('na', 3200, 3);  // New Arrivals: 3-per-view
-    initMobileSlider('ts', 3000);  // Top Sellers:  2-per-slide page
-    initMobileSlider('wc', 3500);  // Why Choose:   1-per-slide
-  }, 120);
+  // Use requestAnimationFrame + small delay so slides render at correct width
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      initMobileSlider('na', 3200, 2);  // New Arrivals: 2-per-view (was 3, too cramped)
+      initMobileSlider('ts', 3000);     // Top Sellers:  2-per-slide page
+      initMobileSlider('wc', 3500);     // Why Choose:   1-per-slide
+    }, 60);
+  });
 
   // ── Reviews ─────────────────────────────────────────────────
   const reviewsTrack = document.getElementById('reviews-track');

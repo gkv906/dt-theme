@@ -96,14 +96,27 @@ if ( function_exists( 'elementor_theme_do_location' ) && elementor_theme_do_loca
         </div>
     </div>
     <script>
+        // Use requestAnimationFrame for instant visual fade, then remove from DOM
         window.addEventListener('load', function() {
             const loader = document.getElementById('page-loader');
             if (loader) {
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 500);
+                loader.style.transition = 'opacity 0.3s ease';
+                requestAnimationFrame(function() {
+                    loader.style.opacity = '0';
+                    setTimeout(() => { loader.style.display = 'none'; }, 300);
+                });
             }
+        });
+        // Also hide loader on DOMContentLoaded if load fires late (slow images)
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const loader = document.getElementById('page-loader');
+                if (loader && loader.style.opacity !== '0') {
+                    loader.style.transition = 'opacity 0.3s ease';
+                    loader.style.opacity = '0';
+                    setTimeout(() => { loader.style.display = 'none'; }, 300);
+                }
+            }, 1800);
         });
     </script>
 <?php endif; ?>
