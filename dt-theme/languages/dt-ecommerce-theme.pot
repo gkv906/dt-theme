@@ -1,0 +1,311 @@
+# Copyright (C) 2024 DT Ecommerce Theme
+# This file is distributed under the same license as the DT Ecommerce Theme package.
+msgid ""
+msgstr ""
+"Project-Id-Version: DT Ecommerce Theme 1.0\n"
+"Report-Msgid-Bugs-To: https://arshmandesigns.com\n"
+"POT-Creation-Date: 2024-01-01T00:00:00+05:30\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"X-Generator: WP-CLI 2.x\n"
+"X-Domain: dt-ecommerce-theme\n"
+
+#: inc/activation.php
+msgid "Theme Activation"
+msgstr ""
+
+#: inc/activation.php
+msgid "Enter Security PIN"
+msgstr ""
+
+#: inc/activation.php
+msgid "Activate Theme"
+msgstr ""
+
+#: inc/activation.php
+msgid "Invalid PIN. Please try again."
+msgstr ""
+
+#: inc/roles.php
+msgid "Customer"
+msgstr ""
+
+#: inc/roles.php
+msgid "Reseller"
+msgstr ""
+
+#: inc/roles.php
+msgid "Retailer"
+msgstr ""
+
+#: inc/roles.php
+msgid "Wholesaler"
+msgstr ""
+
+#: inc/roles.php
+msgid "Administrator"
+msgstr ""
+
+#: inc/roles.php
+msgid "Guest"
+msgstr ""
+
+#: inc/roles.php
+msgid "Account Type"
+msgstr ""
+
+#: inc/roles.php
+msgid "-- Select Account Type --"
+msgstr ""
+
+#: inc/roles.php
+msgid "Customer (Retail)"
+msgstr ""
+
+#: inc/popups.php
+msgid "Join The Heritage Circle"
+msgstr ""
+
+#: inc/popups.php
+msgid "Subscribe and be the first to receive exclusive collections, weave stories, and member-only offers."
+msgstr ""
+
+#: inc/popups.php
+msgid "your@email.com"
+msgstr ""
+
+#: inc/popups.php
+msgid "Subscribe"
+msgstr ""
+
+#: inc/popups.php
+msgid "No spam. Unsubscribe at any time."
+msgstr ""
+
+#: inc/popups.php
+msgid "Use code at checkout:"
+msgstr ""
+
+#: inc/popups.php
+msgid "Copy"
+msgstr ""
+
+#: inc/popups.php
+msgid "Wait — Don't Leave Yet!"
+msgstr ""
+
+#: inc/popups.php
+msgid "You have beautiful sarees waiting in your wishlist. Complete your order today and enjoy free shipping."
+msgstr ""
+
+#: inc/popups.php
+msgid "Continue Shopping"
+msgstr ""
+
+#: inc/popups.php
+msgid "No Thanks"
+msgstr ""
+
+#: inc/wishlist.php
+msgid "Product added to wishlist"
+msgstr ""
+
+#: inc/wishlist.php
+msgid "Product removed from wishlist"
+msgstr ""
+
+#: template-parts/breadcrumb.php
+msgid "Breadcrumb"
+msgstr ""
+
+#: template-parts/breadcrumb.php
+msgid "Home"
+msgstr ""
+
+#: template-parts/breadcrumb.php
+msgid "Search results for: %s"
+msgstr ""
+
+#: template-parts/breadcrumb.php
+msgid "404 Not Found"
+msgstr ""
+
+#: template-parts/product-card.php
+msgid "New"
+msgstr ""
+
+#: template-parts/product-card.php
+msgid "Sold Out"
+msgstr ""
+
+#: template-parts/no-products.php
+msgid "No Products Found"
+msgstr ""
+
+#: template-parts/no-products.php
+msgid "We couldn't find any products matching your criteria. Try adjusting your filters or explore our full collection."
+msgstr ""
+
+#: template-parts/no-products.php
+msgid "View All Products"
+msgstr ""
+
+#: templates/template-our-story.php
+msgid "The Journey"
+msgstr ""
+
+#: templates/template-our-story.php
+msgid "Our Story"
+msgstr ""
+
+#: templates/template-our-story.php
+msgid "The Beginning"
+msgstr ""
+
+#: templates/template-our-story.php
+msgid "Growing Our Family"
+msgstr ""
+
+#: templates/template-our-story.php
+msgid "Going Global"
+msgstr ""
+
+#: templates/template-our-story.php
+msgid "Today"
+msgstr ""
+
+#: templates/template-our-story.php
+msgid "A Movement, Not Just a Brand"
+msgstr ""
+
+#: templates/template-our-story.php
+msgid "Be Part of Our Story"
+msgstr ""
+
+#: templates/template-our-story.php
+msgid "Explore Collection"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "Shipping Policy"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "Fast, safe, and free worldwide delivery for every order."
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "Ships to"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "40+ Countries"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "Delivery"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "3-7 Days"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "Free Shipping"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "Above ₹999"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "Domestic Delivery (India)"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "Standard Shipping:"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "FREE on orders above ₹999 · 3-5 business days"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "Express Shipping:"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "₹99 · 1-2 business days"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "Cash on Delivery:"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "Available across India (₹49 processing fee)"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "International Delivery"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "Order Processing"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "Packaging"
+msgstr ""
+
+#: templates/template-shipping-policy.php
+msgid "Need help?"
+msgstr ""
+
+#: templates/template-contact.php
+msgid "Contact Us"
+msgstr ""
+
+#: templates/template-faq.php
+msgid "FAQ"
+msgstr ""
+
+#: templates/template-about.php
+msgid "About Us"
+msgstr ""
+
+#: templates/template-track-order.php
+msgid "Track Order"
+msgstr ""
+
+#: templates/template-wishlist.php
+msgid "My Wishlist"
+msgstr ""
+
+#: inc/theme-options.php
+msgid "Theme Options"
+msgstr ""
+
+#: inc/setup-wizard.php
+msgid "DT Ecommerce Theme Setup Wizard"
+msgstr ""
+
+#: header.php
+msgid "Skip to content"
+msgstr ""
+
+#: footer.php
+msgid "All rights reserved."
+msgstr ""
+
+#: 404.php
+msgid "Page Not Found"
+msgstr ""
+
+#: search.php
+msgid "Search Results"
+msgstr ""

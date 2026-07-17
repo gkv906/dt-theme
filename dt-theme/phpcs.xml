@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<ruleset name="DT Ecommerce Theme">
+    <description>PHP_CodeSniffer ruleset for DT Ecommerce WordPress Theme.</description>
+
+    <!-- Scan these directories -->
+    <file>.</file>
+
+    <!-- Exclude non-theme files -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/assets/js/*</exclude-pattern>
+    <exclude-pattern>*/assets/css/*</exclude-pattern>
+    <exclude-pattern>.ide-stubs.php</exclude-pattern>
+
+    <!-- Use WordPress Coding Standards -->
+    <rule ref="WordPress">
+        <!-- Allow short array syntax -->
+        <exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+        <!-- Allow long lines in template files (HTML mixed) -->
+        <exclude name="Generic.Files.LineLength"/>
+        <!-- Suppress tab/space indent conflicts from HTML templates -->
+        <exclude name="WordPress.WhiteSpace.PrecisionAlignment"/>
+        <!-- Allow echo shorthand in templates -->
+        <exclude name="Generic.PHP.DisallowShortOpenTag.EchoFound"/>
+    </rule>
+
+    <!-- PHP 8.1 compatibility -->
+    <config name="testVersion" value="8.1-"/>
+
+    <!-- Set text domain -->
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="dt-ecommerce-theme"/>
+            </property>
+        </properties>
+    </rule>
+</ruleset>
