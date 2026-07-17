@@ -240,10 +240,10 @@ $has_elementor_footer = ( ! $hide_main_footer && function_exists( 'elementor_the
 <?php $hide_mobile_bottom_nav = function_exists( 'is_product' ) && is_product(); ?>
 <div id="mobile-bottom-nav" class="fixed bottom-0 left-0 w-full bg-[#0a0a0a]/90 backdrop-blur-lg border-t border-[#C8A46A]/20 md:hidden z-50 px-2 py-2 safe-area-bottom <?php echo $hide_mobile_bottom_nav ? 'hidden' : ''; ?>">
     <div class="flex items-end justify-around">
-        <button onclick="toggleMobileMenuDrawer(true)" class="flex flex-col items-center justify-center w-16 gap-1 text-gray-400 hover:text-white transition-colors">
+        <button id="dt-nav-menu-btn" type="button" class="flex flex-col items-center justify-center w-16 gap-1 text-gray-400 hover:text-white transition-colors">
             <i data-lucide="menu" class="w-5 h-5"></i><span class="text-[10px] uppercase tracking-wider"><?php esc_html_e( 'Menu', 'dt-ecommerce-theme' ); ?></span>
         </button>
-        <button onclick="toggleMobileSearchOverlay(true)" class="flex flex-col items-center justify-center w-16 gap-1 text-gray-400 hover:text-white transition-colors">
+        <button id="dt-nav-search-btn" type="button" class="flex flex-col items-center justify-center w-16 gap-1 text-gray-400 hover:text-white transition-colors">
             <i data-lucide="search" class="w-5 h-5"></i><span class="text-[10px] uppercase tracking-wider"><?php esc_html_e( 'Search', 'dt-ecommerce-theme' ); ?></span>
         </button>
         <button onclick="window.location.href='<?php echo esc_url( $shop_url ); ?>'" class="flex flex-col items-center justify-center w-16 -translate-y-3 relative z-10">
@@ -269,6 +269,89 @@ $has_elementor_footer = ( ! $hide_main_footer && function_exists( 'elementor_the
         </button>
     </div>
 </div>
+
+<!-- ============================================================
+     MOBILE NAV — click bindings locked in BEFORE wp_footer/main.js
+     addEventListener stores the function reference at parse time,
+     so main.js can never override it no matter what it redefines.
+============================================================ -->
+<script>
+(function () {
+    function dtOpenMenu() {
+        var overlay = document.getElementById('mobile-menu-overlay');
+        var drawer  = document.getElementById('mobile-menu-drawer');
+        if (!overlay || !drawer) return;
+        overlay.classList.remove('hidden');
+        requestAnimationFrame(function () {
+            overlay.classList.remove('opacity-0');
+            overlay.classList.add('opacity-100');
+            drawer.classList.remove('-translate-x-full');
+        });
+        document.body.style.overflow = 'hidden';
+    }
+
+    function dtCloseMenu() {
+        var overlay = document.getElementById('mobile-menu-overlay');
+        var drawer  = document.getElementById('mobile-menu-drawer');
+        if (!overlay || !drawer) return;
+        overlay.classList.add('opacity-0');
+        overlay.classList.remove('opacity-100');
+        drawer.classList.add('-translate-x-full');
+        setTimeout(function () { overlay.classList.add('hidden'); }, 300);
+        document.body.style.overflow = '';
+    }
+
+    function dtOpenSearch() {
+        var el = document.getElementById('mobile-search-overlay');
+        if (!el) return;
+        el.style.display = 'flex';
+        el.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        setTimeout(function () {
+            var inp = document.getElementById('overlay-search-input');
+            if (inp) { inp.value = ''; inp.focus(); }
+            if (typeof renderOverlaySearchSuggestions === 'function') renderOverlaySearchSuggestions('');
+        }, 80);
+    }
+
+    function dtCloseSearch() {
+        var el = document.getElementById('mobile-search-overlay');
+        if (!el) return;
+        el.style.display = 'none';
+        el.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    /* Expose as globals for close buttons inside drawer / overlay */
+    window.toggleMobileMenuDrawer    = function (open) { open ? dtOpenMenu()   : dtCloseMenu();   };
+    window.toggleMobileSearchOverlay = function (open) { open ? dtOpenSearch() : dtCloseSearch(); };
+
+    /* Bind nav buttons by ID — reference is captured now, immune to later overrides */
+    function bindNavBtn(id, fn) {
+        var el = document.getElementById(id);
+        if (el) { el.addEventListener('click', fn); }
+        else {
+            /* Element may not be in DOM yet if script runs early — wait */
+            document.addEventListener('DOMContentLoaded', function () {
+                var el2 = document.getElementById(id);
+                if (el2) el2.addEventListener('click', fn);
+            });
+        }
+    }
+    bindNavBtn('dt-nav-menu-btn',   dtOpenMenu);
+    bindNavBtn('dt-nav-search-btn', dtOpenSearch);
+
+    /* Backdrop tap closes menu */
+    document.addEventListener('DOMContentLoaded', function () {
+        var overlay = document.getElementById('mobile-menu-overlay');
+        if (overlay) {
+            overlay.addEventListener('click', function (e) {
+                if (e.target === overlay) dtCloseMenu();
+            });
+        }
+    });
+})();
+</script>
 
 <div id="cart-drawer-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] transition-opacity hidden" onclick="closeCartDrawer()">
     <div id="cart-drawer-panel" class="absolute top-0 right-0 w-full max-w-md h-full bg-[#0a0a0a] border-l border-[#C8A46A]/20 flex flex-col shadow-2xl translate-x-full transition-transform duration-300" onclick="event.stopPropagation()">
@@ -428,82 +511,5 @@ if ( ! empty( $after_body_html ) ) {
 }
 ?>
 
-<!-- ================================================================
-     MOBILE BOTTOM NAV — Definitive button bindings.
-     This runs AFTER wp_footer() (i.e. after main.js), so these
-     overwrite any incorrect function defined by main.js.
-================================================================ -->
-<script>
-(function () {
-    'use strict';
-
-    /* ── Core drawer toggle ───────────────────────────────────── */
-    window.toggleMobileMenuDrawer = function (open) {
-        var overlay = document.getElementById('mobile-menu-overlay');
-        var drawer  = document.getElementById('mobile-menu-drawer');
-        if (!overlay || !drawer) return;
-
-        if (open) {
-            overlay.classList.remove('hidden');
-            requestAnimationFrame(function () {
-                overlay.classList.remove('opacity-0');
-                overlay.classList.add('opacity-100');
-                drawer.classList.remove('-translate-x-full');
-            });
-            document.body.style.overflow = 'hidden';
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-        } else {
-            overlay.classList.add('opacity-0');
-            overlay.classList.remove('opacity-100');
-            drawer.classList.add('-translate-x-full');
-            setTimeout(function () { overlay.classList.add('hidden'); }, 300);
-            document.body.style.overflow = '';
-        }
-    };
-
-    /* ── Core search overlay toggle ───────────────────────────── */
-    window.toggleMobileSearchOverlay = function (open) {
-        var el = document.getElementById('mobile-search-overlay');
-        if (!el) return;
-        if (open) {
-            el.style.display = 'flex';
-            el.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-            setTimeout(function () {
-                var inp = document.getElementById('overlay-search-input');
-                if (inp) { inp.value = ''; inp.focus(); }
-                if (typeof renderOverlaySearchSuggestions === 'function') renderOverlaySearchSuggestions('');
-            }, 80);
-        } else {
-            el.style.display = 'none';
-            el.classList.add('hidden');
-            document.body.style.overflow = '';
-        }
-    };
-
-    /* ── Attach via addEventListener as belt-and-braces ──────── */
-    document.addEventListener('DOMContentLoaded', function () {
-        var menuBtn   = document.querySelector('#mobile-bottom-nav button[onclick*="toggleMobileMenuDrawer"]');
-        var searchBtn = document.querySelector('#mobile-bottom-nav button[onclick*="toggleMobileSearchOverlay"]');
-
-        if (menuBtn) {
-            menuBtn.removeAttribute('onclick');
-            menuBtn.addEventListener('click', function () { window.toggleMobileMenuDrawer(true); });
-        }
-        if (searchBtn) {
-            searchBtn.removeAttribute('onclick');
-            searchBtn.addEventListener('click', function () { window.toggleMobileSearchOverlay(true); });
-        }
-
-        /* Close drawer when tapping backdrop */
-        var overlay = document.getElementById('mobile-menu-overlay');
-        if (overlay) {
-            overlay.addEventListener('click', function (e) {
-                if (e.target === overlay) window.toggleMobileMenuDrawer(false);
-            });
-        }
-    });
-})();
-</script>
 </body>
 </html>
