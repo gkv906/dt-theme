@@ -1067,7 +1067,9 @@ function handleGlobalSearch(event) {
 }
 
 // ── Search Autocomplete — AJAX-powered for WordPress, local PRODUCTS for HTML demo ──
-let _searchTimer = null;
+let _searchTimer        = null;
+let _overlaySearchTimer = null;
+let _shopSearchTimer    = null;
 
 function renderGlobalSearchSuggestions(query, containerId, wrapId) {
   containerId = containerId || 'suggested-products-list';
@@ -1199,58 +1201,121 @@ function fillOverlaySearch(term) {
   }
 }
 
-// Global search submit
+// Global search submit (mobile overlay form)
 function handleMobileSearchSubmit(event) {
   event.preventDefault();
   const input = document.getElementById('overlay-search-input');
   if (!input) return;
   const query = input.value.trim();
-  
-  const isHtml = window.location.pathname.includes('.html');
-  const dest = _isWP ? (_URL.shop + '?search=' + encodeURIComponent(query)) : ((isHtml ? 'shop.html' : 'shop') + '?search=' + encodeURIComponent(query));
-  window.location.href = dest;
+  if (!query) return;
+
+  if (_isWP) {
+    // WooCommerce full-page search
+    window.location.href = dt_theme_vars.home_url + '?s=' + encodeURIComponent(query) + '&post_type=product';
+  } else {
+    const isHtml = window.location.pathname.includes('.html');
+    window.location.href = (isHtml ? 'shop.html' : 'shop') + '?search=' + encodeURIComponent(query);
+  }
 }
 
 function renderOverlaySearchSuggestions(query) {
-  const container = document.getElementById('overlay-search-results');
-  const title = document.getElementById('overlay-results-title');
-  if (!container || typeof PRODUCTS === 'undefined') return;
+  const container  = document.getElementById('overlay-search-results');
+  const titleEl    = document.getElementById('overlay-results-title');
+  const trendingEl = document.getElementById('overlay-trending');
+  if (!container) return;
 
-  const q = query.toLowerCase().trim();
+  const q = (query || '').trim();
+
+  // ── HTML demo mode (no WordPress) ─────────────────────────────────────
+  if (!_isWP) {
+    if (!q) {
+      if (titleEl) titleEl.textContent = 'Suggested Products';
+      if (trendingEl) trendingEl.style.display = '';
+      container.innerHTML = typeof PRODUCTS !== 'undefined'
+        ? PRODUCTS.slice(0, 4).map(p => getOverlaySuggestionRowHTML(p)).join('')
+        : '';
+      return;
+    }
+    if (trendingEl) trendingEl.style.display = 'none';
+    if (titleEl) titleEl.textContent = 'Search Results';
+    const matched = (typeof PRODUCTS !== 'undefined' ? PRODUCTS : []).filter(p =>
+      p.name.toLowerCase().includes(q.toLowerCase()) ||
+      p.fabric.toLowerCase().includes(q.toLowerCase()) ||
+      (p.color && p.color.toLowerCase().includes(q.toLowerCase()))
+    ).slice(0, 8);
+    container.innerHTML = matched.length
+      ? matched.map(p => getOverlaySuggestionRowHTML(p)).join('')
+      : '<p class="text-xs text-gray-500 py-6 text-center font-light">No products found matching your search.</p>';
+    return;
+  }
+
+  // ── WordPress AJAX mode ────────────────────────────────────────────────
   if (!q) {
-    title.textContent = 'Suggested Products';
-    container.innerHTML = PRODUCTS.slice(0, 4).map(prod => getOverlaySuggestionRowHTML(prod)).join('');
+    if (titleEl) titleEl.textContent = 'Suggested Products';
+    if (trendingEl) trendingEl.style.display = '';
+    container.innerHTML = '<p class="text-[11px] text-gray-500 py-4 text-center">Start typing to search products…</p>';
     return;
   }
 
-  const matched = PRODUCTS.filter(p => p.name.toLowerCase().includes(q) || p.fabric.toLowerCase().includes(q) || (p.color && p.color.toLowerCase().includes(q))).slice(0, 8);
+  if (trendingEl) trendingEl.style.display = 'none';
+  if (titleEl) titleEl.textContent = 'Search Results';
+  container.innerHTML = '<p class="text-[11px] text-gray-400 py-4 text-center animate-pulse">Searching…</p>';
 
-  if (matched.length === 0) {
-    title.textContent = 'Search Results';
-    container.innerHTML = `<p class="text-xs text-gray-500 py-6 text-center font-light">No products found matching your search.</p>`;
-    return;
-  }
-
-  title.textContent = 'Search Results';
-  container.innerHTML = matched.map(prod => getOverlaySuggestionRowHTML(prod)).join('');
+  clearTimeout(_overlaySearchTimer);
+  _overlaySearchTimer = setTimeout(() => {
+    const url = dt_theme_vars.ajax_url
+      + '?action=dt_ajax_search'
+      + '&term=' + encodeURIComponent(q);
+    fetch(url, { credentials: 'same-origin' })
+      .then(r => r.json())
+      .then(resp => {
+        if (!resp.success || !resp.data || !resp.data.length) {
+          container.innerHTML = '<p class="text-[11px] text-gray-500 py-4 text-center">No products found for "<strong style=\'color:#C8A46A\'>' + q + '</strong>"</p>';
+          return;
+        }
+        container.innerHTML = resp.data.slice(0, 8).map(p => getAjaxOverlayRowHTML(p)).join('');
+      })
+      .catch(() => {
+        container.innerHTML = '<p class="text-[11px] text-gray-500 py-4 text-center">Search unavailable. Please try again.</p>';
+      });
+  }, 280);
 }
 
+// Overlay row for HTML-demo local PRODUCTS
 function getOverlaySuggestionRowHTML(prod) {
-  return `
-    <div onclick="window.location.href=_productUrl(prod.id)" class="flex items-center gap-4 p-2 bg-[#111] hover:bg-[#C8A46A]/5 rounded-sm transition-all cursor-pointer border border-[#C8A46A]/10 hover:border-[#C8A46A]/40 group">
-      <div class="w-12 h-16 bg-[#1A1A1A] overflow-hidden rounded-sm shrink-0 border border-white/5">
-        <img src="${prod.img1}" alt="${prod.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-      </div>
-      <div class="flex-1 min-w-0 text-left">
-        <p class="text-xs font-semibold text-[#F7F4EE] group-hover:text-[#C8A46A] transition-colors truncate">${prod.name}</p>
-        <p class="text-[10px] text-gray-400 mt-1 uppercase">${prod.fabric}</p>
-        <p class="text-xs font-bold text-[#C8A46A] mt-1.5">${formatCurrency(prod.price)}</p>
-      </div>
-      <div class="text-[#C8A46A] opacity-50 group-hover:opacity-100 transition-opacity pr-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-      </div>
+  const url = _productUrl(prod.id);
+  return `<a href="${url}" class="flex items-center gap-4 p-2.5 hover:bg-[#C8A46A]/5 rounded-sm transition-all border border-transparent hover:border-[#C8A46A]/30 group" style="text-decoration:none;">
+    <div class="w-12 h-16 bg-[#1A1A1A] overflow-hidden rounded-sm shrink-0 border border-white/5">
+      <img src="${prod.img1}" alt="${prod.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
     </div>
-  `;
+    <div class="flex-1 min-w-0 text-left">
+      <p class="text-xs font-semibold text-[#F7F4EE] group-hover:text-[#C8A46A] transition-colors truncate">${prod.name}</p>
+      <p class="text-[10px] text-gray-400 uppercase mt-0.5">${prod.fabric}</p>
+      <p class="text-xs font-bold text-[#C8A46A] mt-1">${formatCurrency(prod.price)}</p>
+    </div>
+    <svg class="w-4 h-4 text-[#C8A46A] opacity-40 group-hover:opacity-100 transition-opacity shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+  </a>`;
+}
+
+// Overlay row for WordPress AJAX results — larger card with SKU badge
+function getAjaxOverlayRowHTML(prod) {
+  const url    = prod.url   || _productUrl(prod.id);
+  const title  = prod.title || '';
+  const fabric = prod.fabric || '';
+  const price  = prod.price_html || ('₹' + Number(prod.price || 0).toLocaleString('en-IN'));
+  const img    = prod.img || '';
+  const sku    = prod.sku ? '<span class="inline-block text-[9px] bg-[#C8A46A]/10 text-[#C8A46A] border border-[#C8A46A]/20 px-1.5 py-0.5 rounded-sm font-mono ml-1">SKU: ' + prod.sku + '</span>' : '';
+  return `<a href="${url}" class="flex items-center gap-4 p-2.5 hover:bg-[#C8A46A]/5 rounded-sm transition-all border border-transparent hover:border-[#C8A46A]/30 group" style="text-decoration:none;">
+    <div class="w-12 h-16 bg-[#1A1A1A] overflow-hidden rounded-sm shrink-0 border border-white/5">
+      <img src="${img}" alt="${title.replace(/"/g,'&quot;')}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+    </div>
+    <div class="flex-1 min-w-0 text-left">
+      <p class="text-xs font-semibold text-[#F7F4EE] group-hover:text-[#C8A46A] transition-colors truncate">${title}</p>
+      <p class="text-[10px] text-gray-400 uppercase mt-0.5 truncate">${fabric}${sku}</p>
+      <p class="text-xs font-bold text-[#C8A46A] mt-1">${price}</p>
+    </div>
+    <svg class="w-4 h-4 text-[#C8A46A] opacity-40 group-hover:opacity-100 transition-opacity shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+  </a>`;
 }
 
 // Mobile Side Menu Drawer Logic (Slides in from left)
@@ -1720,33 +1785,122 @@ function _renderMsDots(id) {
 }
 
 // =============================================================
-// setupSearchBar — binds autocomplete to any search input+dropdown
+// _bindSearchInput — generic helper: attaches live-search events
+// to any (input, dropdown-container, render-function) triple.
+// =============================================================
+function _bindSearchInput(inputId, dropdownId, renderFn, wrapId) {
+  const input    = document.getElementById(inputId);
+  const dropdown = document.getElementById(dropdownId);
+  if (!input || !dropdown || input._dtSearchBound) return;
+  input._dtSearchBound = true;
+
+  const show = () => { dropdown.classList.remove('hidden'); renderFn(input.value); };
+  const hide = () => dropdown.classList.add('hidden');
+
+  input.addEventListener('focus', show);
+  input.addEventListener('input', () => { dropdown.classList.remove('hidden'); renderFn(input.value); });
+  input.addEventListener('keydown', e => { if (e.key === 'Escape') hide(); });
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#' + inputId) &&
+        !e.target.closest('#' + dropdownId) &&
+        !(wrapId && e.target.closest('#' + wrapId))) {
+      hide();
+    }
+  }, { passive: true });
+}
+
+// =============================================================
+// _bindMobileShopSearch — AJAX suggestions for the shop-page
+// mobile header search input (#mobile-search-input).
+// Dropdown is #mobile-shop-suggestions / list #mobile-shop-sugg-list.
+// =============================================================
+function _bindMobileShopSearch() {
+  const input    = document.getElementById('mobile-search-input');
+  const dropdown = document.getElementById('mobile-shop-suggestions');
+  const list     = document.getElementById('mobile-shop-sugg-list');
+  if (!input || !dropdown || !list || input._dtSearchBound) return;
+  input._dtSearchBound = true;
+
+  function render(query) {
+    const q = (query || '').trim();
+    dropdown.classList.remove('hidden');
+
+    if (!q) {
+      list.innerHTML = '<p class="text-[10px] text-gray-500 py-3 text-center">Type to search products…</p>';
+      return;
+    }
+
+    if (!_isWP) {
+      // HTML demo — local array
+      const matched = (typeof PRODUCTS !== 'undefined' ? PRODUCTS : []).filter(p =>
+        p.name.toLowerCase().includes(q.toLowerCase()) ||
+        p.fabric.toLowerCase().includes(q.toLowerCase())
+      ).slice(0, 5);
+      list.innerHTML = matched.length
+        ? matched.map(p => getSuggestionRowHTML(p)).join('')
+        : '<p class="text-[10px] text-gray-500 py-3 text-center">No products found.</p>';
+      return;
+    }
+
+    // WordPress AJAX
+    list.innerHTML = '<p class="text-[10px] text-gray-400 py-3 text-center animate-pulse">Searching…</p>';
+    clearTimeout(_shopSearchTimer);
+    _shopSearchTimer = setTimeout(() => {
+      const url = dt_theme_vars.ajax_url
+        + '?action=dt_ajax_search&term=' + encodeURIComponent(q);
+      fetch(url, { credentials: 'same-origin' })
+        .then(r => r.json())
+        .then(resp => {
+          if (!resp.success || !resp.data || !resp.data.length) {
+            list.innerHTML = '<p class="text-[10px] text-gray-500 py-3 text-center">No results for "<strong style=\'color:#C8A46A\'>' + q + '</strong>"</p>';
+            return;
+          }
+          list.innerHTML = resp.data.slice(0, 5).map(p => getAjaxSuggestionRowHTML(p)).join('');
+        })
+        .catch(() => {
+          list.innerHTML = '<p class="text-[10px] text-gray-500 py-3 text-center">Search unavailable.</p>';
+        });
+    }, 250);
+  }
+
+  input.addEventListener('focus', () => render(input.value));
+  input.addEventListener('input', () => render(input.value));
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Escape') dropdown.classList.add('hidden');
+  });
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#mobile-shop-search-wrap')) {
+      dropdown.classList.add('hidden');
+    }
+  }, { passive: true });
+}
+
+// =============================================================
+// setupSearchBar — binds all three search inputs
 // Called from DOMContentLoaded (WordPress) and loadGlobalHeader (HTML mode)
 // =============================================================
 function setupSearchBar() {
-  const searchInput       = document.getElementById('header-search-input');
-  const searchSuggestions = document.getElementById('search-suggestions');
-  if (!searchInput || !searchSuggestions || searchInput._dtSearchBound) return;
-  searchInput._dtSearchBound = true; // prevent double-binding
+  // 1. Desktop header search
+  _bindSearchInput(
+    'header-search-input',
+    'search-suggestions',
+    renderGlobalSearchSuggestions,
+    'header-search-wrap'
+  );
 
-  searchInput.addEventListener('focus', () => {
-    renderGlobalSearchSuggestions(searchInput.value);
-  });
-  searchInput.addEventListener('input', () => {
-    renderGlobalSearchSuggestions(searchInput.value);
-  });
-  // Close on Escape
-  searchInput.addEventListener('keydown', e => {
-    if (e.key === 'Escape') searchSuggestions.classList.add('hidden');
-  });
-  // Close on outside click
-  document.addEventListener('click', e => {
-    if (!e.target.closest('#header-search-input') &&
-        !e.target.closest('#search-suggestions') &&
-        !e.target.closest('#header-search-wrap')) {
-      searchSuggestions.classList.add('hidden');
-    }
-  }, { passive: true });
+  // 2. Mobile overlay search (bottom-nav search icon → full-screen overlay)
+  //    Uses its own AJAX renderer with larger card + trending chips logic
+  _bindSearchInput(
+    'overlay-search-input',
+    'overlay-search-results',
+    renderOverlaySearchSuggestions,
+    'mobile-search-overlay'
+  );
+
+  // 3. Mobile shop-page header search (#mobile-header-shop)
+  //    Dropdown: #mobile-shop-sugg-list (inside #mobile-shop-suggestions)
+  _bindMobileShopSearch();
 }
 
 // =============================================================

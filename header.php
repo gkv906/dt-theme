@@ -326,14 +326,22 @@ if ( function_exists( 'elementor_theme_do_location' ) && elementor_theme_do_loca
                 <button onclick="window.history.back()" title="Go Back" aria-label="Go Back" class="text-[#C8A46A] hover:text-[#F7F4EE] transition-colors p-1 shrink-0">
                     <i data-lucide="arrow-left" class="w-5 h-5"></i>
                 </button>
-                <div class="flex-1 relative">
+                <div class="flex-1 relative" id="mobile-shop-search-wrap">
                     <form action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get" class="flex w-full rounded-sm overflow-hidden border border-[#C8A46A]/40 focus-within:border-[#C8A46A] bg-[#111] h-9">
-                        <input type="text" name="s" id="mobile-search-input" placeholder="<?php echo esc_attr( $search_placeholder ); ?>" class="flex-1 bg-transparent text-[#F7F4EE] px-3 outline-none placeholder:text-[#F7F4EE]/30 text-xs font-light" autocomplete="new-password" spellcheck="false" value="<?php echo esc_attr( get_search_query() ); ?>">
+                        <input type="text" name="s" id="mobile-search-input"
+                               placeholder="<?php echo esc_attr( $search_placeholder ); ?>"
+                               class="flex-1 bg-transparent text-[#F7F4EE] px-3 outline-none placeholder:text-[#F7F4EE]/30 text-xs font-light"
+                               autocomplete="new-password" spellcheck="false"
+                               value="<?php echo esc_attr( get_search_query() ); ?>">
                         <input type="hidden" name="post_type" value="product">
                         <button type="submit" title="Search" aria-label="Search" class="bg-gradient-to-r from-[#b08d55] to-[#d8ba82] text-black px-3 flex items-center justify-center">
                             <i data-lucide="search" class="w-3.5 h-3.5"></i>
                         </button>
                     </form>
+                    <!-- Live suggestions dropdown for mobile shop header -->
+                    <div id="mobile-shop-suggestions" class="absolute left-0 top-full w-full bg-[#111] border border-[#C8A46A]/30 shadow-2xl z-50 hidden mt-0.5 rounded-b-sm max-h-72 overflow-y-auto no-scrollbar">
+                        <div id="mobile-shop-sugg-list" class="p-1.5 space-y-0.5"></div>
+                    </div>
                 </div>
                 <div data-bag-toggle class="relative p-1 cursor-pointer shrink-0">
                     <i data-lucide="shopping-bag" class="w-5 h-5 text-[#C8A46A]"></i>
@@ -1217,30 +1225,43 @@ if ( function_exists( 'elementor_theme_do_location' ) && elementor_theme_do_loca
     <!-- ================================================================
          MOBILE SEARCH OVERLAY
     ================================================================ -->
-    <div id="mobile-search-overlay" class="fixed inset-0 bg-black/95 backdrop-blur-lg z-[90] hidden flex flex-col p-4 pt-6">
-        <div class="flex items-center justify-between mb-6">
-            <span class="text-[#C8A46A] uppercase tracking-widest text-xs font-semibold">Search</span>
-            <button onclick="toggleMobileSearchOverlay(false)" class="text-[#a3a3a3] hover:text-white" aria-label="Close">
-                <i data-lucide="x" class="w-6 h-6"></i>
+    <div id="mobile-search-overlay" class="fixed inset-0 bg-black/95 backdrop-blur-lg z-[90] hidden flex-col p-4 pt-6" style="display:none;">
+        <!-- Header row -->
+        <div class="flex items-center gap-3 mb-5">
+            <button onclick="toggleMobileSearchOverlay(false)" class="text-[#C8A46A] hover:text-[#F7F4EE] transition-colors p-1.5 shrink-0" aria-label="Close search">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
             </button>
+            <form action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get" class="flex flex-1 rounded-sm overflow-hidden border border-[#C8A46A]/40 focus-within:border-[#C8A46A] bg-[#111] h-11 transition-colors">
+                <?php /* id="overlay-search-input" matches the JS toggleMobileSearchOverlay + renderOverlaySearchSuggestions */ ?>
+                <input type="text" name="s" id="overlay-search-input"
+                       placeholder="Search sarees, fabrics, SKU…"
+                       class="flex-1 bg-transparent text-[#F7F4EE] px-4 outline-none placeholder:text-[#F7F4EE]/30 text-sm font-light"
+                       autocomplete="new-password" spellcheck="false">
+                <input type="hidden" name="post_type" value="product">
+                <button type="submit" aria-label="Search" class="bg-gradient-to-r from-[#b08d55] via-[#C8A46A] to-[#d8ba82] text-black px-5 flex items-center justify-center hover:brightness-110 transition-all">
+                    <i data-lucide="search" class="w-5 h-5"></i>
+                </button>
+            </form>
         </div>
-        <form action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get" class="flex gap-2 mb-6">
-            <input type="text" name="s" id="mobile-overlay-search" placeholder="Search sarees, fabrics, colors..." class="flex-1 bg-[#111] border border-[#C8A46A]/40 focus:border-[#C8A46A] text-white px-4 py-3 outline-none text-sm placeholder:text-[#555]" autocomplete="off">
-            <input type="hidden" name="post_type" value="product">
-            <button type="submit" class="bg-[#C8A46A] text-black px-5 flex items-center justify-center">
-                <i data-lucide="search" class="w-5 h-5"></i>
-            </button>
-        </form>
-        <div class="space-y-3">
-            <p class="text-[10px] uppercase tracking-widest text-[#666]">Popular Searches</p>
+
+        <!-- Trending chips — shown while input is empty -->
+        <div id="overlay-trending" class="mb-5">
+            <p class="text-[10px] uppercase tracking-widest text-[#666] mb-3"><?php esc_html_e( 'Popular Searches', 'dt-ecommerce-theme' ); ?></p>
             <div class="flex flex-wrap gap-2">
                 <?php
                 $popular = array( 'Banarasi Silk', 'Kanjeevaram', 'Bridal Saree', 'Organza', 'Festive Collection' );
                 foreach ( $popular as $tag ) {
-                    $search_url = add_query_arg( array( 's' => urlencode( $tag ), 'post_type' => 'product' ), home_url( '/' ) );
-                    echo '<a href="' . esc_url( $search_url ) . '" class="px-3 py-1.5 border border-[#333] text-xs text-[#a3a3a3] hover:border-[#C8A46A] hover:text-[#C8A46A] transition-all">' . esc_html( $tag ) . '</a>';
+                    echo '<button type="button" onclick="fillOverlaySearch(' . json_encode( $tag ) . ')" class="px-3 py-1.5 border border-[#333] text-xs text-[#a3a3a3] hover:border-[#C8A46A] hover:text-[#C8A46A] transition-all">' . esc_html( $tag ) . '</button>';
                 }
                 ?>
+            </div>
+        </div>
+
+        <!-- Live results container -->
+        <div class="flex-1 overflow-y-auto no-scrollbar text-left">
+            <p class="text-[10px] uppercase tracking-widest text-[#C8A46A] mb-3 font-semibold" id="overlay-results-title"><?php esc_html_e( 'Suggested Products', 'dt-ecommerce-theme' ); ?></p>
+            <div id="overlay-search-results" class="space-y-1">
+                <!-- populated by renderOverlaySearchSuggestions() -->
             </div>
         </div>
     </div>
