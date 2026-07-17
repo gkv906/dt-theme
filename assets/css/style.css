@@ -9760,8 +9760,17 @@ body.woocommerce-checkout .woocommerce-message {
   overflow: hidden;
 }
 @media (max-width: 767px) {
-  /* review card width set by JS to exact container width */
-  #reviews-track { overflow: visible !important; }
+  /* Mobile reviews: cards fill container, no hover effects, no scale */
+  #reviews-track { overflow: visible !important; gap: 0 !important; }
+  .review-card {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94) !important;
+    flex-shrink: 0;
+  }
+  .review-card.review-active { transform: none !important; }
+  /* Hide desktop dots row on mobile */
+  #reviews-dots { display: none !important; }
 }
 .review-card::before {
   content: '';
@@ -9835,12 +9844,12 @@ body.woocommerce-checkout .woocommerce-message {
   will-change: transform;
   overflow: visible;
 }
-#reviews-prev, #reviews-next { display: flex !important; }
+/* Desktop nav buttons: only show on md+ */
+@media (min-width: 768px) {
+  #reviews-prev, #reviews-next { display: flex !important; }
+}
 @media (max-width: 767px) {
-  #reviews-prev, #reviews-next {
-    position: static !important;
-    transform: none !important;
-  }
+  #reviews-prev, #reviews-next { display: none !important; }
 }
 
 /* ── wc-card mobile min-height ── */

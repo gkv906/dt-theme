@@ -1,4 +1,4 @@
-﻿// ===== WordPress / HTML Compatibility Layer =====
+// ===== WordPress / HTML Compatibility Layer =====
 const _isWP = typeof dt_theme_vars !== 'undefined';
 const _IMG_BASE = _isWP ? (dt_theme_vars.images_url + '/') : 'assets/images/';
 const _URL = {
@@ -1535,22 +1535,36 @@ function setReviewIndex(idx) {
   reviewIdx      = Math.max(0, Math.min(idx, maxIdx));
   let tx;
   if (isMobile) {
-    // On mobile: zero gap, each card = wrap width → clean 1-per-step snap
-    const wrapW = clipEl.offsetWidth;
+    // Reset widths first so offsetWidth reads true container width
+    cards.forEach(c => { c.style.width = ''; c.style.minWidth = ''; c.style.maxWidth = ''; });
     track.style.gap = '0px';
-    cards.forEach(c => { c.style.width = wrapW + 'px'; c.style.minWidth = wrapW + 'px'; c.style.maxWidth = wrapW + 'px'; });
+    const wrapW = clipEl.offsetWidth || window.innerWidth;
+    cards.forEach(c => {
+      c.style.width     = wrapW + 'px';
+      c.style.minWidth  = wrapW + 'px';
+      c.style.maxWidth  = wrapW + 'px';
+      c.style.flexShrink = '0';
+    });
     tx = reviewIdx * wrapW;
   } else {
+    track.style.gap = '';
     const gapPx = window.innerWidth < 1024 ? 24 : 32;
     const cardW  = cards[0].getBoundingClientRect().width;
     tx = reviewIdx * (cardW + gapPx);
   }
   track.style.transform = `translateX(-${tx}px)`;
-  // Update all dot containers (desktop + mobile)
-  [document.getElementById('reviews-dots'), document.getElementById('reviews-dots-mobile')]
-    .forEach(container => {
-      if (container) container.querySelectorAll('.review-dot').forEach((d,i) => d.classList.toggle('active', i === reviewIdx));
-    });
+  // Update desktop dots using proportion-based mapping (max 7 dots)
+  const _dotsEl = document.getElementById('reviews-dots');
+  if (_dotsEl) {
+    const _dotNodes = _dotsEl.querySelectorAll('.review-dot');
+    if (_dotNodes.length > 0) {
+      const _isMob  = window.innerWidth < 768;
+      const _perV   = _isMob ? 1 : (window.innerWidth < 1024 ? 2 : 3);
+      const _maxI   = Math.max(0, REVIEWS.length - _perV);
+      const _active = _maxI === 0 ? 0 : Math.round(reviewIdx / _maxI * (_dotNodes.length - 1));
+      _dotNodes.forEach((d, i) => d.classList.toggle('active', i === _active));
+    }
+  }
 }
 
 function reviewsNav(dir) {
@@ -1663,24 +1677,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const rPrev = document.getElementById('reviews-prev');
   const rNext = document.getElementById('reviews-next');
 
-  // Show prev/next on mobile (they have class="hidden md:flex" but we force them)
-  if (rPrev) { rPrev.classList.remove('hidden'); rPrev.style.cssText += 'display:flex!important;'; }
-  if (rNext) { rNext.classList.remove('hidden'); rNext.style.cssText += 'display:flex!important;'; }
-
   if (reviewsTrack && reviewsDots) {
     reviewsTrack.innerHTML = REVIEWS.map(r => buildReviewCard(r)).join('');
 
     setTimeout(() => {
       const isMobile = window.innerWidth < 768;
       const perView  = isMobile ? 1 : (window.innerWidth < 1024 ? 2 : 3);
-      const dotCount = REVIEWS.length - perView + 1;
+      const maxIdx   = Math.max(0, REVIEWS.length - perView);
 
-      const _dotHtml = Array.from({length: dotCount}, (_,i) =>
-        `<span class="review-dot${i===0?' active':''}" onclick="setReviewIndex(${i});restartReviewsAuto();"></span>`
-      ).join('');
-      reviewsDots.innerHTML = _dotHtml;
-      const _mDots = document.getElementById('reviews-dots-mobile');
-      if (_mDots) _mDots.innerHTML = _dotHtml;
+      // Mobile: pure auto-slide — no dots, no buttons
+      // Desktop: max 7 dots, evenly spaced across the range
+      if (!isMobile && reviewsDots) {
+        const numDots = Math.min(7, maxIdx + 1);
+        reviewsDots.innerHTML = Array.from({length: numDots}, (_, i) => {
+          const targetIdx = numDots === 1 ? 0 : Math.round(i * maxIdx / (numDots - 1));
+          return `<span class="review-dot${i===0?' active':''}" onclick="setReviewIndex(${targetIdx});restartReviewsAuto();"></span>`;
+        }).join('');
+      } else if (reviewsDots) {
+        reviewsDots.innerHTML = '';
+      }
 
       setReviewIndex(0);
       startReviewsAuto();
@@ -1690,17 +1705,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (reviewsWrap) {
       reviewsWrap.addEventListener('mouseenter', () => {
         reviewsPaused = true;
-        const pl = document.getElementById('reviews-play-label');
-        const pi = document.getElementById('reviews-play-icon');
-        if (pl) pl.textContent = 'Paused';
-        if (pi) { pi.classList.remove('animate-pulse'); pi.style.background = '#666'; }
       });
       reviewsWrap.addEventListener('mouseleave', () => {
         reviewsPaused = false;
-        const pl = document.getElementById('reviews-play-label');
-        const pi = document.getElementById('reviews-play-icon');
-        if (pl) pl.textContent = 'Auto-playing';
-        if (pi) { pi.classList.add('animate-pulse'); pi.style.background = '#C8A46A'; }
       });
     }
 
