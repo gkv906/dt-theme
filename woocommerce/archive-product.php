@@ -12,11 +12,51 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 get_header();
 
-$current_cat_slug = is_product_category() ? get_queried_object()->slug : '';
+$current_cat_slug  = is_product_category() ? get_queried_object()->slug : '';
 $current_max_price = isset( $_GET['max_price'] ) ? intval( wp_unslash( $_GET['max_price'] ) ) : 35000;
-$current_orderby = isset( $_GET['orderby'] ) ? wc_clean( wp_unslash( $_GET['orderby'] ) ) : 'menu_order';
+$current_orderby   = isset( $_GET['orderby'] ) ? wc_clean( wp_unslash( $_GET['orderby'] ) ) : 'menu_order';
+$current_color     = isset( $_GET['filter_color'] ) ? wc_clean( wp_unslash( $_GET['filter_color'] ) ) : '';
+$current_size      = isset( $_GET['filter_size'] ) ? wc_clean( wp_unslash( $_GET['filter_size'] ) ) : '';
 
 $clear_filters_url = get_permalink( wc_get_page_id( 'shop' ) );
+
+// Fetch product categories
+$categories = get_terms( array(
+    'taxonomy'   => 'product_cat',
+    'hide_empty' => false,
+) );
+
+// Fetch available attribute terms (only with products attached)
+$color_terms = array();
+$size_terms  = array();
+foreach ( array( 'pa_color', 'pa_colour' ) as $color_tax ) {
+    if ( taxonomy_exists( $color_tax ) ) {
+        $terms = get_terms( array( 'taxonomy' => $color_tax, 'hide_empty' => true ) );
+        if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+            $color_terms = $terms;
+            break;
+        }
+    }
+}
+foreach ( array( 'pa_size', 'pa_sizes' ) as $size_tax ) {
+    if ( taxonomy_exists( $size_tax ) ) {
+        $terms = get_terms( array( 'taxonomy' => $size_tax, 'hide_empty' => true ) );
+        if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+            $size_terms = $terms;
+            break;
+        }
+    }
+}
+
+// Sort options
+$sort_options = apply_filters( 'woocommerce_catalog_orderby', array(
+    'menu_order' => __( 'Default sorting', 'woocommerce' ),
+    'popularity' => __( 'Sort by popularity', 'woocommerce' ),
+    'rating'     => __( 'Sort by average rating', 'woocommerce' ),
+    'date'       => __( 'Sort by latest', 'woocommerce' ),
+    'price'      => __( 'Sort by price: low to high', 'woocommerce' ),
+    'price-desc' => __( 'Sort by price: high to low', 'woocommerce' ),
+) );
 ?>
 
 <!-- Promo Ribbon (hidden on mobile) -->
@@ -34,7 +74,7 @@ $clear_filters_url = get_permalink( wc_get_page_id( 'shop' ) );
 
 <!-- MAIN CONTENT AREA -->
 <div class="flex relative px-4 md:px-8 py-8 pb-40 md:pb-8 max-w-[1800px] mx-auto bg-black min-h-[80vh]">
-    
+
     <!-- FILTER DRAWER (Sidebar on large screens) -->
     <aside class="hidden lg:block w-64 xl:w-72 shrink-0 pr-8 sticky top-28 h-[calc(100vh-8rem)] overflow-y-auto no-scrollbar">
         <div class="flex items-center justify-between mb-6">
@@ -43,35 +83,45 @@ $clear_filters_url = get_permalink( wc_get_page_id( 'shop' ) );
         </div>
 
         <div class="space-y-8">
-            <!-- Fabric Filter -->
+
+            <!-- Sort By (in sidebar) -->
+            <div class="border-b border-[#C8A46A]/10 pb-6">
+                <h4 class="text-xs font-semibold mb-4 text-[#F7F4EE] uppercase tracking-[0.15em]"><?php esc_html_e( 'Sort By', 'dt-ecommerce-theme' ); ?></h4>
+                <form class="woocommerce-ordering" method="get">
+                    <select name="orderby" class="w-full bg-[#111] border border-[#C8A46A]/30 text-[#F7F4EE] text-xs uppercase tracking-wider py-2.5 px-3 focus:outline-none focus:border-[#C8A46A] rounded-sm" onchange="this.form.submit()">
+                        <?php foreach ( $sort_options as $id => $name ) : ?>
+                            <option value="<?php echo esc_attr( $id ); ?>" <?php selected( $current_orderby, $id ); ?>><?php echo esc_html( $name ); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?php if ( isset( $_GET['max_price'] ) ) : ?>
+                        <input type="hidden" name="max_price" value="<?php echo esc_attr( $current_max_price ); ?>" />
+                    <?php endif; ?>
+                    <input type="hidden" name="paged" value="1" />
+                    <?php wc_query_string_form_fields( null, array( 'orderby', 'submit', 'paged', 'product-page', 'max_price' ) ); ?>
+                </form>
+            </div>
+
+            <!-- Fabric Category Filter -->
             <div class="border-b border-[#C8A46A]/10 pb-6">
                 <h4 class="text-xs font-semibold mb-4 text-[#F7F4EE] uppercase tracking-[0.15em]"><?php esc_html_e( 'Fabric Category', 'dt-ecommerce-theme' ); ?></h4>
                 <div class="space-y-3">
-                    <?php
-                    $categories = get_terms( array(
-                        'taxonomy'   => 'product_cat',
-                        'hide_empty' => false,
-                    ) );
-                    if ( ! is_wp_error( $categories ) && ! empty( $categories ) ) {
-                        foreach ( $categories as $cat ) {
+                    <?php if ( ! is_wp_error( $categories ) && ! empty( $categories ) ) : ?>
+                        <?php foreach ( $categories as $cat ) :
                             $is_active = ( $current_cat_slug === $cat->slug );
                             $link = $is_active ? $clear_filters_url : get_term_link( $cat );
-                            // Preserve current parameters
                             if ( isset( $_GET['max_price'] ) ) {
                                 $link = add_query_arg( 'max_price', $current_max_price, $link );
                             }
                             if ( isset( $_GET['orderby'] ) ) {
                                 $link = add_query_arg( 'orderby', $current_orderby, $link );
                             }
-                            ?>
-                            <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="checkbox" <?php checked( $is_active ); ?> onchange="window.location.href='<?php echo esc_url( $link ); ?>'" class="rounded border-[#C8A46A]/40 bg-black text-[#C8A46A] focus:ring-0 w-4 h-4" />
-                                <span class="text-sm text-[#F7F4EE]/70 group-hover:text-[#C8A46A] transition-colors"><?php echo esc_html( $cat->name ); ?></span>
-                            </label>
-                            <?php
-                        }
-                    }
-                    ?>
+                        ?>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" <?php checked( $is_active ); ?> onchange="window.location.href='<?php echo esc_url( $link ); ?>'" class="rounded border-[#C8A46A]/40 bg-black text-[#C8A46A] focus:ring-0 w-4 h-4" />
+                            <span class="text-sm text-[#F7F4EE]/70 group-hover:text-[#C8A46A] transition-colors"><?php echo esc_html( $cat->name ); ?></span>
+                        </label>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -84,10 +134,56 @@ $clear_filters_url = get_permalink( wc_get_page_id( 'shop' ) );
                     <span id="price-range-val" class="text-[#C8A46A] font-semibold">₹<?php echo number_format( $current_max_price ); ?></span>
                 </div>
             </div>
+
+            <?php if ( ! empty( $color_terms ) ) : ?>
+            <!-- Available Colors Filter (auto-shown only when colors exist) -->
+            <div class="border-b border-[#C8A46A]/10 pb-6">
+                <h4 class="text-xs font-semibold mb-4 text-[#F7F4EE] uppercase tracking-[0.15em]"><?php esc_html_e( 'Available Colors', 'dt-ecommerce-theme' ); ?></h4>
+                <div class="flex flex-wrap gap-2">
+                    <?php foreach ( $color_terms as $color ) :
+                        $is_active = ( $current_color === $color->slug );
+                        $color_url = $is_active
+                            ? remove_query_arg( 'filter_color' )
+                            : add_query_arg( 'filter_color', $color->slug );
+                        $swatch_bg = $color->name ? strtolower( preg_replace( '/\s+/', '', $color->name ) ) : '#999';
+                    ?>
+                    <a href="<?php echo esc_url( $color_url ); ?>"
+                       title="<?php echo esc_attr( $color->name ); ?>"
+                       class="group flex flex-col items-center gap-1.5">
+                        <span class="w-6 h-6 rounded-full border-2 <?php echo $is_active ? 'border-[#C8A46A] scale-110' : 'border-[#444] group-hover:border-[#C8A46A]'; ?> transition-all"
+                              style="background-color:<?php echo esc_attr( $swatch_bg ); ?>;"></span>
+                        <span class="text-[9px] text-[#F7F4EE]/50 uppercase tracking-wider group-hover:text-[#C8A46A] transition-colors"><?php echo esc_html( $color->name ); ?></span>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <?php if ( ! empty( $size_terms ) ) : ?>
+            <!-- Available Sizes Filter (auto-shown only when sizes exist) -->
+            <div class="border-b border-[#C8A46A]/10 pb-6">
+                <h4 class="text-xs font-semibold mb-4 text-[#F7F4EE] uppercase tracking-[0.15em]"><?php esc_html_e( 'Available Sizes', 'dt-ecommerce-theme' ); ?></h4>
+                <div class="flex flex-wrap gap-2">
+                    <?php foreach ( $size_terms as $size ) :
+                        $is_active = ( $current_size === $size->slug );
+                        $size_url = $is_active
+                            ? remove_query_arg( 'filter_size' )
+                            : add_query_arg( 'filter_size', $size->slug );
+                    ?>
+                    <a href="<?php echo esc_url( $size_url ); ?>"
+                       class="px-3 py-1.5 text-xs uppercase tracking-wider border rounded-sm transition-all font-medium
+                              <?php echo $is_active ? 'bg-[#C8A46A] text-black border-[#C8A46A]' : 'border-[#C8A46A]/30 text-[#F7F4EE]/70 hover:border-[#C8A46A] hover:text-[#C8A46A]'; ?>">
+                        <?php echo esc_html( $size->name ); ?>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+
         </div>
     </aside>
 
-    <!-- RIGHT COLUMN: Grid & Sort -->
+    <!-- RIGHT COLUMN: Product Grid -->
     <div class="flex-1 min-w-0">
         <?php
         $shop_cols = dt_get_theme_option( 'shop_columns', '4' );
@@ -100,48 +196,6 @@ $clear_filters_url = get_permalink( wc_get_page_id( 'shop' ) );
             $grid_class .= ' md:grid-cols-3 xl:grid-cols-4';
         }
         ?>
-        <!-- Sort Bar (hidden on mobile — items count & sort handled by bottom bar) -->
-        <div class="hidden sm:flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-4 border-b border-[#C8A46A]/10 pb-4">
-            <div class="flex items-center justify-between w-full sm:w-auto gap-4">
-                <span class="text-xs text-[#F7F4EE]/50 tracking-wide">
-                    <?php
-                    $total = wc_get_loop_prop( 'total' );
-                    printf( esc_html( _n( '%d Item found', '%d Items found', $total, 'dt-ecommerce-theme' ) ), $total );
-                    ?>
-                </span>
-            </div>
-
-            <!-- Sort Select (hidden on mobile — handled by bottom Filter/Sort bar) -->
-            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
-                <span class="text-xs text-[#F7F4EE]/50 uppercase tracking-widest hidden sm:inline"><?php esc_html_e( 'Sort By', 'dt-ecommerce-theme' ); ?></span>
-                <form class="woocommerce-ordering" method="get">
-                    <select name="orderby" class="bg-[#111] border border-[#C8A46A]/30 text-[#F7F4EE] text-xs uppercase tracking-wider py-2 px-3 focus:outline-none focus:border-[#C8A46A]" onchange="this.form.submit()">
-                        <?php
-                        $catalog_orderby_options = apply_filters(
-                            'woocommerce_catalog_orderby',
-                            array(
-                                'menu_order' => __( 'Default sorting', 'woocommerce' ),
-                                'popularity' => __( 'Sort by popularity', 'woocommerce' ),
-                                'rating'     => __( 'Sort by average rating', 'woocommerce' ),
-                                'date'       => __( 'Sort by latest', 'woocommerce' ),
-                                'price'      => __( 'Sort by price: low to high', 'woocommerce' ),
-                                'price-desc' => __( 'Sort by price: high to low', 'woocommerce' ),
-                            )
-                        );
-
-                        foreach ( $catalog_orderby_options as $id => $name ) {
-                            echo '<option value="' . esc_attr( $id ) . '" ' . selected( $current_orderby, $id, false ) . '>' . esc_html( $name ) . '</option>';
-                        }
-                        ?>
-                    </select>
-                    <?php if ( isset( $_GET['max_price'] ) ) : ?>
-                        <input type="hidden" name="max_price" value="<?php echo esc_attr( $current_max_price ); ?>" />
-                    <?php endif; ?>
-                    <input type="hidden" name="paged" value="1" />
-                    <?php wc_query_string_form_fields( null, array( 'orderby', 'submit', 'paged', 'product-page', 'max_price' ) ); ?>
-                </form>
-            </div>
-        </div>
 
         <!-- Products Grid -->
         <div id="shop-products-grid" class="<?php echo esc_attr( $grid_class ); ?> gap-x-4 gap-y-12 md:gap-x-8">
@@ -156,12 +210,12 @@ $clear_filters_url = get_permalink( wc_get_page_id( 'shop' ) );
             }
             ?>
         </div>
-        
+
         <div class="mt-12 text-center">
             <?php the_posts_pagination( array(
                 'prev_text' => '<i data-lucide="arrow-left" class="w-4 h-4"></i>',
                 'next_text' => '<i data-lucide="arrow-right" class="w-4 h-4"></i>',
-                'class'     => 'dt-pagination'
+                'class'     => 'dt-pagination',
             ) ); ?>
         </div>
     </div>
@@ -186,7 +240,7 @@ $clear_filters_url = get_permalink( wc_get_page_id( 'shop' ) );
     <!-- Backdrop -->
     <div class="absolute inset-0" onclick="toggleMobileFilterDrawer(false)"></div>
     <!-- Drawer panel -->
-    <div id="mob-filter-panel" class="absolute left-0 bottom-0 w-full h-[80vh] bg-[#0a0a0a] border-t border-[#C8A46A]/30 rounded-t-2xl shadow-2xl flex flex-col transform translate-y-full transition-transform duration-300 ease-in-out">
+    <div id="mob-filter-panel" class="absolute left-0 bottom-0 w-full h-[85vh] bg-[#0a0a0a] border-t border-[#C8A46A]/30 rounded-t-2xl shadow-2xl flex flex-col transform translate-y-full transition-transform duration-300 ease-in-out">
         <!-- Header -->
         <div class="flex items-center justify-between p-5 border-b border-[#C8A46A]/20 bg-black/40 rounded-t-2xl">
             <h3 class="font-serif text-xl text-[#C8A46A] tracking-wider uppercase"><?php esc_html_e( 'Filters', 'dt-ecommerce-theme' ); ?></h3>
@@ -196,13 +250,13 @@ $clear_filters_url = get_permalink( wc_get_page_id( 'shop' ) );
         </div>
         <!-- Body -->
         <div class="flex-1 overflow-y-auto p-6 space-y-8 text-left">
-            <!-- Fabric Filter -->
+
+            <!-- Fabric Category -->
             <div class="border-b border-[#C8A46A]/10 pb-6">
                 <h4 class="text-xs font-semibold mb-4 text-[#F7F4EE] uppercase tracking-[0.15em]"><?php esc_html_e( 'Fabric Category', 'dt-ecommerce-theme' ); ?></h4>
                 <div class="space-y-4">
-                    <?php
-                    if ( ! is_wp_error( $categories ) && ! empty( $categories ) ) {
-                        foreach ( $categories as $cat ) {
+                    <?php if ( ! is_wp_error( $categories ) && ! empty( $categories ) ) : ?>
+                        <?php foreach ( $categories as $cat ) :
                             $is_active = ( $current_cat_slug === $cat->slug );
                             $link = $is_active ? $clear_filters_url : get_term_link( $cat );
                             if ( isset( $_GET['max_price'] ) ) {
@@ -211,19 +265,17 @@ $clear_filters_url = get_permalink( wc_get_page_id( 'shop' ) );
                             if ( isset( $_GET['orderby'] ) ) {
                                 $link = add_query_arg( 'orderby', $current_orderby, $link );
                             }
-                            ?>
-                            <label class="flex items-center gap-3 cursor-pointer group">
-                                <input type="checkbox" <?php checked( $is_active ); ?> onchange="window.location.href='<?php echo esc_url( $link ); ?>'" class="rounded border-[#C8A46A]/40 bg-black text-[#C8A46A] focus:ring-0 w-4 h-4" />
-                                <span class="text-sm text-[#F7F4EE]/70 group-hover:text-[#C8A46A]"><?php echo esc_html( $cat->name ); ?></span>
-                            </label>
-                            <?php
-                        }
-                    }
-                    ?>
+                        ?>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" <?php checked( $is_active ); ?> onchange="window.location.href='<?php echo esc_url( $link ); ?>'" class="rounded border-[#C8A46A]/40 bg-black text-[#C8A46A] focus:ring-0 w-4 h-4" />
+                            <span class="text-sm text-[#F7F4EE]/70 group-hover:text-[#C8A46A]"><?php echo esc_html( $cat->name ); ?></span>
+                        </label>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
 
-            <!-- Price Range Filter -->
+            <!-- Price Range -->
             <div class="border-b border-[#C8A46A]/10 pb-6">
                 <h4 class="text-xs font-semibold mb-4 text-[#F7F4EE] uppercase tracking-[0.15em]"><?php esc_html_e( 'Max Price', 'dt-ecommerce-theme' ); ?></h4>
                 <input type="range" id="mob-price-range" min="9000" max="35000" step="1000" value="<?php echo esc_attr( $current_max_price ); ?>" class="w-full accent-[#C8A46A] bg-[#1a1a1a] h-1 rounded-lg cursor-pointer" />
@@ -232,6 +284,52 @@ $clear_filters_url = get_permalink( wc_get_page_id( 'shop' ) );
                     <span id="mob-price-range-val" class="text-[#C8A46A] font-semibold">₹<?php echo number_format( $current_max_price ); ?></span>
                 </div>
             </div>
+
+            <?php if ( ! empty( $color_terms ) ) : ?>
+            <!-- Available Colors (auto-hidden when none exist) -->
+            <div class="border-b border-[#C8A46A]/10 pb-6">
+                <h4 class="text-xs font-semibold mb-4 text-[#F7F4EE] uppercase tracking-[0.15em]"><?php esc_html_e( 'Available Colors', 'dt-ecommerce-theme' ); ?></h4>
+                <div class="flex flex-wrap gap-3">
+                    <?php foreach ( $color_terms as $color ) :
+                        $is_active = ( $current_color === $color->slug );
+                        $color_url = $is_active
+                            ? remove_query_arg( 'filter_color' )
+                            : add_query_arg( 'filter_color', $color->slug );
+                        $swatch_bg = strtolower( preg_replace( '/\s+/', '', $color->name ) );
+                    ?>
+                    <a href="<?php echo esc_url( $color_url ); ?>"
+                       title="<?php echo esc_attr( $color->name ); ?>"
+                       class="group flex flex-col items-center gap-1.5">
+                        <span class="w-8 h-8 rounded-full border-2 <?php echo $is_active ? 'border-[#C8A46A] scale-110' : 'border-[#444] group-hover:border-[#C8A46A]'; ?> transition-all"
+                              style="background-color:<?php echo esc_attr( $swatch_bg ); ?>;"></span>
+                        <span class="text-[9px] text-[#F7F4EE]/50 uppercase tracking-wider"><?php echo esc_html( $color->name ); ?></span>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <?php if ( ! empty( $size_terms ) ) : ?>
+            <!-- Available Sizes (auto-hidden when none exist) -->
+            <div class="border-b border-[#C8A46A]/10 pb-6">
+                <h4 class="text-xs font-semibold mb-4 text-[#F7F4EE] uppercase tracking-[0.15em]"><?php esc_html_e( 'Available Sizes', 'dt-ecommerce-theme' ); ?></h4>
+                <div class="flex flex-wrap gap-2">
+                    <?php foreach ( $size_terms as $size ) :
+                        $is_active = ( $current_size === $size->slug );
+                        $size_url = $is_active
+                            ? remove_query_arg( 'filter_size' )
+                            : add_query_arg( 'filter_size', $size->slug );
+                    ?>
+                    <a href="<?php echo esc_url( $size_url ); ?>"
+                       class="px-4 py-2 text-sm uppercase tracking-wider border rounded-sm transition-all font-medium
+                              <?php echo $is_active ? 'bg-[#C8A46A] text-black border-[#C8A46A]' : 'border-[#C8A46A]/30 text-[#F7F4EE]/70 hover:border-[#C8A46A] hover:text-[#C8A46A]'; ?>">
+                        <?php echo esc_html( $size->name ); ?>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+
         </div>
         <!-- Footer actions -->
         <div class="p-5 border-t border-[#C8A46A]/20 bg-black/40 grid grid-cols-2 gap-4">
@@ -256,26 +354,19 @@ $clear_filters_url = get_permalink( wc_get_page_id( 'shop' ) );
         </div>
         <!-- Options list -->
         <div class="p-4 space-y-1 text-left">
-            <?php
-            $mobile_sorts = array(
-                'menu_order' => __( 'Default sorting', 'woocommerce' ),
-                'popularity' => __( 'Sort by popularity', 'woocommerce' ),
-                'rating'     => __( 'Sort by average rating', 'woocommerce' ),
-                'date'       => __( 'Sort by latest', 'woocommerce' ),
-                'price'      => __( 'Sort by price: low to high', 'woocommerce' ),
-                'price-desc' => __( 'Sort by price: high to low', 'woocommerce' ),
-            );
-
-            foreach ( $mobile_sorts as $key => $name ) :
+            <?php foreach ( $sort_options as $key => $name ) :
                 $is_selected = ( $current_orderby === $key );
-                $sort_url = add_query_arg( 'orderby', $key );
-                ?>
-                <button onclick="window.location.href='<?php echo esc_url( $sort_url ); ?>'" class="mob-sort-option w-full py-3.5 px-4 flex items-center justify-between text-sm <?php echo $is_selected ? 'text-white bg-[#C8A46A]/10 border-[#C8A46A]/30' : 'text-[#F7F4EE]/80 border-transparent'; ?> hover:bg-[#C8A46A]/10 hover:text-white transition-all font-medium rounded-sm border">
-                    <span><?php echo esc_html( $name ); ?></span>
-                    <?php if ( $is_selected ) : ?>
-                        <i data-lucide="check" class="w-4 h-4 text-[#C8A46A]"></i>
-                    <?php endif; ?>
-                </button>
+                $sort_url    = add_query_arg( 'orderby', $key );
+            ?>
+            <button onclick="window.location.href='<?php echo esc_url( $sort_url ); ?>'"
+                    class="mob-sort-option w-full py-3.5 px-4 flex items-center justify-between text-sm
+                           <?php echo $is_selected ? 'text-white bg-[#C8A46A]/10 border-[#C8A46A]/30' : 'text-[#F7F4EE]/80 border-transparent'; ?>
+                           hover:bg-[#C8A46A]/10 hover:text-white transition-all font-medium rounded-sm border">
+                <span><?php echo esc_html( $name ); ?></span>
+                <?php if ( $is_selected ) : ?>
+                    <i data-lucide="check" class="w-4 h-4 text-[#C8A46A]"></i>
+                <?php endif; ?>
+            </button>
             <?php endforeach; ?>
         </div>
     </div>
@@ -285,7 +376,7 @@ $clear_filters_url = get_permalink( wc_get_page_id( 'shop' ) );
     // Toggle Mobile Filter Drawer
     function toggleMobileFilterDrawer(open) {
         const drawer = document.getElementById('mob-filter-drawer');
-        const panel = document.getElementById('mob-filter-panel');
+        const panel  = document.getElementById('mob-filter-panel');
         if (!drawer || !panel) return;
         if (open) {
             drawer.classList.remove('hidden');
@@ -318,11 +409,10 @@ $clear_filters_url = get_permalink( wc_get_page_id( 'shop' ) );
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        // Sync sliders
         const desktopSlider = document.getElementById('price-range');
-        const desktopLabel = document.getElementById('price-range-val');
-        const mobileSlider = document.getElementById('mob-price-range');
-        const mobileLabel = document.getElementById('mob-price-range-val');
+        const desktopLabel  = document.getElementById('price-range-val');
+        const mobileSlider  = document.getElementById('mob-price-range');
+        const mobileLabel   = document.getElementById('mob-price-range-val');
 
         if (desktopSlider && desktopLabel) {
             desktopSlider.addEventListener('input', (e) => {
