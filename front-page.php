@@ -448,7 +448,7 @@ if ( $show_new_arrivals ) {
                         if ( ! empty( $p_ids ) ) {
                             $delay = 0;
                             foreach ( $p_ids as $pid ) {
-                                echo '<div class="na-mobile-slide w-full shrink-0 px-2">';
+                                echo '<div class="na-mobile-slide shrink-0 px-1">';
                                 $render_product_grid_card( $pid, $delay );
                                 echo '</div>';
                                 $delay += 80;

@@ -1591,23 +1591,27 @@ function restartReviewsAuto() { clearInterval(reviewsAutoTimer); startReviewsAut
 // =============================================================
 const _mobileSliders = {};
 
-function initMobileSlider(id, intervalMs) {
+// perView: how many slides are visible at once (default 1)
+function initMobileSlider(id, intervalMs, perView) {
+  perView = perView || 1;
   const track = document.getElementById(id + '-mobile-track');
   if (!track) return;
   const outer = track.parentElement;  // the overflow-hidden div
   if (!outer) return;
-  const slideW = outer.offsetWidth;
-  if (!slideW) return;
+  const containerW = outer.offsetWidth;
+  if (!containerW) return;
+  const slideW = containerW / perView;
   const slides = Array.from(track.children);
   if (!slides.length) return;
-  // Give every slide an exact pixel width = container width
+  // Give every slide an exact pixel width = container / perView
   slides.forEach(s => {
     s.style.width     = slideW + 'px';
     s.style.minWidth  = slideW + 'px';
     s.style.maxWidth  = slideW + 'px';
     s.style.flexShrink = '0';
   });
-  _mobileSliders[id] = { idx: 0, total: slides.length, slideW, timer: null };
+  const maxIdx = Math.max(0, slides.length - perView);
+  _mobileSliders[id] = { idx: 0, total: slides.length, slideW, perView, maxIdx, timer: null };
   _renderMsDots(id);
   // Swipe support
   let tStart = null;
@@ -1619,7 +1623,7 @@ function initMobileSlider(id, intervalMs) {
     tStart = null;
   }, { passive: true });
   // Auto-advance
-  if (intervalMs && slides.length > 1) {
+  if (intervalMs && slides.length > perView) {
     _mobileSliders[id].timer = setInterval(() => mobileSliderNav(id, 1), intervalMs);
   }
 }
@@ -1627,7 +1631,10 @@ function initMobileSlider(id, intervalMs) {
 function mobileSliderNav(id, dir) {
   const s = _mobileSliders[id];
   if (!s) return;
-  s.idx = (s.idx + dir + s.total) % s.total;
+  // Loop: 0 → maxIdx → 0
+  s.idx = s.idx + dir;
+  if (s.idx < 0) s.idx = s.maxIdx;
+  if (s.idx > s.maxIdx) s.idx = 0;
   const track = document.getElementById(id + '-mobile-track');
   if (track) track.style.transform = `translateX(-${s.idx * s.slideW}px)`;
   _renderMsDots(id);
@@ -1642,7 +1649,7 @@ function mobileSliderNav(id, dir) {
 function mobileSliderGoTo(id, idx) {
   const s = _mobileSliders[id];
   if (!s) return;
-  s.idx = Math.max(0, Math.min(idx, s.total - 1));
+  s.idx = Math.max(0, Math.min(idx, s.maxIdx));
   const track = document.getElementById(id + '-mobile-track');
   if (track) track.style.transform = `translateX(-${s.idx * s.slideW}px)`;
   _renderMsDots(id);
@@ -1652,7 +1659,9 @@ function _renderMsDots(id) {
   const s  = _mobileSliders[id];
   const el = document.getElementById(id + '-dots');
   if (!s || !el) return;
-  el.innerHTML = Array.from({length: s.total}, (_, i) =>
+  // Dot count = maxIdx + 1 (accounts for perView)
+  const dotCount = s.maxIdx + 1;
+  el.innerHTML = Array.from({length: dotCount}, (_, i) =>
     `<button class="mobile-slider-dot${i===s.idx?' active':''}" onclick="mobileSliderGoTo('${id}',${i})" aria-label="Slide ${i+1}"></button>`
   ).join('');
 }
@@ -1665,7 +1674,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Always init — CSS (md:hidden) controls visibility per breakpoint
   // setTimeout ensures fonts/images haven't shifted layout yet
   setTimeout(() => {
-    initMobileSlider('na', 3200);  // New Arrivals: 1-per-slide
+    initMobileSlider('na', 3200, 3);  // New Arrivals: 3-per-view
     initMobileSlider('ts', 3000);  // Top Sellers:  2-per-slide page
     initMobileSlider('wc', 3500);  // Why Choose:   1-per-slide
   }, 120);
