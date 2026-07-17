@@ -381,7 +381,44 @@ function dt_render_theme_options_page(): void {
                                 <?php dt_option_row( 'hero_btn1_url', 'Button 1 Redirection Link', 'Navigation destination link', 'text', $opts ); ?>
                                 <?php dt_option_row( 'hero_btn2_text', 'Button 2 (Right) Label', 'e.g. Our Story', 'text', $opts ); ?>
                                 <?php dt_option_row( 'hero_btn2_url', 'Button 2 Redirection Link', 'Navigation destination link', 'text', $opts ); ?>
+                                <?php dt_option_row( 'mobile_slide_speed', 'Mobile Slide Speed (seconds)', 'Auto-advance interval in seconds for the mobile hero slider (default: 5, min: 3)', 'number', $opts ); ?>
                             </div>
+
+                            <!-- ── Mobile Hero Slides ─────────────────────── -->
+                            <div class="dt-section">
+                                <div class="dt-section-title">📱 Mobile Hero Slides (Video + Image)</div>
+                                <p class="description" style="margin-bottom:16px;">Add up to 5 mobile-only hero slides. Each slide can be a looping video or an image, with its own heading and buttons. Videos auto-play, muted, and loop. Slide 1 is always shown — add more with the button below.</p>
+
+                                <?php for ( $__si = 1; $__si <= 5; $__si++ ) :
+                                    $__has_content = ! empty( $opts["mobile_slide_{$__si}_video_url"] ) || ! empty( $opts["mobile_slide_{$__si}_image_url"] );
+                                    $__show = ( $__si === 1 || $__has_content ) ? '' : 'display:none;';
+                                ?>
+                                <div class="dt-mobile-slide-block" id="dt-mobile-slide-<?php echo $__si; ?>" style="<?php echo $__show; ?>border:1px solid #2a2a2a;border-radius:6px;padding:16px 20px;margin-bottom:16px;background:#111;">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                                        <p style="font-weight:600;color:#C8A46A;margin:0;font-size:13px;text-transform:uppercase;letter-spacing:.06em;">📱 Mobile Slide <?php echo $__si; ?></p>
+                                        <?php if ( $__si > 1 ) : ?>
+                                        <button type="button" style="background:none;border:1px solid #d63638;color:#d63638;cursor:pointer;font-size:12px;padding:4px 10px;border-radius:4px;" onclick="dtRemoveMobileSlide(<?php echo $__si; ?>)">✕ Remove</button>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php dt_option_video( "mobile_slide_{$__si}_video_url", 'Video Background (MP4/WebM)', 'Upload or paste a .mp4 video URL — auto-plays, loops, muted on mobile', $opts ); ?>
+                                    <?php dt_option_media( "mobile_slide_{$__si}_image_url", 'Fallback Image (when no video)', 'Shown if no video is set, or as poster frame', $opts ); ?>
+                                    <?php dt_option_row( "mobile_slide_{$__si}_badge",    'Badge / Eyebrow Text',  'Small golden text above the heading (e.g. Royal Heritage)', 'text', $opts ); ?>
+                                    <?php dt_option_row( "mobile_slide_{$__si}_heading",  'Slide Heading',         'Large title text (e.g. Banarasi Elegance)', 'text', $opts ); ?>
+                                    <?php dt_option_row( "mobile_slide_{$__si}_btn1_text",'Button 1 Label',        'Left button text (e.g. Shop Collection)', 'text', $opts ); ?>
+                                    <?php dt_option_row( "mobile_slide_{$__si}_btn1_url", 'Button 1 Link URL',     'Where Button 1 navigates to', 'text', $opts ); ?>
+                                    <?php dt_option_row( "mobile_slide_{$__si}_btn2_text",'Button 2 Label',        'Right button text (e.g. Our Story)', 'text', $opts ); ?>
+                                    <?php dt_option_row( "mobile_slide_{$__si}_btn2_url", 'Button 2 Link URL',     'Where Button 2 navigates to', 'text', $opts ); ?>
+                                </div>
+                                <?php endfor; ?>
+
+                                <button type="button" id="dt-add-mobile-slide"
+                                    style="display:flex;align-items:center;gap:8px;background:none;border:2px dashed #C8A46A;color:#C8A46A;padding:10px 20px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;margin-top:4px;"
+                                    onmouseover="this.style.background='rgba(200,164,106,0.08)'" onmouseout="this.style.background='none'"
+                                    onclick="dtAddMobileSlide()">
+                                    <span style="font-size:20px;line-height:1;font-weight:300;">+</span> Add Another Slide
+                                </button>
+                            </div>
+
                             <!-- ── Premium Banners Section ───────────────────── -->
                             <div class="dt-section">
                                 <div class="dt-section-title">🖼️ Premium Banners Section</div>
@@ -1025,6 +1062,44 @@ function dt_option_media( string $key, string $label, string $desc, array $opts 
                 </button>
             </div>
             <img id="<?php echo esc_attr( $preview_id ); ?>" src="<?php echo esc_url( $val ); ?>" class="dt-upload-preview <?php echo esc_attr( $hidden_class ); ?>" style="max-height:80px;border:1px solid #333;padding:4px;background:#111;">
+        </div>
+    </div>
+    <?php
+}
+
+/**
+ * Video upload field — uses WP Media Uploader filtered to video types.
+ */
+function dt_option_video( string $key, string $label, string $desc, array $opts = [] ): void {
+    $val      = $opts[ $key ] ?? '';
+    $input_id = 'dt_' . esc_attr( $key );
+    $prev_id  = 'vidprev_' . esc_attr( $key );
+    ?>
+    <div class="dt-form-row">
+        <div class="dt-form-label"><?php echo esc_html( $label ); ?><small><?php echo wp_kses_post( $desc ); ?></small></div>
+        <div>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px;">
+                <input type="text" id="<?php echo $input_id; ?>"
+                       name="dt_options[<?php echo esc_attr( $key ); ?>]"
+                       value="<?php echo esc_attr( $val ); ?>"
+                       class="dt-input" placeholder="https://... or click Upload Video"
+                       style="width:100%;max-width:400px;"
+                       oninput="dtVideoPreviewRefresh('<?php echo $input_id; ?>','<?php echo $prev_id; ?>')">
+                <button type="button" class="button button-secondary"
+                        onclick="dtUploadVideo('<?php echo $input_id; ?>','<?php echo $prev_id; ?>')">
+                    📹 Upload Video
+                </button>
+                <button type="button" class="button button-link-delete"
+                        onclick="document.getElementById('<?php echo $input_id; ?>').value='';document.getElementById('<?php echo $prev_id; ?>').style.display='none';"
+                        style="color:#d63638;">
+                    Remove
+                </button>
+            </div>
+            <div id="<?php echo $prev_id; ?>" style="<?php echo empty( $val ) ? 'display:none;' : ''; ?>margin-top:4px;">
+                <video src="<?php echo esc_url( $val ); ?>"
+                       style="max-height:90px;max-width:200px;border:1px solid #333;background:#111;display:block;"
+                       muted playsinline preload="metadata" controls></video>
+            </div>
         </div>
     </div>
     <?php

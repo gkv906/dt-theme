@@ -628,6 +628,94 @@
         }
     }
 
+    /* ── Mobile Hero Slide Management ──────────────────────────────────────── */
+
+    // Track which slide blocks are visible (1 is always shown)
+    var dtMobileSlideNext = (function () {
+        var next = 1;
+        for (var i = 2; i <= 5; i++) {
+            if (document.getElementById('dt-mobile-slide-' + i) &&
+                document.getElementById('dt-mobile-slide-' + i).style.display !== 'none') {
+                next = i + 1;
+            }
+        }
+        return Math.min(next, 6); // max 5 slides
+    })();
+
+    window.dtAddMobileSlide = function () {
+        for (var i = 2; i <= 5; i++) {
+            var el = document.getElementById('dt-mobile-slide-' + i);
+            if (el && el.style.display === 'none') {
+                el.style.display = 'block';
+                // Scroll to the new slide
+                setTimeout(function () { el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
+                // Hide button if all 5 shown
+                var allVisible = true;
+                for (var j = 2; j <= 5; j++) {
+                    var jEl = document.getElementById('dt-mobile-slide-' + j);
+                    if (jEl && jEl.style.display === 'none') { allVisible = false; break; }
+                }
+                if (allVisible) {
+                    var addBtn = document.getElementById('dt-add-mobile-slide');
+                    if (addBtn) addBtn.style.display = 'none';
+                }
+                return;
+            }
+        }
+    };
+
+    window.dtRemoveMobileSlide = function (n) {
+        var el = document.getElementById('dt-mobile-slide-' + n);
+        if (!el) return;
+        el.style.display = 'none';
+        // Clear its field values
+        el.querySelectorAll('input[type="text"], input[type="url"], textarea').forEach(function (inp) {
+            inp.value = '';
+            inp.dispatchEvent(new Event('input'));
+        });
+        // Hide video previews in this block
+        el.querySelectorAll('video').forEach(function (v) {
+            v.src = '';
+            v.closest('[id^="vidprev_"]') && (v.closest('[id^="vidprev_"]').style.display = 'none');
+        });
+        // Re-show the + Add button
+        var addBtn = document.getElementById('dt-add-mobile-slide');
+        if (addBtn) addBtn.style.display = 'flex';
+    };
+
+    /* ── Video Upload via WP Media Uploader ──────────────────────────────── */
+    window.dtUploadVideo = function (inputId, previewId) {
+        if (typeof wp === 'undefined' || !wp.media) { return; }
+        var frame = wp.media({
+            title    : 'Select or Upload Video',
+            library  : { type: 'video' },
+            multiple : false,
+            button   : { text: 'Use this video' }
+        });
+        frame.on('select', function () {
+            var attachment = frame.state().get('selection').first().toJSON();
+            var url = attachment.url || '';
+            var inp = document.getElementById(inputId);
+            if (inp) { inp.value = url; inp.dispatchEvent(new Event('input')); }
+            dtVideoPreviewRefresh(inputId, previewId);
+        });
+        frame.open();
+    };
+
+    window.dtVideoPreviewRefresh = function (inputId, previewId) {
+        var inp  = document.getElementById(inputId);
+        var prev = document.getElementById(previewId);
+        if (!inp || !prev) return;
+        var url = inp.value.trim();
+        var vid = prev.querySelector('video');
+        if (url && vid) {
+            vid.src = url;
+            prev.style.display = 'block';
+        } else {
+            prev.style.display = 'none';
+        }
+    };
+
     /* ── Init All ────────────────────────────────────────────────────────────── */
     $(document).ready(function () {
         injectSpinKeyframe();

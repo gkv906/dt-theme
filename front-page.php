@@ -49,6 +49,41 @@ if ( empty( $hero_btn2_url ) ) {
     $hero_btn2_url = class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : '#';
 }
 
+// ── Mobile Hero Slides ─────────────────────────────────────────────────────
+$mobile_slides = array();
+for ( $__i = 1; $__i <= 5; $__i++ ) {
+    $__video = dt_get_theme_option( "mobile_slide_{$__i}_video_url", '' );
+    $__img   = dt_get_theme_option( "mobile_slide_{$__i}_image_url", '' );
+    // Skip empty slides 2-5 that were never configured
+    if ( $__i > 1 && empty( $__video ) && empty( $__img ) ) {
+        continue;
+    }
+    $mobile_slides[] = array(
+        'video'     => $__video,
+        'image'     => ! empty( $__img ) ? $__img : $hero_bg,
+        'badge'     => dt_get_theme_option( "mobile_slide_{$__i}_badge",    $hero_subtitle ),
+        'heading'   => dt_get_theme_option( "mobile_slide_{$__i}_heading",  $hero_title ),
+        'btn1_text' => dt_get_theme_option( "mobile_slide_{$__i}_btn1_text", $hero_btn1_text ),
+        'btn1_url'  => dt_get_theme_option( "mobile_slide_{$__i}_btn1_url",  $hero_btn1_url ),
+        'btn2_text' => dt_get_theme_option( "mobile_slide_{$__i}_btn2_text", $hero_btn2_text ),
+        'btn2_url'  => dt_get_theme_option( "mobile_slide_{$__i}_btn2_url",  $hero_btn2_url ),
+    );
+}
+// Fallback: if no slides configured use desktop hero data
+if ( empty( $mobile_slides ) ) {
+    $mobile_slides[] = array(
+        'video'     => '',
+        'image'     => $hero_bg,
+        'badge'     => $hero_subtitle,
+        'heading'   => $hero_title,
+        'btn1_text' => $hero_btn1_text,
+        'btn1_url'  => $hero_btn1_url,
+        'btn2_text' => $hero_btn2_text,
+        'btn2_url'  => $hero_btn2_url,
+    );
+}
+$mobile_slide_speed = max( 3, (int) dt_get_theme_option( 'mobile_slide_speed', '5' ) );
+
 $show_new_arrivals   = dt_get_theme_option( 'show_new_arrivals', '1' ) !== '0';
 $show_top_sellers    = dt_get_theme_option( 'show_top_sellers', '1' ) !== '0';
 $show_reviews        = dt_get_theme_option( 'show_reviews', '1' ) !== '0';
@@ -307,13 +342,88 @@ $sections = array();
 
 // 1. Hero Banner
 ob_start();
+$__slide_count = count( $mobile_slides );
 ?>
 <!-- Hero Section -->
-    <section class="relative w-full h-[50vw] min-h-[60vh] md:h-[70vh] bg-[#050505] overflow-hidden">
+<section class="relative w-full bg-[#050505] overflow-hidden" id="dt-hero-section">
+
+    <!-- ══ MOBILE HERO SLIDER (visible only < md) ══════════════════════════ -->
+    <div class="md:hidden relative w-full overflow-hidden" id="mobile-hero-slider" style="aspect-ratio:3/4;">
+
+        <?php foreach ( $mobile_slides as $__si => $__slide ) : ?>
+        <div class="mobile-hero-slide absolute inset-0 w-full h-full"
+             data-slide="<?php echo $__si; ?>"
+             style="opacity:<?php echo $__si === 0 ? '1' : '0'; ?>;z-index:<?php echo $__si === 0 ? '10' : '0'; ?>;transition:opacity 0.7s ease-in-out;">
+
+            <?php if ( ! empty( $__slide['video'] ) ) : ?>
+            <!-- Video background -->
+            <video class="absolute inset-0 w-full h-full object-cover"
+                   autoplay muted loop playsinline preload="auto"
+                   style="display:block;">
+                <source src="<?php echo esc_url( $__slide['video'] ); ?>" type="video/mp4">
+            </video>
+            <?php else : ?>
+            <!-- Image background -->
+            <img src="<?php echo esc_url( $__slide['image'] ); ?>"
+                 alt="<?php echo esc_attr( $__slide['heading'] ); ?>"
+                 class="absolute inset-0 w-full h-full object-cover<?php echo $__si === 0 ? ' animate-hero-img' : ''; ?>"
+                 <?php echo $__si === 0 ? 'fetchpriority="high" decoding="sync"' : 'loading="lazy"'; ?>>
+            <?php endif; ?>
+
+            <!-- Gradient overlay -->
+            <div class="absolute inset-0" style="background:linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.18) 55%, rgba(0,0,0,0.08) 100%);"></div>
+
+            <!-- Text overlay — anchored to bottom -->
+            <div class="absolute bottom-0 left-0 right-0 z-10 px-5 pb-14 text-center">
+                <?php if ( ! empty( $__slide['badge'] ) ) : ?>
+                <span class="block text-[#C8A46A] uppercase tracking-[0.35em] text-[10px] font-medium mb-2">
+                    <?php echo esc_html( $__slide['badge'] ); ?>
+                </span>
+                <?php endif; ?>
+                <?php if ( ! empty( $__slide['heading'] ) ) : ?>
+                <h2 class="font-serif text-[28px] leading-tight text-white mb-5">
+                    <?php echo wp_kses_post( nl2br( $__slide['heading'] ) ); ?>
+                </h2>
+                <?php endif; ?>
+                <div class="flex flex-row items-center justify-center gap-3 w-full max-w-[280px] mx-auto">
+                    <?php if ( ! empty( $__slide['btn1_text'] ) ) : ?>
+                    <a href="<?php echo esc_url( $__slide['btn1_url'] ?: '#' ); ?>"
+                       class="btn-gold-shimmer py-3 px-4 uppercase tracking-widest text-[10px] font-semibold flex-1 text-center rounded-sm">
+                        <?php echo esc_html( $__slide['btn1_text'] ); ?>
+                    </a>
+                    <?php endif; ?>
+                    <?php if ( ! empty( $__slide['btn2_text'] ) ) : ?>
+                    <a href="<?php echo esc_url( $__slide['btn2_url'] ?: '#' ); ?>"
+                       class="border border-[#C8A46A] text-[#C8A46A] py-3 px-4 uppercase tracking-widest text-[10px] font-medium hover:bg-[#C8A46A] hover:text-black transition-all flex-1 text-center rounded-sm">
+                        <?php echo esc_html( $__slide['btn2_text'] ); ?>
+                    </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <?php endforeach; ?>
+
+        <?php if ( $__slide_count > 1 ) : ?>
+        <!-- Dot indicators -->
+        <div class="absolute bottom-5 left-1/2 z-20 flex items-center gap-[6px]"
+             id="mobile-hero-dots"
+             style="transform:translateX(-50%);">
+            <?php for ( $__di = 0; $__di < $__slide_count; $__di++ ) : ?>
+            <button class="mobile-hero-dot rounded-full transition-all duration-300"
+                    data-dot="<?php echo $__di; ?>"
+                    aria-label="Slide <?php echo $__di + 1; ?>"
+                    style="width:<?php echo $__di === 0 ? '20px' : '8px'; ?>;height:8px;background:<?php echo $__di === 0 ? '#C8A46A' : 'rgba(255,255,255,0.35)'; ?>;border:none;padding:0;cursor:pointer;"></button>
+            <?php endfor; ?>
+        </div>
+        <?php endif; ?>
+    </div><!-- /mobile-hero-slider -->
+
+    <!-- ══ DESKTOP HERO (hidden on mobile) ════════════════════════════════ -->
+    <div class="hidden md:block relative w-full" style="height:70vh;">
         <div class="absolute inset-0 z-0">
-            <img 
-                src="<?php echo esc_url( $hero_bg ); ?>" 
-                alt="Luxury Saree" 
+            <img
+                src="<?php echo esc_url( $hero_bg ); ?>"
+                alt="Luxury Saree"
                 class="w-full h-full object-cover animate-hero-img opacity-80"
                 fetchpriority="high"
                 decoding="sync"
@@ -322,18 +432,18 @@ ob_start();
             <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/80"></div>
         </div>
 
-        <div class="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-4 pt-12 md:pt-20">
+        <div class="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-4 pt-20">
             <div class="reveal-on-scroll max-w-xl">
-                <span class="text-[#C8A46A] uppercase tracking-[0.4em] text-[10px] md:text-sm font-medium mb-3 md:mb-6 block">
+                <span class="text-[#C8A46A] uppercase tracking-[0.4em] text-sm font-medium mb-6 block">
                     <?php echo esc_html( $hero_subtitle ); ?>
                 </span>
-                <h1 class="dt-hero-heading font-serif text-3xl md:text-7xl lg:text-8xl text-white mb-3 md:mb-6 leading-tight">
+                <h1 class="dt-hero-heading font-serif text-7xl lg:text-8xl text-white mb-6 leading-tight">
                     <?php echo wp_kses_post( nl2br( $hero_title ) ); ?>
                 </h1>
-                <p class="dt-hero-subtext text-[#F7F4EE]/80 max-w-md mx-auto font-light text-xs md:text-base mb-6 md:mb-10 leading-relaxed">
+                <p class="dt-hero-subtext text-[#F7F4EE]/80 max-w-md mx-auto font-light text-base mb-10 leading-relaxed">
                     <?php echo esc_html( $hero_desc ); ?>
                 </p>
-                <div class="flex flex-row items-center justify-center gap-3 w-full max-w-xs sm:max-w-sm mx-auto">
+                <div class="flex flex-row items-center justify-center gap-3 w-full max-w-sm mx-auto">
                     <a href="<?php echo esc_url( $hero_btn1_url ); ?>" class="btn-gold-shimmer py-3 px-4 uppercase tracking-widest text-[10px] font-semibold flex-1 text-center rounded-sm">
                         <?php echo esc_html( $hero_btn1_text ); ?>
                     </a>
@@ -344,13 +454,15 @@ ob_start();
             </div>
         </div>
 
-        <!-- Slide Indicators -->
+        <!-- Desktop slide indicators -->
         <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-3">
             <div class="w-12 h-0.5 bg-[#C8A46A]"></div>
-            <div class="w-12 h-0.5 bg-white/20 hover:bg-white/50 transition-colors cursor-pointer"></div>
-            <div class="w-12 h-0.5 bg-white/20 hover:bg-white/50 transition-colors cursor-pointer"></div>
+            <div class="w-12 h-0.5 bg-white/20"></div>
+            <div class="w-12 h-0.5 bg-white/20"></div>
         </div>
-    </section>
+    </div><!-- /desktop-hero -->
+
+</section>
 <?php
 $sections['hero'] = ob_get_clean();
 
@@ -1079,6 +1191,79 @@ echo '</main>';
         wcStats.forEach(s => wcObserver.observe(s));
 
     // Reviews & mobile sliders are initialized in main.js
+
+    // ── Mobile Hero Slider ──────────────────────────────────────────────────
+    (function () {
+        var slides  = document.querySelectorAll('.mobile-hero-slide');
+        var dots    = document.querySelectorAll('.mobile-hero-dot');
+        if (!slides.length) return;
+
+        var total   = slides.length;
+        var current = 0;
+        var speed   = <?php echo intval( $mobile_slide_speed ) * 1000; ?>; // ms
+        var timer   = null;
+
+        function goTo(idx) {
+            // hide current
+            slides[current].style.opacity = '0';
+            slides[current].style.zIndex  = '0';
+            if (dots[current]) {
+                dots[current].style.width      = '8px';
+                dots[current].style.background = 'rgba(255,255,255,0.35)';
+            }
+
+            current = ((idx % total) + total) % total;
+
+            // show next
+            slides[current].style.opacity = '1';
+            slides[current].style.zIndex  = '10';
+            if (dots[current]) {
+                dots[current].style.width      = '20px';
+                dots[current].style.background = '#C8A46A';
+            }
+
+            // restart video if present
+            var vid = slides[current].querySelector('video');
+            if (vid) {
+                vid.currentTime = 0;
+                var p = vid.play();
+                if (p && p.catch) p.catch(function(){});
+            }
+        }
+
+        function startAuto() {
+            if (total < 2) return;
+            clearInterval(timer);
+            timer = setInterval(function () { goTo(current + 1); }, speed);
+        }
+
+        // Dot click handlers
+        dots.forEach(function (dot, i) {
+            dot.addEventListener('click', function () {
+                goTo(i);
+                startAuto();
+            });
+        });
+
+        // Touch swipe
+        var slider   = document.getElementById('mobile-hero-slider');
+        var touchX0  = 0;
+        if (slider) {
+            slider.addEventListener('touchstart', function (e) {
+                touchX0 = e.changedTouches[0].clientX;
+            }, { passive: true });
+            slider.addEventListener('touchend', function (e) {
+                var dx = e.changedTouches[0].clientX - touchX0;
+                if (Math.abs(dx) > 40) {
+                    goTo(dx < 0 ? current + 1 : current - 1);
+                    startAuto();
+                }
+            }, { passive: true });
+        }
+
+        // Kick off auto-advance
+        startAuto();
+    })();
 </script>
 
 <?php
