@@ -724,12 +724,18 @@ function injectGlobalUI() {
     </div>
   `;
 
-  document.body.insertAdjacentHTML('beforeend', cartDrawerHTML + loginModalHTML + quickViewModalHTML + mobileSearchOverlayHTML + mobileMenuDrawerHTML);
+  // In WordPress mode all drawers/modals are already rendered by PHP templates.
+  // Injecting them again would create duplicate IDs, conflicting z-layers, and
+  // broken click handlers (e.g. menu button not opening, search not opening).
+  if (!_isWP) {
+    document.body.insertAdjacentHTML('beforeend', cartDrawerHTML + loginModalHTML + quickViewModalHTML + mobileSearchOverlayHTML + mobileMenuDrawerHTML);
+  }
 
-  // Bind search overlay input events
+  // Bind search overlay input events (works for both PHP-rendered and JS-injected overlay)
   setTimeout(() => {
     const overlayInput = document.getElementById('overlay-search-input');
-    if (overlayInput) {
+    if (overlayInput && !overlayInput._dtBound) {
+      overlayInput._dtBound = true;
       overlayInput.addEventListener('input', (e) => {
         renderOverlaySearchSuggestions(e.target.value);
       });
