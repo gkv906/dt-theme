@@ -930,26 +930,8 @@ function loadGlobalHeader() {
       // Re-initialize header widgets (badge counts, account label)
       updateHeaderWidgets();
 
-      // Bind search autocomplete input events
-      const searchInput = document.getElementById('header-search-input');
-      const searchSuggestions = document.getElementById('search-suggestions');
-      if (searchInput && searchSuggestions) {
-        searchInput.addEventListener('focus', () => {
-          renderGlobalSearchSuggestions(searchInput.value);
-          searchSuggestions.classList.remove('hidden');
-        });
-
-        searchInput.addEventListener('input', () => {
-          renderGlobalSearchSuggestions(searchInput.value);
-        });
-
-        // Close suggestions on outside click
-        document.addEventListener('click', (e) => {
-          if (!e.target.closest('#header-search-input') && !e.target.closest('#search-suggestions')) {
-            searchSuggestions.classList.add('hidden');
-          }
-        });
-      }
+      // Bind search autocomplete (shared helper handles de-dupe guard)
+      setupSearchBar();
 
       // Bind cart drawer toggles globally
       const bagBtns = document.querySelectorAll('[data-bag-toggle]');
@@ -1084,39 +1066,110 @@ function handleGlobalSearch(event) {
   window.location.href = dest;
 }
 
-// Global autocomplete suggestions
-function renderGlobalSearchSuggestions(query) {
-  const container = document.getElementById('suggested-products-list');
-  if (!container || typeof PRODUCTS === 'undefined') return;
+// ── Search Autocomplete — AJAX-powered for WordPress, local PRODUCTS for HTML demo ──
+let _searchTimer = null;
 
-  const q = query.toLowerCase().trim();
+function renderGlobalSearchSuggestions(query, containerId, wrapId) {
+  containerId = containerId || 'suggested-products-list';
+  wrapId      = wrapId      || 'search-suggestions';
+  const container = document.getElementById(containerId);
+  const wrap      = document.getElementById(wrapId);
+  if (!container) return;
+
+  clearTimeout(_searchTimer);
+  const q = (query || '').trim();
+
+  // Show the dropdown immediately
+  if (wrap) wrap.classList.remove('hidden');
+
+  if (!_isWP) {
+    // ── HTML demo mode: filter static PRODUCTS array ──
+    if (!q) {
+      container.innerHTML = PRODUCTS.slice(0, 4).map(p => getSuggestionRowHTML(p)).join('');
+      return;
+    }
+    const matched = PRODUCTS.filter(p =>
+      p.name.toLowerCase().includes(q.toLowerCase()) ||
+      p.fabric.toLowerCase().includes(q.toLowerCase())
+    ).slice(0, 6);
+    container.innerHTML = matched.length
+      ? matched.map(p => getSuggestionRowHTML(p)).join('')
+      : '<p class="text-[10px] text-gray-500 py-3 text-center">No products match your search.</p>';
+    return;
+  }
+
+  // ── WordPress mode: call dt_ajax_search ──
+  // Update "View all results" link to include current query
+  const viewAllLink = document.getElementById('search-view-all-link');
+  const labelEl     = document.getElementById('search-suggestions-label');
+  if (viewAllLink && q) {
+    const shopBase = dt_theme_vars.shop_url || (window.location.origin + '/?post_type=product');
+    viewAllLink.href = shopBase + (shopBase.includes('?') ? '&' : '?') + 's=' + encodeURIComponent(q);
+  }
+
   if (!q) {
-    container.innerHTML = PRODUCTS.slice(0, 3).map(prod => getSuggestionRowHTML(prod)).join('');
+    container.innerHTML = '<p class="text-[10px] text-gray-400 py-3 px-2">Start typing to search products…</p>';
+    if (labelEl) labelEl.textContent = 'Suggested Products';
     return;
   }
 
-  const matched = PRODUCTS.filter(p => p.name.toLowerCase().includes(q) || p.fabric.toLowerCase().includes(q)).slice(0, 4);
+  if (labelEl) labelEl.textContent = 'Search Results';
+  container.innerHTML = '<p class="text-[10px] text-gray-400 py-3 px-2 animate-pulse">Searching products…</p>';
 
-  if (matched.length === 0) {
-    container.innerHTML = `<p class="text-[10px] text-gray-500 py-3 text-center">No suggested products match your query.</p>`;
-    return;
-  }
+  _searchTimer = setTimeout(() => {
+    const catEl  = document.getElementById('header-search-category');
+    const catVal = catEl ? catEl.value : 'all';
+    const url    = dt_theme_vars.ajax_url
+      + '?action=dt_ajax_search'
+      + '&term='     + encodeURIComponent(q)
+      + '&category=' + encodeURIComponent(catVal);
 
-  container.innerHTML = matched.map(prod => getSuggestionRowHTML(prod)).join('');
+    fetch(url, { credentials: 'same-origin' })
+      .then(r => r.json())
+      .then(resp => {
+        if (!resp.success || !resp.data || !resp.data.length) {
+          container.innerHTML = '<p class="text-[10px] text-gray-500 py-3 px-2">No products found for "<strong style=\'color:#C8A46A\'>' + q + '</strong>"</p>';
+          return;
+        }
+        container.innerHTML = resp.data.slice(0, 6).map(p => getAjaxSuggestionRowHTML(p)).join('');
+      })
+      .catch(() => {
+        container.innerHTML = '<p class="text-[10px] text-gray-500 py-3 px-2">Search unavailable. Please try again.</p>';
+      });
+  }, 280);
 }
 
+// Row HTML for HTML-demo PRODUCTS (local array)
 function getSuggestionRowHTML(prod) {
-  return `
-    <div onclick="window.location.href=_productUrl(prod.id)" class="flex items-center gap-3 p-1.5 hover:bg-[#1A1A1A] rounded-sm transition-colors cursor-pointer border border-transparent hover:border-[#C8A46A]/20 group">
-      <div class="w-10 h-12 bg-[#1A1A1A] overflow-hidden rounded-sm shrink-0">
-        <img src="${prod.img1}" alt="${prod.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-      </div>
-      <div class="flex-1 min-w-0 text-left">
-        <p class="text-xs font-medium text-[#F7F4EE] group-hover:text-[#C8A46A] transition-colors truncate">${prod.name}</p>
-        <p class="text-[10px] text-[#C8A46A] mt-0.5">${formatCurrency(prod.price)}</p>
-      </div>
+  const url = _productUrl(prod.id);
+  return `<a href="${url}" class="flex items-center gap-3 p-1.5 hover:bg-[#1A1A1A] rounded-sm transition-colors border border-transparent hover:border-[#C8A46A]/20 group" style="text-decoration:none;">
+    <div class="w-10 h-12 bg-[#1A1A1A] overflow-hidden rounded-sm shrink-0">
+      <img src="${prod.img1}" alt="${prod.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
     </div>
-  `;
+    <div class="flex-1 min-w-0 text-left">
+      <p class="text-xs font-medium text-[#F7F4EE] group-hover:text-[#C8A46A] transition-colors truncate">${prod.name}</p>
+      <p class="text-[10px] text-[#C8A46A] mt-0.5">${formatCurrency(prod.price)}</p>
+    </div>
+  </a>`;
+}
+
+// Row HTML for WordPress AJAX results
+function getAjaxSuggestionRowHTML(prod) {
+  const url    = prod.url || _productUrl(prod.id);
+  const title  = prod.title  || '';
+  const fabric = prod.fabric || '';
+  const price  = prod.price_html || ('₹' + Number(prod.price || 0).toLocaleString('en-IN'));
+  const img    = prod.img || '';
+  return `<a href="${url}" class="flex items-center gap-3 p-1.5 hover:bg-[#1A1A1A] rounded-sm transition-colors border border-transparent hover:border-[#C8A46A]/20 group" style="text-decoration:none;">
+    <div class="w-10 h-12 bg-[#1A1A1A] overflow-hidden rounded-sm shrink-0">
+      <img src="${img}" alt="${title.replace(/"/g,'&quot;')}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
+    </div>
+    <div class="flex-1 min-w-0 text-left">
+      <p class="text-xs font-medium text-[#F7F4EE] group-hover:text-[#C8A46A] transition-colors truncate">${title}</p>
+      <p class="text-[10px] text-[#C8A46A]/70 truncate">${fabric}</p>
+      <p class="text-[10px] font-semibold text-[#C8A46A] mt-0.5">${price}</p>
+    </div>
+  </a>`;
 }
 
 // Mobile Search Overlay Helpers
@@ -1667,9 +1720,42 @@ function _renderMsDots(id) {
 }
 
 // =============================================================
+// setupSearchBar — binds autocomplete to any search input+dropdown
+// Called from DOMContentLoaded (WordPress) and loadGlobalHeader (HTML mode)
+// =============================================================
+function setupSearchBar() {
+  const searchInput       = document.getElementById('header-search-input');
+  const searchSuggestions = document.getElementById('search-suggestions');
+  if (!searchInput || !searchSuggestions || searchInput._dtSearchBound) return;
+  searchInput._dtSearchBound = true; // prevent double-binding
+
+  searchInput.addEventListener('focus', () => {
+    renderGlobalSearchSuggestions(searchInput.value);
+  });
+  searchInput.addEventListener('input', () => {
+    renderGlobalSearchSuggestions(searchInput.value);
+  });
+  // Close on Escape
+  searchInput.addEventListener('keydown', e => {
+    if (e.key === 'Escape') searchSuggestions.classList.add('hidden');
+  });
+  // Close on outside click
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#header-search-input') &&
+        !e.target.closest('#search-suggestions') &&
+        !e.target.closest('#header-search-wrap')) {
+      searchSuggestions.classList.add('hidden');
+    }
+  }, { passive: true });
+}
+
+// =============================================================
 // DOMContentLoaded — Bootstrap everything
 // =============================================================
 document.addEventListener('DOMContentLoaded', () => {
+  // ── Search bar: bind immediately for WordPress (header already in DOM) ──
+  setupSearchBar();
+
   // ── Mobile product sliders ──────────────────────────────────
   // Always init — CSS (md:hidden) controls visibility per breakpoint
   // setTimeout ensures fonts/images haven't shifted layout yet

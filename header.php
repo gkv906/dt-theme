@@ -190,10 +190,13 @@ if ( function_exists( 'elementor_theme_do_location' ) && elementor_theme_do_loca
             </div>
 
             <!-- Desktop Center: Search Bar -->
-            <div class="flex-1 max-w-xl relative animate-fade-in">
+            <div class="flex-1 max-w-xl relative animate-fade-in" id="header-search-wrap">
                 <form action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get" class="flex w-full rounded-sm overflow-hidden border border-[#C8A46A]/40 focus-within:border-[#C8A46A] focus-within:ring-1 focus-within:ring-[#C8A46A] bg-[#111] transition-all">
-                    <select id="header-category-select" name="product_cat" title="Select Category" aria-label="Select Category" class="bg-[#1A1A1A] text-[#F7F4EE] px-3 text-xs outline-none border-r border-[#C8A46A]/20 cursor-pointer hover:bg-[#222] transition-colors font-medium">
-                        <option value="">All Fabrics</option>
+                    <?php
+                    /* id="header-search-category" is read by the AJAX search JS to filter by fabric */
+                    ?>
+                    <select id="header-search-category" name="product_cat" title="Select Category" aria-label="Select Category" class="bg-[#1A1A1A] text-[#F7F4EE] px-3 text-xs outline-none border-r border-[#C8A46A]/20 cursor-pointer hover:bg-[#222] transition-colors font-medium">
+                        <option value="all"><?php esc_html_e( 'All Fabrics', 'dt-ecommerce-theme' ); ?></option>
                         <?php
                         $cats = get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false ) );
                         if ( ! is_wp_error( $cats ) ) {
@@ -206,18 +209,30 @@ if ( function_exists( 'elementor_theme_do_location' ) && elementor_theme_do_loca
                     <?php
                     $search_placeholder = dt_get_theme_option( 'search_placeholder', 'Search sarees, fabrics, colors...' );
                     ?>
-                    <input type="text" name="s" id="header-search-input" placeholder="<?php echo esc_attr( $search_placeholder ); ?>" class="flex-1 bg-transparent text-[#F7F4EE] px-4 py-2 outline-none placeholder:text-[#F7F4EE]/30 text-sm font-light" autocomplete="off" value="<?php echo get_search_query(); ?>">
+                    <?php /* autocomplete="new-password" prevents Chrome/Edge from showing browser history */ ?>
+                    <input type="text" name="s" id="header-search-input"
+                           placeholder="<?php echo esc_attr( $search_placeholder ); ?>"
+                           class="flex-1 bg-transparent text-[#F7F4EE] px-4 py-2 outline-none placeholder:text-[#F7F4EE]/30 text-sm font-light"
+                           autocomplete="new-password"
+                           spellcheck="false"
+                           value="<?php echo esc_attr( get_search_query() ); ?>">
                     <input type="hidden" name="post_type" value="product">
                     <button type="submit" title="Search" aria-label="Search" class="bg-gradient-to-r from-[#b08d55] via-[#C8A46A] to-[#d8ba82] hover:brightness-110 text-black px-5 flex items-center justify-center transition-all cursor-pointer">
                         <i data-lucide="search" class="w-4 h-4"></i>
                     </button>
                 </form>
                 <!-- AJAX Suggestions Dropdown -->
-                <div id="search-suggestions" class="absolute left-0 top-full w-full bg-[#111] border border-[#C8A46A]/30 shadow-2xl z-50 rounded-b-sm hidden p-2 mt-1">
-                    <div class="p-2 border-b border-[#222] text-left">
-                        <span class="text-[10px] uppercase tracking-widest text-[#C8A46A]">Suggested Products</span>
+                <div id="search-suggestions" class="absolute left-0 top-full w-full bg-[#111] border border-[#C8A46A]/30 shadow-2xl z-50 rounded-b-sm hidden mt-1" style="min-width:100%;">
+                    <div class="flex items-center justify-between px-3 py-2 border-b border-[#222]">
+                        <span id="search-suggestions-label" class="text-[10px] uppercase tracking-widest text-[#C8A46A]"><?php esc_html_e( 'Suggested Products', 'dt-ecommerce-theme' ); ?></span>
+                        <button type="button" onclick="document.getElementById('search-suggestions').classList.add('hidden')" class="text-gray-600 hover:text-[#C8A46A] transition-colors text-xs leading-none" aria-label="Close suggestions">✕</button>
                     </div>
-                    <div id="suggested-products-list" class="space-y-1 mt-2"></div>
+                    <div id="suggested-products-list" class="space-y-0.5 p-2"></div>
+                    <div class="px-3 py-2 border-t border-[#222] text-right">
+                        <a id="search-view-all-link" href="<?php echo esc_url( class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : home_url( '/shop/' ) ); ?>" class="text-[10px] text-[#C8A46A] uppercase tracking-widest hover:underline">
+                            <?php esc_html_e( 'View all results →', 'dt-ecommerce-theme' ); ?>
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -313,7 +328,7 @@ if ( function_exists( 'elementor_theme_do_location' ) && elementor_theme_do_loca
                 </button>
                 <div class="flex-1 relative">
                     <form action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get" class="flex w-full rounded-sm overflow-hidden border border-[#C8A46A]/40 focus-within:border-[#C8A46A] bg-[#111] h-9">
-                        <input type="text" name="s" id="mobile-search-input" placeholder="<?php echo esc_attr( $search_placeholder ); ?>" class="flex-1 bg-transparent text-[#F7F4EE] px-3 outline-none placeholder:text-[#F7F4EE]/30 text-xs font-light" autocomplete="off" value="<?php echo get_search_query(); ?>">
+                        <input type="text" name="s" id="mobile-search-input" placeholder="<?php echo esc_attr( $search_placeholder ); ?>" class="flex-1 bg-transparent text-[#F7F4EE] px-3 outline-none placeholder:text-[#F7F4EE]/30 text-xs font-light" autocomplete="new-password" spellcheck="false" value="<?php echo esc_attr( get_search_query() ); ?>">
                         <input type="hidden" name="post_type" value="product">
                         <button type="submit" title="Search" aria-label="Search" class="bg-gradient-to-r from-[#b08d55] to-[#d8ba82] text-black px-3 flex items-center justify-center">
                             <i data-lucide="search" class="w-3.5 h-3.5"></i>
