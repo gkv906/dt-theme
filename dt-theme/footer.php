@@ -427,5 +427,83 @@ if ( ! empty( $after_body_html ) ) {
     echo $after_body_html;
 }
 ?>
+
+<!-- ================================================================
+     MOBILE BOTTOM NAV — Definitive button bindings.
+     This runs AFTER wp_footer() (i.e. after main.js), so these
+     overwrite any incorrect function defined by main.js.
+================================================================ -->
+<script>
+(function () {
+    'use strict';
+
+    /* ── Core drawer toggle ───────────────────────────────────── */
+    window.toggleMobileMenuDrawer = function (open) {
+        var overlay = document.getElementById('mobile-menu-overlay');
+        var drawer  = document.getElementById('mobile-menu-drawer');
+        if (!overlay || !drawer) return;
+
+        if (open) {
+            overlay.classList.remove('hidden');
+            requestAnimationFrame(function () {
+                overlay.classList.remove('opacity-0');
+                overlay.classList.add('opacity-100');
+                drawer.classList.remove('-translate-x-full');
+            });
+            document.body.style.overflow = 'hidden';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        } else {
+            overlay.classList.add('opacity-0');
+            overlay.classList.remove('opacity-100');
+            drawer.classList.add('-translate-x-full');
+            setTimeout(function () { overlay.classList.add('hidden'); }, 300);
+            document.body.style.overflow = '';
+        }
+    };
+
+    /* ── Core search overlay toggle ───────────────────────────── */
+    window.toggleMobileSearchOverlay = function (open) {
+        var el = document.getElementById('mobile-search-overlay');
+        if (!el) return;
+        if (open) {
+            el.style.display = 'flex';
+            el.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            setTimeout(function () {
+                var inp = document.getElementById('overlay-search-input');
+                if (inp) { inp.value = ''; inp.focus(); }
+                if (typeof renderOverlaySearchSuggestions === 'function') renderOverlaySearchSuggestions('');
+            }, 80);
+        } else {
+            el.style.display = 'none';
+            el.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    };
+
+    /* ── Attach via addEventListener as belt-and-braces ──────── */
+    document.addEventListener('DOMContentLoaded', function () {
+        var menuBtn   = document.querySelector('#mobile-bottom-nav button[onclick*="toggleMobileMenuDrawer"]');
+        var searchBtn = document.querySelector('#mobile-bottom-nav button[onclick*="toggleMobileSearchOverlay"]');
+
+        if (menuBtn) {
+            menuBtn.removeAttribute('onclick');
+            menuBtn.addEventListener('click', function () { window.toggleMobileMenuDrawer(true); });
+        }
+        if (searchBtn) {
+            searchBtn.removeAttribute('onclick');
+            searchBtn.addEventListener('click', function () { window.toggleMobileSearchOverlay(true); });
+        }
+
+        /* Close drawer when tapping backdrop */
+        var overlay = document.getElementById('mobile-menu-overlay');
+        if (overlay) {
+            overlay.addEventListener('click', function (e) {
+                if (e.target === overlay) window.toggleMobileMenuDrawer(false);
+            });
+        }
+    });
+})();
+</script>
 </body>
 </html>
