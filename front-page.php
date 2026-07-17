@@ -54,6 +54,40 @@ $show_top_sellers    = dt_get_theme_option( 'show_top_sellers', '1' ) !== '0';
 $show_reviews        = dt_get_theme_option( 'show_reviews', '1' ) !== '0';
 $show_instagram_feed = dt_get_theme_option( 'show_instagram_feed', '1' ) !== '0';
 
+// ── Premium Banners admin options ─────────────────────────────────────────
+$default_shop_url = class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : home_url( '/shop/' );
+
+// Banner 1
+$banner1_show     = dt_get_theme_option( 'banner1_show', '1' ) !== '0';
+$banner1_image    = dt_get_theme_option( 'banner1_image', get_template_directory_uri() . '/assets/images/banner-bridal.jpg' );
+if ( empty( $banner1_image ) ) $banner1_image = get_template_directory_uri() . '/assets/images/banner-bridal.jpg';
+$banner1_title    = dt_get_theme_option( 'banner1_title', 'Bridal Collection' );
+$banner1_subtitle = dt_get_theme_option( 'banner1_subtitle', 'For your special day' );
+$banner1_btn_text = dt_get_theme_option( 'banner1_btn_text', 'Explore' );
+$banner1_link     = dt_get_theme_option( 'banner1_link', $default_shop_url );
+if ( empty( $banner1_link ) ) $banner1_link = $default_shop_url;
+
+// Banner 2
+$banner2_show     = dt_get_theme_option( 'banner2_show', '1' ) !== '0';
+$banner2_image    = dt_get_theme_option( 'banner2_image', get_template_directory_uri() . '/assets/images/banner-festival.jpg' );
+if ( empty( $banner2_image ) ) $banner2_image = get_template_directory_uri() . '/assets/images/banner-festival.jpg';
+$banner2_title    = dt_get_theme_option( 'banner2_title', 'Festival Specials' );
+$banner2_subtitle = dt_get_theme_option( 'banner2_subtitle', 'Celebrate in style' );
+$banner2_btn_text = dt_get_theme_option( 'banner2_btn_text', 'Explore' );
+$banner2_link     = dt_get_theme_option( 'banner2_link', $default_shop_url );
+if ( empty( $banner2_link ) ) $banner2_link = $default_shop_url;
+
+// Banner 3 (Offer card)
+$banner3_show     = dt_get_theme_option( 'banner3_show', '1' ) !== '0';
+$banner3_image    = dt_get_theme_option( 'banner3_image', get_template_directory_uri() . '/assets/images/banner-offer.jpg' );
+if ( empty( $banner3_image ) ) $banner3_image = get_template_directory_uri() . '/assets/images/banner-offer.jpg';
+$banner3_eyebrow  = dt_get_theme_option( 'banner3_eyebrow', 'Limited Time' );
+$banner3_discount = dt_get_theme_option( 'banner3_discount', '30% OFF' );
+$banner3_subtitle = dt_get_theme_option( 'banner3_subtitle', 'on exclusive designer weaves' );
+$banner3_btn_text = dt_get_theme_option( 'banner3_btn_text', 'Shop Sale' );
+$banner3_link     = dt_get_theme_option( 'banner3_link', $default_shop_url );
+if ( empty( $banner3_link ) ) $banner3_link = $default_shop_url;
+
 
 // Render Product Card closure
 $render_product_card = function( $post_id, $delay_ms = 0, $is_bestseller = false ) {
@@ -546,51 +580,78 @@ $sections['ticker'] = ob_get_clean();
 ob_start();
 ?>
 <!-- Premium Banners -->
+    <?php
+    // Build list of visible banners to calculate grid columns dynamically
+    $active_banners = array_filter( array( $banner1_show, $banner2_show, $banner3_show ) );
+    $banner_count   = count( $active_banners );
+    $grid_cols      = $banner_count === 1 ? 'md:grid-cols-1' : ( $banner_count === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3' );
+    if ( $banner_count > 0 ) :
+    ?>
     <section class="py-8 md:py-24 bg-[#050505]">
         <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 md:h-[70vh]">
+            <div class="grid grid-cols-1 <?php echo esc_attr( $grid_cols ); ?> gap-6 md:gap-8 md:h-[70vh]">
+
+                <?php if ( $banner1_show ) : ?>
                 <!-- Banner 1 -->
                 <div class="relative group overflow-hidden bg-[#111] reveal-on-scroll min-h-[55vw] md:min-h-0">
-                    <img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/banner-bridal.jpg' ); ?>" alt="Bridal Collection" class="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-1000" />
+                    <img src="<?php echo esc_url( $banner1_image ); ?>"
+                         alt="<?php echo esc_attr( $banner1_title ); ?>"
+                         class="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-1000"
+                         loading="lazy" decoding="async" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
                     <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-10">
-                        <h3 class="font-serif text-3xl md:text-4xl text-white mb-2"><?php esc_html_e( 'Bridal Collection', 'dt-ecommerce-theme' ); ?></h3>
-                        <p class="text-[#C8A46A] text-sm uppercase tracking-widest mb-6"><?php esc_html_e( 'For your special day', 'dt-ecommerce-theme' ); ?></p>
-                        <a href="<?php echo esc_url( class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : home_url( '/shop/' ) ); ?>" class="flex items-center gap-2 text-white text-sm tracking-widest uppercase hover:text-[#C8A46A] transition-colors w-fit pb-1 border-b border-[#C8A46A]">
-                            Explore <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        <h3 class="font-serif text-3xl md:text-4xl text-white mb-2"><?php echo esc_html( $banner1_title ); ?></h3>
+                        <p class="text-[#C8A46A] text-sm uppercase tracking-widest mb-6"><?php echo esc_html( $banner1_subtitle ); ?></p>
+                        <a href="<?php echo esc_url( $banner1_link ); ?>" class="flex items-center gap-2 text-white text-sm tracking-widest uppercase hover:text-[#C8A46A] transition-colors w-fit pb-1 border-b border-[#C8A46A]">
+                            <?php echo esc_html( $banner1_btn_text ); ?> <i data-lucide="arrow-right" class="w-4 h-4"></i>
                         </a>
                     </div>
                 </div>
+                <?php endif; ?>
 
+                <?php if ( $banner2_show ) : ?>
                 <!-- Banner 2 -->
                 <div class="relative group overflow-hidden bg-[#2a0808] reveal-on-scroll min-h-[55vw] md:min-h-0">
-                    <img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/banner-festival.jpg' ); ?>" alt="Festival Specials" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-1000" />
+                    <img src="<?php echo esc_url( $banner2_image ); ?>"
+                         alt="<?php echo esc_attr( $banner2_title ); ?>"
+                         class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-1000"
+                         loading="lazy" decoding="async" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
                     <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-10">
-                        <h3 class="font-serif text-3xl md:text-4xl text-white mb-2"><?php esc_html_e( 'Festival Specials', 'dt-ecommerce-theme' ); ?></h3>
-                        <p class="text-[#C8A46A] text-sm uppercase tracking-widest mb-6"><?php esc_html_e( 'Celebrate in style', 'dt-ecommerce-theme' ); ?></p>
-                        <a href="<?php echo esc_url( class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : home_url( '/shop/' ) ); ?>" class="flex items-center gap-2 text-white text-sm tracking-widest uppercase hover:text-[#C8A46A] transition-colors w-fit pb-1 border-b border-[#C8A46A]">
-                            Explore <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        <h3 class="font-serif text-3xl md:text-4xl text-white mb-2"><?php echo esc_html( $banner2_title ); ?></h3>
+                        <p class="text-[#C8A46A] text-sm uppercase tracking-widest mb-6"><?php echo esc_html( $banner2_subtitle ); ?></p>
+                        <a href="<?php echo esc_url( $banner2_link ); ?>" class="flex items-center gap-2 text-white text-sm tracking-widest uppercase hover:text-[#C8A46A] transition-colors w-fit pb-1 border-b border-[#C8A46A]">
+                            <?php echo esc_html( $banner2_btn_text ); ?> <i data-lucide="arrow-right" class="w-4 h-4"></i>
                         </a>
                     </div>
                 </div>
+                <?php endif; ?>
 
-                <!-- Banner 3 -->
+                <?php if ( $banner3_show ) : ?>
+                <!-- Banner 3 — Offer Card -->
                 <div class="relative group overflow-hidden bg-black border border-[#C8A46A]/20 reveal-on-scroll min-h-[55vw] md:min-h-0">
-                    <img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/banner-offer.jpg' ); ?>" alt="Exclusive Offer" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-luminosity group-hover:scale-105 transition-transform duration-1000" />
+                    <?php if ( ! empty( $banner3_image ) ) : ?>
+                    <img src="<?php echo esc_url( $banner3_image ); ?>"
+                         alt="<?php echo esc_attr( $banner3_eyebrow ); ?>"
+                         class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-luminosity group-hover:scale-105 transition-transform duration-1000"
+                         loading="lazy" decoding="async" />
+                    <?php endif; ?>
                     <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
                     <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-8">
-                        <span class="text-[#C8A46A] uppercase tracking-[0.3em] text-xs mb-4"><?php esc_html_e( 'Limited Time', 'dt-ecommerce-theme' ); ?></span>
-                        <h3 class="font-serif text-5xl md:text-6xl text-[#C8A46A] mb-4"><?php esc_html_e( '30% OFF', 'dt-ecommerce-theme' ); ?></h3>
-                        <p class="text-white text-lg font-serif italic mb-8"><?php esc_html_e( 'on exclusive designer weaves', 'dt-ecommerce-theme' ); ?></p>
-                        <a href="<?php echo esc_url( class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : home_url( '/shop/' ) ); ?>" class="btn-gold-shimmer px-8 py-3 uppercase tracking-widest text-xs font-semibold">
-                            Shop Sale
+                        <span class="text-[#C8A46A] uppercase tracking-[0.3em] text-xs mb-4"><?php echo esc_html( $banner3_eyebrow ); ?></span>
+                        <h3 class="font-serif text-5xl md:text-6xl text-[#C8A46A] mb-4"><?php echo esc_html( $banner3_discount ); ?></h3>
+                        <p class="text-white text-lg font-serif italic mb-8"><?php echo esc_html( $banner3_subtitle ); ?></p>
+                        <a href="<?php echo esc_url( $banner3_link ); ?>" class="btn-gold-shimmer px-8 py-3 uppercase tracking-widest text-xs font-semibold">
+                            <?php echo esc_html( $banner3_btn_text ); ?>
                         </a>
                     </div>
                 </div>
+                <?php endif; ?>
+
             </div>
         </div>
     </section>
+    <?php endif; // end banner_count > 0 ?>
 <?php
 $sections['banners'] = ob_get_clean();
 

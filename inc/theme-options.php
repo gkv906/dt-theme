@@ -382,6 +382,46 @@ function dt_render_theme_options_page(): void {
                                 <?php dt_option_row( 'hero_btn2_text', 'Button 2 (Right) Label', 'e.g. Our Story', 'text', $opts ); ?>
                                 <?php dt_option_row( 'hero_btn2_url', 'Button 2 Redirection Link', 'Navigation destination link', 'text', $opts ); ?>
                             </div>
+                            <!-- ── Premium Banners Section ───────────────────── -->
+                            <div class="dt-section">
+                                <div class="dt-section-title">🖼️ Premium Banners Section</div>
+                                <p class="description" style="margin-bottom:16px;">Control the three promotional banner cards that appear on the homepage. Each banner has its own image, text, link and visibility toggle.</p>
+
+                                <!-- Banner 1 -->
+                                <div style="border:1px solid #2a2a2a;border-radius:6px;padding:16px 20px;margin-bottom:20px;background:#111;">
+                                    <p style="font-weight:600;color:#C8A46A;margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;">Banner 1 — Bridal Collection</p>
+                                    <?php dt_option_checkbox( 'banner1_show',     'Show Banner 1',       'Uncheck to hide this banner card', $opts ); ?>
+                                    <?php dt_option_media(   'banner1_image',    'Banner 1 Image',      'Upload or paste URL for the banner background photo', $opts ); ?>
+                                    <?php dt_option_row(     'banner1_title',    'Banner 1 Title',      'Large heading text (e.g. Bridal Collection)', 'text', $opts ); ?>
+                                    <?php dt_option_row(     'banner1_subtitle', 'Banner 1 Subtitle',   'Small caption below the title (e.g. For your special day)', 'text', $opts ); ?>
+                                    <?php dt_option_row(     'banner1_btn_text', 'Banner 1 Button Label','Button / link text (e.g. Explore)', 'text', $opts ); ?>
+                                    <?php dt_option_row(     'banner1_link',     'Banner 1 Link URL',   'Where clicking the banner or button goes', 'url', $opts ); ?>
+                                </div>
+
+                                <!-- Banner 2 -->
+                                <div style="border:1px solid #2a2a2a;border-radius:6px;padding:16px 20px;margin-bottom:20px;background:#111;">
+                                    <p style="font-weight:600;color:#C8A46A;margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;">Banner 2 — Festival Specials</p>
+                                    <?php dt_option_checkbox( 'banner2_show',     'Show Banner 2',       'Uncheck to hide this banner card', $opts ); ?>
+                                    <?php dt_option_media(   'banner2_image',    'Banner 2 Image',      'Upload or paste URL for the banner background photo', $opts ); ?>
+                                    <?php dt_option_row(     'banner2_title',    'Banner 2 Title',      'Large heading text (e.g. Festival Specials)', 'text', $opts ); ?>
+                                    <?php dt_option_row(     'banner2_subtitle', 'Banner 2 Subtitle',   'Small caption below the title (e.g. Celebrate in style)', 'text', $opts ); ?>
+                                    <?php dt_option_row(     'banner2_btn_text', 'Banner 2 Button Label','Button / link text (e.g. Explore)', 'text', $opts ); ?>
+                                    <?php dt_option_row(     'banner2_link',     'Banner 2 Link URL',   'Where clicking the banner or button goes', 'url', $opts ); ?>
+                                </div>
+
+                                <!-- Banner 3 (Offer) -->
+                                <div style="border:1px solid #2a2a2a;border-radius:6px;padding:16px 20px;background:#111;">
+                                    <p style="font-weight:600;color:#C8A46A;margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;">Banner 3 — Exclusive Offer</p>
+                                    <?php dt_option_checkbox( 'banner3_show',       'Show Banner 3',          'Uncheck to hide this banner card', $opts ); ?>
+                                    <?php dt_option_media(   'banner3_image',      'Banner 3 Background Image','Optional overlay image (shown at low opacity)', $opts ); ?>
+                                    <?php dt_option_row(     'banner3_eyebrow',    'Banner 3 Eyebrow Tag',   'Small label above the discount (e.g. Limited Time)', 'text', $opts ); ?>
+                                    <?php dt_option_row(     'banner3_discount',   'Banner 3 Discount Text',  'Big bold discount text (e.g. 30% OFF)', 'text', $opts ); ?>
+                                    <?php dt_option_row(     'banner3_subtitle',   'Banner 3 Subtitle',       'Descriptive line below discount (e.g. on exclusive designer weaves)', 'text', $opts ); ?>
+                                    <?php dt_option_row(     'banner3_btn_text',   'Banner 3 Button Label',   'Button text (e.g. Shop Sale)', 'text', $opts ); ?>
+                                    <?php dt_option_row(     'banner3_link',       'Banner 3 Link URL',       'Where the Shop Sale button goes', 'url', $opts ); ?>
+                                </div>
+                            </div>
+
                             <div class="dt-section">
                                 <div class="dt-section-title">📦 Homepage Sections Toggles</div>
                                 <?php dt_option_checkbox( 'show_new_arrivals',   'Show "New Arrivals" Carousel Section', 'Slider of the latest product items', $opts ); ?>
