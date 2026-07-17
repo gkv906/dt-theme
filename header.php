@@ -343,10 +343,6 @@ if ( function_exists( 'elementor_theme_do_location' ) && elementor_theme_do_loca
                         <div id="mobile-shop-sugg-list" class="p-1.5 space-y-0.5"></div>
                     </div>
                 </div>
-                <div data-bag-toggle class="relative p-1 cursor-pointer shrink-0">
-                    <i data-lucide="shopping-bag" class="w-5 h-5 text-[#C8A46A]"></i>
-                    <span class="cart-badge absolute top-0 right-0 bg-[#C8A46A] text-black text-[8px] font-bold w-3.5 h-3.5 flex items-center justify-center rounded-full <?php echo $cart_count > 0 ? '' : 'hidden'; ?>"><?php echo esc_html( $cart_count ); ?></span>
-                </div>
             </div>
 
             <!-- LAYOUT 3: PRODUCT & INNER PAGES (Back + centered logo + cart) -->

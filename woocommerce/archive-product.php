@@ -19,8 +19,8 @@ $current_orderby = isset( $_GET['orderby'] ) ? wc_clean( wp_unslash( $_GET['orde
 $clear_filters_url = get_permalink( wc_get_page_id( 'shop' ) );
 ?>
 
-<!-- Promo Ribbon -->
-<div class="px-4 md:px-8 pt-5 md:pt-6 max-w-[1800px] mx-auto mt-6 bg-[#050505]">
+<!-- Promo Ribbon (hidden on mobile) -->
+<div class="hidden md:block px-4 md:px-8 pt-5 md:pt-6 max-w-[1800px] mx-auto mt-6 bg-[#050505]">
     <div class="relative rounded-sm overflow-hidden border border-[#C8A46A]/30 bg-gradient-to-r from-[#1a1408] via-[#0f0d08] to-[#1a1408]">
         <div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_20%_50%,#C8A46A_0%,transparent_60%)]"></div>
         <div class="relative flex items-center justify-center gap-3 py-3.5 px-4 text-center">
@@ -100,8 +100,8 @@ $clear_filters_url = get_permalink( wc_get_page_id( 'shop' ) );
             $grid_class .= ' md:grid-cols-3 xl:grid-cols-4';
         }
         ?>
-        <!-- Sort Bar -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-4 border-b border-[#C8A46A]/10 pb-4">
+        <!-- Sort Bar (hidden on mobile — items count & sort handled by bottom bar) -->
+        <div class="hidden sm:flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-4 border-b border-[#C8A46A]/10 pb-4">
             <div class="flex items-center justify-between w-full sm:w-auto gap-4">
                 <span class="text-xs text-[#F7F4EE]/50 tracking-wide">
                     <?php
