@@ -1016,7 +1016,6 @@ echo '</main>';
         wcStats.forEach(s => wcObserver.observe(s));
 
     // Reviews & mobile sliders are initialized in main.js
-    });
 </script>
 
 <?php

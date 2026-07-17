@@ -1524,9 +1524,9 @@ function buildReviewCard(r) {
 }
 
 function setReviewIndex(idx) {
-  const track = document.getElementById('reviews-track');
-  const wrap  = document.getElementById('reviews-carousel-wrap');
-  if (!track || !wrap) return;
+  const track  = document.getElementById('reviews-track');
+  const clipEl = document.getElementById('reviews-track-wrap') || document.getElementById('reviews-carousel-wrap');
+  if (!track || !clipEl) return;
   const cards = track.querySelectorAll('.review-card');
   if (!cards.length) return;
   const isMobile = window.innerWidth < 768;
