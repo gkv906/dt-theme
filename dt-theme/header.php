@@ -1158,147 +1158,271 @@ if ( function_exists( 'elementor_theme_do_location' ) && elementor_theme_do_loca
     <!-- ================================================================
          MOBILE MENU DRAWER
     ================================================================ -->
+    <?php
+    /* Social / contact for drawer footer */
+    $dr_email     = dt_get_theme_option( 'contact_email',  'support@arshmandesigns.com' );
+    $dr_phone     = dt_get_theme_option( 'contact_phone',  '' );
+    $dr_instagram = dt_get_theme_option( 'instagram_url',  '#' );
+    $dr_facebook  = dt_get_theme_option( 'facebook_url',   '#' );
+    $dr_whatsapp  = dt_get_theme_option( 'whatsapp_url',   '#' );
+    $dr_youtube   = dt_get_theme_option( 'youtube_url',    '#' );
+    $dr_twitter   = dt_get_theme_option( 'twitter_url',    '#' );
+    ?>
     <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[90] hidden opacity-0 transition-opacity duration-300">
-        <div id="mobile-menu-drawer" class="absolute top-0 left-0 w-[85vw] max-w-[320px] h-full bg-[#080808] border-r border-[#C8A46A]/20 flex flex-col -translate-x-full transition-transform duration-300 shadow-2xl">
+        <div id="mobile-menu-drawer" class="absolute top-0 left-0 w-[80vw] max-w-[310px] h-full bg-[#080808] border-r border-[#C8A46A]/15 flex flex-col -translate-x-full transition-transform duration-300 shadow-[4px_0_40px_rgba(0,0,0,0.8)]">
 
-            <!-- ── Drawer Header: Logo left · Close right ── -->
-            <div class="flex items-center justify-between px-4 py-3.5 border-b border-[#1a1a1a] bg-[#0a0a0a]">
-                <?php
-                $menu_logo = dt_get_theme_option( 'logo_url' );
-                if ( $menu_logo ) : ?>
-                    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" onclick="toggleMobileMenuDrawer(false)">
-                        <img src="<?php echo esc_url( $menu_logo ); ?>" alt="<?php bloginfo( 'name' ); ?>" class="h-9 w-auto object-contain max-w-[130px]">
+            <!-- ═══════════════════════════════════════════════
+                 DRAWER HEADER  ·  Logo left  ·  Close right
+            ═══════════════════════════════════════════════ -->
+            <div class="flex items-center justify-between px-4 py-3 border-b border-[#1e1e1e] bg-[#050505] shrink-0">
+
+                <!-- Logo / Brand -->
+                <?php $menu_logo = dt_get_theme_option( 'logo_url' ); ?>
+                <?php if ( $menu_logo ) : ?>
+                    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="block">
+                        <img src="<?php echo esc_url( $menu_logo ); ?>"
+                             alt="<?php bloginfo( 'name' ); ?>"
+                             class="h-8 w-auto object-contain max-w-[120px]">
                     </a>
                 <?php else : ?>
-                    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="flex flex-col">
-                        <span class="font-serif text-lg text-[#C8A46A] font-bold leading-tight"><?php bloginfo( 'name' ); ?></span>
-                        <span class="text-[8px] text-[#C8A46A]/60 uppercase tracking-widest"><?php bloginfo( 'description' ); ?></span>
+                    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="flex flex-col leading-tight">
+                        <span class="font-serif text-base text-[#C8A46A] font-bold tracking-wide"><?php bloginfo( 'name' ); ?></span>
+                        <span class="text-[7px] text-[#C8A46A]/50 uppercase tracking-[0.2em]"><?php bloginfo( 'description' ); ?></span>
                     </a>
                 <?php endif; ?>
+
+                <!-- Close button: icon + text -->
                 <button onclick="toggleMobileMenuDrawer(false)" aria-label="Close Menu"
-                    class="flex items-center gap-1.5 text-[#a3a3a3] hover:text-[#C8A46A] transition-colors border border-[#2a2a2a] hover:border-[#C8A46A]/40 rounded-sm px-2.5 py-1.5">
-                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                    <span class="text-[10px] uppercase tracking-widest font-medium">Close</span>
+                    class="group flex items-center gap-1.5 px-3 py-2 rounded-sm border border-[#2a2a2a] hover:border-[#C8A46A]/50 hover:bg-[#C8A46A]/8 text-[#777] hover:text-[#C8A46A] transition-all duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                    <span class="text-[10px] uppercase tracking-[0.15em] font-semibold">Close</span>
                 </button>
             </div>
 
-            <!-- ── Shop Category Chips Slider ── -->
-            <div class="border-b border-[#1a1a1a] bg-[#0d0d0d] py-2.5">
-                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar px-3 snap-x scroll-smooth">
+            <!-- ═══════════════════════════════════════════════
+                 CATEGORY CHIP SLIDER  ·  Shop + all categories
+            ═══════════════════════════════════════════════ -->
+            <div class="shrink-0 bg-[#060606] border-b border-[#1a1a1a] py-2.5">
+                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar px-3" style="-webkit-overflow-scrolling:touch;">
+
+                    <!-- Shop chip (always gold, always first) -->
                     <a href="<?php echo esc_url( class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : home_url( '/shop' ) ); ?>"
                        onclick="toggleMobileMenuDrawer(false)"
-                       class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C8A46A] bg-[#C8A46A]/10 text-[#C8A46A] text-[11px] font-semibold uppercase tracking-wide whitespace-nowrap snap-start shrink-0">
-                        <i data-lucide="grid-3x3" class="w-3 h-3"></i> Shop
+                       class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#C8A46A] bg-[#C8A46A] text-black text-[10px] font-bold uppercase tracking-wide whitespace-nowrap shrink-0 shadow-[0_0_10px_rgba(200,164,106,0.3)]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        Shop
                     </a>
-                    <a href="<?php echo esc_url( add_query_arg( 'filter', 'new', class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : home_url( '/shop' ) ) ); ?>"
+
+                    <!-- New Arrivals chip -->
+                    <a href="<?php echo esc_url( add_query_arg( 'orderby', 'date', class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : home_url( '/shop' ) ) ); ?>"
                        onclick="toggleMobileMenuDrawer(false)"
-                       class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#333] text-[#a3a3a3] hover:border-[#C8A46A] hover:text-[#C8A46A] text-[11px] font-medium whitespace-nowrap snap-start shrink-0 transition-all">
-                        <i data-lucide="sparkles" class="w-3 h-3"></i> New
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#2e2e2e] bg-[#111] text-[#a3a3a3] text-[10px] font-medium whitespace-nowrap shrink-0 transition-all hover:border-[#C8A46A]/60 hover:text-[#C8A46A]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3l14 9-14 9V3z"/></svg>
+                        New
                     </a>
+
                     <?php
-                    $menu_icons_arr = array( 'gem', 'crown', 'feather', 'dot', 'wind', 'heart', 'star' );
+                    $dr_chip_icons = array( 'gem', 'crown', 'feather', 'wind', 'heart', 'star', 'circle', 'tag' );
                     if ( ! is_wp_error( $cats ) && ! empty( $cats ) ) :
-                        $mi = 0;
-                        foreach ( $cats as $cat ) :
-                            $icon_m = isset( $menu_icons_arr[ $mi ] ) ? $menu_icons_arr[ $mi ] : 'tag';
+                        $dci = 0;
+                        foreach ( $cats as $dcat ) :
                     ?>
-                    <a href="<?php echo esc_url( get_term_link( $cat ) ); ?>"
+                    <a href="<?php echo esc_url( get_term_link( $dcat ) ); ?>"
                        onclick="toggleMobileMenuDrawer(false)"
-                       class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#333] text-[#a3a3a3] hover:border-[#C8A46A] hover:text-[#C8A46A] text-[11px] font-medium whitespace-nowrap snap-start shrink-0 transition-all">
-                        <i data-lucide="<?php echo esc_attr( $icon_m ); ?>" class="w-3 h-3"></i> <?php echo esc_html( $cat->name ); ?>
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#2e2e2e] bg-[#111] text-[#a3a3a3] text-[10px] font-medium whitespace-nowrap shrink-0 transition-all hover:border-[#C8A46A]/60 hover:text-[#C8A46A]">
+                        <?php echo esc_html( $dcat->name ); ?>
                     </a>
-                    <?php $mi++; endforeach; endif; ?>
+                    <?php $dci++; endforeach; endif; ?>
                 </div>
             </div>
 
-            <!-- ── User Quick Info ── -->
-            <div class="px-4 py-3 border-b border-[#1a1a1a]">
+            <!-- ═══════════════════════════════════════════════
+                 SCROLLABLE NAV AREA
+            ═══════════════════════════════════════════════ -->
+            <div class="flex-1 overflow-y-auto overscroll-contain" style="-webkit-overflow-scrolling:touch;scrollbar-width:none;">
+
+                <!-- ── Login / User Block ── -->
                 <?php if ( is_user_logged_in() ) :
-                    $u = wp_get_current_user();
-                    ?>
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#C8A46A] to-[#b08d55] text-black font-serif font-bold flex items-center justify-center text-sm shrink-0">
-                            <?php echo esc_html( strtoupper( substr( $u->display_name, 0, 1 ) ) ); ?>
+                    $dr_user = wp_get_current_user();
+                    $dr_init = strtoupper( substr( $dr_user->display_name, 0, 1 ) );
+                ?>
+                <!-- LOGGED IN: avatar + name + email + account + logout -->
+                <div class="px-4 pt-4 pb-3 border-b border-[#1a1a1a] bg-[#0a0a0a]">
+                    <!-- Avatar row -->
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#C8A46A] to-[#8a6630] text-black font-serif font-bold text-base flex items-center justify-center shrink-0 shadow-[0_0_12px_rgba(200,164,106,0.4)]">
+                            <?php echo esc_html( $dr_init ); ?>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-white text-sm font-semibold truncate"><?php echo esc_html( $u->display_name ); ?></p>
-                            <p class="text-[#a3a3a3] text-[10px] truncate"><?php echo esc_html( $u->user_email ); ?></p>
+                            <p class="text-[#F7F4EE] text-sm font-semibold truncate leading-tight"><?php echo esc_html( $dr_user->display_name ); ?></p>
+                            <p class="text-[#666] text-[10px] truncate mt-0.5"><?php echo esc_html( $dr_user->user_email ); ?></p>
                         </div>
+                    </div>
+                    <!-- My Account + Logout buttons -->
+                    <div class="flex gap-2">
                         <a href="<?php echo esc_url( $my_account_url ); ?>"
-                           class="shrink-0 flex items-center gap-1 px-2.5 py-1.5 border border-[#C8A46A]/40 text-[#C8A46A] text-[10px] uppercase tracking-widest hover:bg-[#C8A46A]/10 transition-all rounded-sm">
-                            <i data-lucide="user" class="w-3 h-3"></i> Account
+                           onclick="toggleMobileMenuDrawer(false)"
+                           class="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-[#C8A46A] text-black text-[10px] font-bold uppercase tracking-widest rounded-sm hover:brightness-110 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            My Account
+                        </a>
+                        <a href="<?php echo esc_url( wp_logout_url( home_url( '/' ) ) ); ?>"
+                           class="flex items-center justify-center gap-1.5 px-4 py-2.5 border border-red-500/30 bg-red-500/5 text-red-400 text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-red-500/15 hover:border-red-400/50 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                            Logout
                         </a>
                     </div>
+                </div>
+
                 <?php else : ?>
+                <!-- GUEST: gold sign-in button -->
+                <div class="px-4 pt-4 pb-3 border-b border-[#1a1a1a] bg-[#0a0a0a]">
                     <button type="button" data-user-toggle
-                        class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#b08d55] via-[#C8A46A] to-[#d8ba82] text-black font-bold text-xs uppercase tracking-widest py-3 rounded-sm hover:brightness-110 transition-all shadow-[0_4px_15px_rgba(200,164,106,0.3)]">
-                        <i data-lucide="user" class="w-4 h-4"></i>
+                        class="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-[#b08d55] via-[#C8A46A] to-[#d8ba82] text-black text-xs font-bold uppercase tracking-[0.15em] rounded-sm shadow-[0_4px_20px_rgba(200,164,106,0.35)] hover:brightness-110 active:scale-[.98] transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
                         Sign In / Register
                     </button>
+                </div>
                 <?php endif; ?>
-            </div>
 
-            <!-- ── Nav Links ── -->
-            <nav class="flex-1 overflow-y-auto py-2">
-                <?php $nav_cls = 'flex items-center gap-3 px-5 py-3 text-sm text-[#d4d4d4] hover:text-[#C8A46A] hover:bg-[#C8A46A]/5 border-l-2 border-transparent hover:border-[#C8A46A] transition-all'; ?>
-                <a href="<?php echo esc_url( home_url( '/' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
-                    <i data-lucide="home" class="w-4 h-4 shrink-0"></i> Home
+                <!-- ── Main Navigation ── -->
+                <?php
+                $dnav = 'flex items-center gap-3 px-5 py-3.5 text-sm text-[#c4c4c4] hover:text-[#C8A46A] hover:bg-[#C8A46A]/5 border-l-2 border-transparent hover:border-[#C8A46A] transition-all duration-200';
+                ?>
+
+                <!-- Section label: Explore -->
+                <p class="px-5 pt-4 pb-1 text-[9px] uppercase tracking-[0.2em] text-[#444] font-semibold">Explore</p>
+
+                <a href="<?php echo esc_url( home_url( '/' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $dnav ); ?>">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-[#555]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    Home
                 </a>
-                <a href="<?php echo esc_url( class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : home_url( '/shop' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
-                    <i data-lucide="shopping-bag" class="w-4 h-4 shrink-0 text-[#C8A46A]"></i> <span class="font-semibold text-[#C8A46A]">Shop All</span>
+
+                <a href="<?php echo esc_url( class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : home_url( '/shop' ) ); ?>"
+                   onclick="toggleMobileMenuDrawer(false)"
+                   class="flex items-center gap-3 px-5 py-3.5 text-sm font-semibold text-[#C8A46A] hover:bg-[#C8A46A]/8 border-l-2 border-[#C8A46A]/40 hover:border-[#C8A46A] transition-all duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                    Shop All
                 </a>
-                <?php if ( ! is_wp_error( $cats ) && ! empty( $cats ) ) : ?>
-                    <?php foreach ( $cats as $cat ) : ?>
-                    <a href="<?php echo esc_url( get_term_link( $cat ) ); ?>" onclick="toggleMobileMenuDrawer(false)"
-                       class="flex items-center gap-3 pl-10 pr-5 py-2.5 text-sm text-[#a3a3a3] hover:text-[#C8A46A] hover:bg-[#C8A46A]/5 border-l-2 border-transparent hover:border-[#C8A46A]/50 transition-all">
-                        <i data-lucide="gem" class="w-3.5 h-3.5 shrink-0 text-[#C8A46A]/40"></i> <?php echo esc_html( $cat->name ); ?>
+
+                <?php if ( ! is_wp_error( $cats ) && ! empty( $cats ) ) : foreach ( $cats as $dcat2 ) : ?>
+                <a href="<?php echo esc_url( get_term_link( $dcat2 ) ); ?>"
+                   onclick="toggleMobileMenuDrawer(false)"
+                   class="flex items-center gap-3 pl-11 pr-5 py-2.5 text-sm text-[#888] hover:text-[#C8A46A] hover:bg-[#C8A46A]/5 border-l-2 border-transparent hover:border-[#C8A46A]/40 transition-all duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 shrink-0 text-[#C8A46A]/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/></svg>
+                    <?php echo esc_html( $dcat2->name ); ?>
+                </a>
+                <?php endforeach; endif; ?>
+
+                <!-- divider -->
+                <div class="mx-5 my-2 border-t border-[#1c1c1c]"></div>
+
+                <a href="<?php echo esc_url( $wishlist_url ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $dnav ); ?>">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-[#555]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    Wishlist
+                </a>
+
+                <a href="<?php echo esc_url( home_url( '/track-order' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $dnav ); ?>">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-[#555]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                    Track Order
+                </a>
+
+                <!-- divider + Pages section -->
+                <div class="mx-5 my-2 border-t border-[#1c1c1c]"></div>
+                <p class="px-5 pt-2 pb-1 text-[9px] uppercase tracking-[0.2em] text-[#444] font-semibold">Pages</p>
+
+                <a href="<?php echo esc_url( home_url( '/about-us' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $dnav ); ?>">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-[#555]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    About Us
+                </a>
+
+                <a href="<?php echo esc_url( home_url( '/contact-us' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $dnav ); ?>">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-[#555]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    Contact Us
+                </a>
+
+                <a href="<?php echo esc_url( home_url( '/faq' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $dnav ); ?>">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-[#555]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    FAQ
+                </a>
+
+                <a href="<?php echo esc_url( home_url( '/shipping-policy' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $dnav ); ?>">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-[#555]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3m0 0h4l3 3v4h-7m0-7H9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="17.5" cy="17.5" r="1.5"/></svg>
+                    Shipping Policy
+                </a>
+
+                <!-- bottom padding -->
+                <div class="h-4"></div>
+            </div><!-- /scrollable nav -->
+
+            <!-- ═══════════════════════════════════════════════
+                 DRAWER FOOTER  ·  Social icons + support email
+            ═══════════════════════════════════════════════ -->
+            <div class="shrink-0 border-t border-[#1a1a1a] bg-[#050505] px-4 py-4 space-y-3">
+
+                <!-- Social icons row -->
+                <div class="flex items-center gap-2.5">
+                    <?php if ( ! empty( $dr_instagram ) && $dr_instagram !== '#' ) : ?>
+                    <a href="<?php echo esc_url( $dr_instagram ); ?>" target="_blank" rel="noopener" aria-label="Instagram"
+                       class="w-9 h-9 rounded-full border border-[#2a2a2a] flex items-center justify-center text-[#666] hover:text-[#C8A46A] hover:border-[#C8A46A]/50 transition-all">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                     </a>
-                    <?php endforeach; ?>
+                    <?php endif; ?>
+
+                    <?php if ( ! empty( $dr_facebook ) && $dr_facebook !== '#' ) : ?>
+                    <a href="<?php echo esc_url( $dr_facebook ); ?>" target="_blank" rel="noopener" aria-label="Facebook"
+                       class="w-9 h-9 rounded-full border border-[#2a2a2a] flex items-center justify-center text-[#666] hover:text-[#C8A46A] hover:border-[#C8A46A]/50 transition-all">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    </a>
+                    <?php endif; ?>
+
+                    <?php if ( ! empty( $dr_whatsapp ) && $dr_whatsapp !== '#' ) : ?>
+                    <a href="<?php echo esc_url( $dr_whatsapp ); ?>" target="_blank" rel="noopener" aria-label="WhatsApp"
+                       class="w-9 h-9 rounded-full border border-[#2a2a2a] flex items-center justify-center text-[#666] hover:text-[#25D366] hover:border-[#25D366]/40 transition-all">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    </a>
+                    <?php endif; ?>
+
+                    <?php if ( ! empty( $dr_youtube ) && $dr_youtube !== '#' ) : ?>
+                    <a href="<?php echo esc_url( $dr_youtube ); ?>" target="_blank" rel="noopener" aria-label="YouTube"
+                       class="w-9 h-9 rounded-full border border-[#2a2a2a] flex items-center justify-center text-[#666] hover:text-[#FF0000] hover:border-[#FF0000]/30 transition-all">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    </a>
+                    <?php endif; ?>
+
+                    <?php if ( ! empty( $dr_twitter ) && $dr_twitter !== '#' ) : ?>
+                    <a href="<?php echo esc_url( $dr_twitter ); ?>" target="_blank" rel="noopener" aria-label="X / Twitter"
+                       class="w-9 h-9 rounded-full border border-[#2a2a2a] flex items-center justify-center text-[#666] hover:text-[#C8A46A] hover:border-[#C8A46A]/50 transition-all">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Support email -->
+                <?php if ( ! empty( $dr_email ) ) : ?>
+                <a href="mailto:<?php echo esc_attr( $dr_email ); ?>"
+                   class="flex items-center gap-2 text-[10px] text-[#555] hover:text-[#C8A46A] transition-colors group">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-[#C8A46A]/50 group-hover:text-[#C8A46A] transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <span class="truncate font-medium"><?php echo esc_html( $dr_email ); ?></span>
+                </a>
                 <?php endif; ?>
 
-                <div class="mx-4 my-2 border-t border-[#1a1a1a]"></div>
-
-                <a href="<?php echo esc_url( $wishlist_url ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
-                    <i data-lucide="heart" class="w-4 h-4 shrink-0"></i> Wishlist
-                </a>
-                <a href="<?php echo esc_url( home_url( '/track-order' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
-                    <i data-lucide="package" class="w-4 h-4 shrink-0"></i> Track Order
-                </a>
-
-                <div class="mx-4 my-2 border-t border-[#1a1a1a]"></div>
-
-                <a href="<?php echo esc_url( home_url( '/about-us' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
-                    <i data-lucide="info" class="w-4 h-4 shrink-0"></i> About Us
-                </a>
-                <a href="<?php echo esc_url( home_url( '/contact-us' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
-                    <i data-lucide="phone" class="w-4 h-4 shrink-0"></i> Contact Us
-                </a>
-                <a href="<?php echo esc_url( home_url( '/faq' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
-                    <i data-lucide="help-circle" class="w-4 h-4 shrink-0"></i> FAQ
-                </a>
-                <a href="<?php echo esc_url( home_url( '/shipping-policy' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
-                    <i data-lucide="truck" class="w-4 h-4 shrink-0"></i> Shipping Policy
-                </a>
-
-                <?php if ( is_user_logged_in() ) : ?>
-                <div class="mx-4 my-2 border-t border-[#1a1a1a]"></div>
-                <a href="<?php echo esc_url( $my_account_url ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
-                    <i data-lucide="user-circle" class="w-4 h-4 shrink-0 text-[#C8A46A]"></i> <span class="text-[#C8A46A] font-semibold">My Account</span>
-                </a>
-                <a href="<?php echo esc_url( wp_logout_url( home_url( '/' ) ) ); ?>"
-                   class="flex items-center gap-3 px-5 py-3 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/5 border-l-2 border-transparent hover:border-red-400/40 transition-all">
-                    <i data-lucide="log-out" class="w-4 h-4 shrink-0"></i> Logout
+                <!-- Phone (optional) -->
+                <?php if ( ! empty( $dr_phone ) ) : ?>
+                <a href="tel:<?php echo esc_attr( preg_replace( '/[^+\d]/', '', $dr_phone ) ); ?>"
+                   class="flex items-center gap-2 text-[10px] text-[#444] hover:text-[#C8A46A] transition-colors group">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-[#C8A46A]/40 group-hover:text-[#C8A46A] transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
+                    <?php echo esc_html( $dr_phone ); ?>
                 </a>
                 <?php endif; ?>
-            </nav>
 
-            <!-- ── Sale Banner ── -->
-            <div class="px-4 py-3 border-t border-[#1a1a1a] bg-gradient-to-r from-[#C8A46A]/10 via-[#C8A46A]/5 to-[#C8A46A]/10">
-                <p class="text-[10px] text-[#C8A46A] uppercase tracking-widest text-center font-semibold">⚡ FESTIVE SALE — 40% OFF · Code: FESTIVE40</p>
-            </div>
-        </div>
-    </div>
+            </div><!-- /drawer footer -->
 
+        </div><!-- /drawer panel -->
+    </div><!-- /overlay -->
+
+    <!-- ================================================================
+         MOBILE SEARCH OVERLAY
     <!-- ================================================================
          MOBILE SEARCH OVERLAY
     ================================================================ -->
