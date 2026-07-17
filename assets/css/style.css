@@ -9979,3 +9979,100 @@ body.woocommerce-checkout .woocommerce-message {
 .w-full.h-full.object-cover {
   image-rendering: -webkit-optimize-contrast;
 }
+
+/* ============================================================
+   MOBILE MENU DRAWER — Enhanced Styles
+   ============================================================ */
+
+/* No-scrollbar utility inside drawer */
+#mobile-menu-drawer nav {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+#mobile-menu-drawer nav::-webkit-scrollbar { display: none; }
+
+/* Category chip slider inside drawer */
+#mobile-menu-drawer .cat-slider-menu {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ============================================================
+   SOCIAL BUTTONS — Labeled variant for footer mobile
+   ============================================================ */
+.social-btn-labeled {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 6px;
+  padding: 7px 12px;
+  height: auto;
+  width: auto;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: #9ca3af;
+  border: 1px solid rgba(200,164,106,0.2);
+  background: rgba(200,164,106,0.03);
+  transition: all 0.3s ease;
+}
+.social-btn-labeled:hover {
+  color: #000;
+  background: #C8A46A;
+  border-color: #C8A46A;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -6px rgba(200,164,106,0.6);
+}
+.social-btn-labeled.social-whatsapp:hover {
+  background: #25D366;
+  border-color: #25D366;
+  box-shadow: 0 8px 20px -6px rgba(37,211,102,0.6);
+}
+
+/* On mobile: round icon-only style */
+@media (max-width: 767px) {
+  .social-btn-labeled {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+  }
+  .social-btn-label { display: none; }
+
+  /* Support block styling */
+  .footer-support-block {
+    display: flex !important;
+    flex-direction: column;
+  }
+
+  /* Footer bottom links: center + wrap on mobile */
+  .footer-bottom-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .footer-support-block { display: none !important; }
+  .social-btn-label { display: inline; }
+}
+
+/* ============================================================
+   MOBILE SEARCH OVERLAY — ensure visible flex on open
+   ============================================================ */
+#mobile-search-overlay:not(.hidden) {
+  display: flex !important;
+}
+
+/* ============================================================
+   MOBILE MENU DRAWER CLOSE BUTTON
+   ============================================================ */
+#mobile-menu-drawer .drawer-close-btn {
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+#mobile-menu-drawer .drawer-close-btn:hover {
+  color: #C8A46A;
+  border-color: rgba(200,164,106,0.4);
+  background: rgba(200,164,106,0.08);
+}

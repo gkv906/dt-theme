@@ -1159,65 +1159,142 @@ if ( function_exists( 'elementor_theme_do_location' ) && elementor_theme_do_loca
          MOBILE MENU DRAWER
     ================================================================ -->
     <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[90] hidden opacity-0 transition-opacity duration-300">
-        <div id="mobile-menu-drawer" class="absolute top-0 left-0 w-[85vw] max-w-sm h-full bg-[#080808] border-r border-[#C8A46A]/20 flex flex-col -translate-x-full transition-transform duration-300">
-            <!-- Drawer Header -->
-            <div class="flex items-center justify-between p-5 border-b border-[#1a1a1a]">
-                <div>
-                    <h2 class="font-serif text-xl text-[#C8A46A]"><?php bloginfo( 'name' ); ?></h2>
-                    <p class="text-[9px] text-[#C8A46A]/60 uppercase tracking-widest"><?php bloginfo( 'description' ); ?></p>
-                </div>
-                <button onclick="toggleMobileMenuDrawer(false)" class="text-[#a3a3a3] hover:text-white p-1" aria-label="Close Menu">
-                    <i data-lucide="x" class="w-6 h-6"></i>
+        <div id="mobile-menu-drawer" class="absolute top-0 left-0 w-[85vw] max-w-[320px] h-full bg-[#080808] border-r border-[#C8A46A]/20 flex flex-col -translate-x-full transition-transform duration-300 shadow-2xl">
+
+            <!-- ── Drawer Header: Logo left · Close right ── -->
+            <div class="flex items-center justify-between px-4 py-3.5 border-b border-[#1a1a1a] bg-[#0a0a0a]">
+                <?php
+                $menu_logo = dt_get_theme_option( 'logo_url' );
+                if ( $menu_logo ) : ?>
+                    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" onclick="toggleMobileMenuDrawer(false)">
+                        <img src="<?php echo esc_url( $menu_logo ); ?>" alt="<?php bloginfo( 'name' ); ?>" class="h-9 w-auto object-contain max-w-[130px]">
+                    </a>
+                <?php else : ?>
+                    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="flex flex-col">
+                        <span class="font-serif text-lg text-[#C8A46A] font-bold leading-tight"><?php bloginfo( 'name' ); ?></span>
+                        <span class="text-[8px] text-[#C8A46A]/60 uppercase tracking-widest"><?php bloginfo( 'description' ); ?></span>
+                    </a>
+                <?php endif; ?>
+                <button onclick="toggleMobileMenuDrawer(false)" aria-label="Close Menu"
+                    class="flex items-center gap-1.5 text-[#a3a3a3] hover:text-[#C8A46A] transition-colors border border-[#2a2a2a] hover:border-[#C8A46A]/40 rounded-sm px-2.5 py-1.5">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    <span class="text-[10px] uppercase tracking-widest font-medium">Close</span>
                 </button>
             </div>
-            <!-- User Quick Info -->
-            <div class="p-4 border-b border-[#1a1a1a]">
+
+            <!-- ── Shop Category Chips Slider ── -->
+            <div class="border-b border-[#1a1a1a] bg-[#0d0d0d] py-2.5">
+                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar px-3 snap-x scroll-smooth">
+                    <a href="<?php echo esc_url( class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : home_url( '/shop' ) ); ?>"
+                       onclick="toggleMobileMenuDrawer(false)"
+                       class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#C8A46A] bg-[#C8A46A]/10 text-[#C8A46A] text-[11px] font-semibold uppercase tracking-wide whitespace-nowrap snap-start shrink-0">
+                        <i data-lucide="grid-3x3" class="w-3 h-3"></i> Shop
+                    </a>
+                    <a href="<?php echo esc_url( add_query_arg( 'filter', 'new', class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : home_url( '/shop' ) ) ); ?>"
+                       onclick="toggleMobileMenuDrawer(false)"
+                       class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#333] text-[#a3a3a3] hover:border-[#C8A46A] hover:text-[#C8A46A] text-[11px] font-medium whitespace-nowrap snap-start shrink-0 transition-all">
+                        <i data-lucide="sparkles" class="w-3 h-3"></i> New
+                    </a>
+                    <?php
+                    $menu_icons_arr = array( 'gem', 'crown', 'feather', 'dot', 'wind', 'heart', 'star' );
+                    if ( ! is_wp_error( $cats ) && ! empty( $cats ) ) :
+                        $mi = 0;
+                        foreach ( $cats as $cat ) :
+                            $icon_m = isset( $menu_icons_arr[ $mi ] ) ? $menu_icons_arr[ $mi ] : 'tag';
+                    ?>
+                    <a href="<?php echo esc_url( get_term_link( $cat ) ); ?>"
+                       onclick="toggleMobileMenuDrawer(false)"
+                       class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#333] text-[#a3a3a3] hover:border-[#C8A46A] hover:text-[#C8A46A] text-[11px] font-medium whitespace-nowrap snap-start shrink-0 transition-all">
+                        <i data-lucide="<?php echo esc_attr( $icon_m ); ?>" class="w-3 h-3"></i> <?php echo esc_html( $cat->name ); ?>
+                    </a>
+                    <?php $mi++; endforeach; endif; ?>
+                </div>
+            </div>
+
+            <!-- ── User Quick Info ── -->
+            <div class="px-4 py-3 border-b border-[#1a1a1a]">
                 <?php if ( is_user_logged_in() ) :
                     $u = wp_get_current_user();
                     ?>
                     <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-full bg-[#C8A46A] text-black font-serif font-bold flex items-center justify-center text-sm"><?php echo esc_html( strtoupper( substr( $u->display_name, 0, 1 ) ) ); ?></div>
-                        <div>
-                            <p class="text-white text-sm font-medium"><?php echo esc_html( $u->display_name ); ?></p>
-                            <a href="<?php echo esc_url( $my_account_url ); ?>" class="text-[#C8A46A] text-[10px] uppercase tracking-widest">My Account</a>
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#C8A46A] to-[#b08d55] text-black font-serif font-bold flex items-center justify-center text-sm shrink-0">
+                            <?php echo esc_html( strtoupper( substr( $u->display_name, 0, 1 ) ) ); ?>
                         </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-white text-sm font-semibold truncate"><?php echo esc_html( $u->display_name ); ?></p>
+                            <p class="text-[#a3a3a3] text-[10px] truncate"><?php echo esc_html( $u->user_email ); ?></p>
+                        </div>
+                        <a href="<?php echo esc_url( $my_account_url ); ?>"
+                           class="shrink-0 flex items-center gap-1 px-2.5 py-1.5 border border-[#C8A46A]/40 text-[#C8A46A] text-[10px] uppercase tracking-widest hover:bg-[#C8A46A]/10 transition-all rounded-sm">
+                            <i data-lucide="user" class="w-3 h-3"></i> Account
+                        </a>
                     </div>
                 <?php else : ?>
-                    <a href="<?php echo esc_url( $my_account_url ); ?>" class="flex items-center gap-3 text-sm text-[#F7F4EE] hover:text-[#C8A46A]">
-                        <i data-lucide="user" class="w-5 h-5 text-[#C8A46A]"></i>
-                        <span>Sign In / Register</span>
-                    </a>
+                    <button type="button" data-user-toggle
+                        class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#b08d55] via-[#C8A46A] to-[#d8ba82] text-black font-bold text-xs uppercase tracking-widest py-3 rounded-sm hover:brightness-110 transition-all shadow-[0_4px_15px_rgba(200,164,106,0.3)]">
+                        <i data-lucide="user" class="w-4 h-4"></i>
+                        Sign In / Register
+                    </button>
                 <?php endif; ?>
             </div>
-            <!-- Nav Links -->
-            <nav class="flex-1 overflow-y-auto p-4 space-y-1">
-                <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="flex items-center gap-3 px-4 py-3 text-sm text-[#F7F4EE] hover:text-[#C8A46A] hover:bg-[#C8A46A]/5 border-l-2 border-transparent hover:border-[#C8A46A] transition-all"><i data-lucide="home" class="w-4 h-4"></i> Home</a>
-                <a href="<?php echo esc_url( class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : home_url( '/shop' ) ); ?>" class="flex items-center gap-3 px-4 py-3 text-sm text-[#F7F4EE] hover:text-[#C8A46A] hover:bg-[#C8A46A]/5 border-l-2 border-transparent hover:border-[#C8A46A] transition-all"><i data-lucide="shopping-bag" class="w-4 h-4"></i> Shop All</a>
-                <?php
-                if ( ! is_wp_error( $cats ) && ! empty( $cats ) ) {
-                    foreach ( $cats as $cat ) {
-                        echo '<a href="' . esc_url( get_term_link( $cat ) ) . '" class="flex items-center gap-3 px-4 py-3 text-sm text-[#F7F4EE] hover:text-[#C8A46A] hover:bg-[#C8A46A]/5 border-l-2 border-transparent hover:border-[#C8A46A] transition-all pl-8">';
-                        echo '<i data-lucide="gem" class="w-4 h-4 text-[#C8A46A]/40"></i> ' . esc_html( $cat->name ) . '</a>';
-                    }
-                }
-                ?>
-                <div class="border-t border-[#1a1a1a] pt-2 mt-2">
-                    <a href="<?php echo esc_url( $wishlist_url ); ?>" class="flex items-center gap-3 px-4 py-3 text-sm text-[#F7F4EE] hover:text-[#C8A46A] hover:bg-[#C8A46A]/5 border-l-2 border-transparent hover:border-[#C8A46A] transition-all"><i data-lucide="heart" class="w-4 h-4"></i> Wishlist</a>
-                    <a href="<?php echo esc_url( home_url( '/track-order' ) ); ?>" class="flex items-center gap-3 px-4 py-3 text-sm text-[#F7F4EE] hover:text-[#C8A46A] hover:bg-[#C8A46A]/5 border-l-2 border-transparent hover:border-[#C8A46A] transition-all"><i data-lucide="package" class="w-4 h-4"></i> Track Order</a>
-                    <a href="<?php echo esc_url( home_url( '/about-us' ) ); ?>" class="flex items-center gap-3 px-4 py-3 text-sm text-[#F7F4EE] hover:text-[#C8A46A] hover:bg-[#C8A46A]/5 border-l-2 border-transparent hover:border-[#C8A46A] transition-all"><i data-lucide="info" class="w-4 h-4"></i> About Us</a>
-                    <a href="<?php echo esc_url( home_url( '/contact-us' ) ); ?>" class="flex items-center gap-3 px-4 py-3 text-sm text-[#F7F4EE] hover:text-[#C8A46A] hover:bg-[#C8A46A]/5 border-l-2 border-transparent hover:border-[#C8A46A] transition-all"><i data-lucide="phone" class="w-4 h-4"></i> Contact Us</a>
-                    <a href="<?php echo esc_url( home_url( '/faq' ) ); ?>" class="flex items-center gap-3 px-4 py-3 text-sm text-[#F7F4EE] hover:text-[#C8A46A] hover:bg-[#C8A46A]/5 border-l-2 border-transparent hover:border-[#C8A46A] transition-all"><i data-lucide="help-circle" class="w-4 h-4"></i> FAQ</a>
-                    <a href="<?php echo esc_url( home_url( '/shipping-policy' ) ); ?>" class="flex items-center gap-3 px-4 py-3 text-sm text-[#F7F4EE] hover:text-[#C8A46A] hover:bg-[#C8A46A]/5 border-l-2 border-transparent hover:border-[#C8A46A] transition-all"><i data-lucide="truck" class="w-4 h-4"></i> Shipping Policy</a>
-                </div>
+
+            <!-- ── Nav Links ── -->
+            <nav class="flex-1 overflow-y-auto py-2">
+                <?php $nav_cls = 'flex items-center gap-3 px-5 py-3 text-sm text-[#d4d4d4] hover:text-[#C8A46A] hover:bg-[#C8A46A]/5 border-l-2 border-transparent hover:border-[#C8A46A] transition-all'; ?>
+                <a href="<?php echo esc_url( home_url( '/' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
+                    <i data-lucide="home" class="w-4 h-4 shrink-0"></i> Home
+                </a>
+                <a href="<?php echo esc_url( class_exists( 'WooCommerce' ) ? get_permalink( wc_get_page_id( 'shop' ) ) : home_url( '/shop' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
+                    <i data-lucide="shopping-bag" class="w-4 h-4 shrink-0 text-[#C8A46A]"></i> <span class="font-semibold text-[#C8A46A]">Shop All</span>
+                </a>
+                <?php if ( ! is_wp_error( $cats ) && ! empty( $cats ) ) : ?>
+                    <?php foreach ( $cats as $cat ) : ?>
+                    <a href="<?php echo esc_url( get_term_link( $cat ) ); ?>" onclick="toggleMobileMenuDrawer(false)"
+                       class="flex items-center gap-3 pl-10 pr-5 py-2.5 text-sm text-[#a3a3a3] hover:text-[#C8A46A] hover:bg-[#C8A46A]/5 border-l-2 border-transparent hover:border-[#C8A46A]/50 transition-all">
+                        <i data-lucide="gem" class="w-3.5 h-3.5 shrink-0 text-[#C8A46A]/40"></i> <?php echo esc_html( $cat->name ); ?>
+                    </a>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+
+                <div class="mx-4 my-2 border-t border-[#1a1a1a]"></div>
+
+                <a href="<?php echo esc_url( $wishlist_url ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
+                    <i data-lucide="heart" class="w-4 h-4 shrink-0"></i> Wishlist
+                </a>
+                <a href="<?php echo esc_url( home_url( '/track-order' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
+                    <i data-lucide="package" class="w-4 h-4 shrink-0"></i> Track Order
+                </a>
+
+                <div class="mx-4 my-2 border-t border-[#1a1a1a]"></div>
+
+                <a href="<?php echo esc_url( home_url( '/about-us' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
+                    <i data-lucide="info" class="w-4 h-4 shrink-0"></i> About Us
+                </a>
+                <a href="<?php echo esc_url( home_url( '/contact-us' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
+                    <i data-lucide="phone" class="w-4 h-4 shrink-0"></i> Contact Us
+                </a>
+                <a href="<?php echo esc_url( home_url( '/faq' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
+                    <i data-lucide="help-circle" class="w-4 h-4 shrink-0"></i> FAQ
+                </a>
+                <a href="<?php echo esc_url( home_url( '/shipping-policy' ) ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
+                    <i data-lucide="truck" class="w-4 h-4 shrink-0"></i> Shipping Policy
+                </a>
+
                 <?php if ( is_user_logged_in() ) : ?>
-                <div class="border-t border-[#1a1a1a] pt-2 mt-2">
-                    <a href="<?php echo esc_url( wp_logout_url( home_url( '/' ) ) ); ?>" class="flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/5 border-l-2 border-transparent transition-all"><i data-lucide="log-out" class="w-4 h-4"></i> Logout</a>
-                </div>
+                <div class="mx-4 my-2 border-t border-[#1a1a1a]"></div>
+                <a href="<?php echo esc_url( $my_account_url ); ?>" onclick="toggleMobileMenuDrawer(false)" class="<?php echo esc_attr( $nav_cls ); ?>">
+                    <i data-lucide="user-circle" class="w-4 h-4 shrink-0 text-[#C8A46A]"></i> <span class="text-[#C8A46A] font-semibold">My Account</span>
+                </a>
+                <a href="<?php echo esc_url( wp_logout_url( home_url( '/' ) ) ); ?>"
+                   class="flex items-center gap-3 px-5 py-3 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/5 border-l-2 border-transparent hover:border-red-400/40 transition-all">
+                    <i data-lucide="log-out" class="w-4 h-4 shrink-0"></i> Logout
+                </a>
                 <?php endif; ?>
             </nav>
-            <!-- Sale Banner -->
-            <div class="p-4 border-t border-[#1a1a1a] bg-[#C8A46A]/5">
-                <p class="text-[10px] text-[#C8A46A] uppercase tracking-widest text-center font-semibold">⚡ FESTIVE SALE — 40% OFF · Use code FESTIVE40</p>
+
+            <!-- ── Sale Banner ── -->
+            <div class="px-4 py-3 border-t border-[#1a1a1a] bg-gradient-to-r from-[#C8A46A]/10 via-[#C8A46A]/5 to-[#C8A46A]/10">
+                <p class="text-[10px] text-[#C8A46A] uppercase tracking-widest text-center font-semibold">⚡ FESTIVE SALE — 40% OFF · Code: FESTIVE40</p>
             </div>
         </div>
     </div>
@@ -1298,7 +1375,12 @@ if ( function_exists( 'elementor_theme_do_location' ) && elementor_theme_do_loca
             el.style.display = 'flex';
             el.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
-            setTimeout(() => { const inp = document.getElementById('mobile-overlay-search'); if (inp) inp.focus(); }, 100);
+            // Focus the correct input ID used in the search overlay form
+            setTimeout(() => {
+                const inp = document.getElementById('overlay-search-input');
+                if (inp) { inp.value = ''; inp.focus(); }
+                if (typeof renderOverlaySearchSuggestions === 'function') renderOverlaySearchSuggestions('');
+            }, 120);
         } else {
             el.style.display = 'none';
             el.classList.add('hidden');
