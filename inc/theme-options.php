@@ -913,16 +913,16 @@ function dt_render_theme_options_page(): void {
                             <!-- ── ABOUT PAGE ────────────────────────────────────────── -->
                             <div class="dt-section">
                                 <div class="dt-section-title">📄 About Page</div>
-                                <p class="description" style="margin-bottom:16px;">All content controls for the <strong>About Us</strong> page template.</p>
+                                <p class="description" style="margin-bottom:16px;color:#6b7280;">All content controls for the <strong>About Us</strong> page template.</p>
 
-                                <div style="border:1px solid #2a2a2a;border-radius:6px;padding:16px 20px;margin-bottom:14px;background:#111;">
-                                    <p style="font-weight:600;color:#C8A46A;margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;">🖼️ Hero Banner</p>
+                                <div style="border:1px solid #e2e6ea;border-radius:6px;padding:16px 20px;margin-bottom:14px;background:#f8f9fa;">
+                                    <p style="font-weight:700;color:#b08d55;margin:0 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;">🖼️ Hero Banner</p>
                                     <?php dt_option_media( 'about_hero_image_url', 'Hero Background Image', 'Upload or paste URL for the About page hero banner', $opts ); ?>
                                     <?php dt_option_row( 'about_hero_badge', 'Hero Eyebrow / Badge Text', 'Small gold text above the page title (default: Our Atelier)', 'text', $opts ); ?>
                                 </div>
 
-                                <div style="border:1px solid #2a2a2a;border-radius:6px;padding:16px 20px;margin-bottom:14px;background:#111;">
-                                    <p style="font-weight:600;color:#C8A46A;margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;">📖 Brand Story Section</p>
+                                <div style="border:1px solid #e2e6ea;border-radius:6px;padding:16px 20px;margin-bottom:14px;background:#f8f9fa;">
+                                    <p style="font-weight:700;color:#b08d55;margin:0 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;">📖 Brand Story Section</p>
                                     <?php dt_option_row( 'about_founded_year', 'Founded Year Label', 'Shown above story heading (e.g. Est. 2010)', 'text', $opts ); ?>
                                     <?php dt_option_row( 'about_story_title', 'Story Section Heading', 'Large heading (e.g. Weaving Dreams, One Thread at a Time)', 'text', $opts ); ?>
                                     <?php dt_option_textarea( 'about_story_p1', 'Story Paragraph 1', 'First paragraph of the brand story text', $opts ); ?>
@@ -930,21 +930,21 @@ function dt_render_theme_options_page(): void {
                                     <?php dt_option_textarea( 'about_story_p3', 'Story Paragraph 3', 'Third paragraph (optional — leave blank to hide)', $opts ); ?>
                                 </div>
 
-                                <div style="border:1px solid #2a2a2a;border-radius:6px;padding:16px 20px;margin-bottom:14px;background:#111;">
-                                    <p style="font-weight:600;color:#C8A46A;margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;">🏅 Our Values Cards (3 cards)</p>
+                                <div style="border:1px solid #e2e6ea;border-radius:6px;padding:16px 20px;margin-bottom:14px;background:#f8f9fa;">
+                                    <p style="font-weight:700;color:#b08d55;margin:0 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;">🏅 Our Values Cards (3 cards)</p>
                                     <?php for ( $__av = 1; $__av <= 3; $__av++ ) : ?>
-                                    <div style="border:1px solid #1a1a1a;border-radius:4px;padding:12px 16px;margin-bottom:10px;background:#0c0c0c;">
-                                        <p style="color:#a3a3a3;font-size:11px;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">Value Card <?php echo $__av; ?></p>
+                                    <div style="border:1px solid #e2e6ea;border-radius:4px;padding:12px 16px;margin-bottom:10px;background:#fff;">
+                                        <p style="color:#6b7280;font-size:11px;font-weight:600;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">Value Card <?php echo $__av; ?></p>
                                         <?php dt_option_row( "about_value{$__av}_title", "Card {$__av} Title", 'e.g. Handcrafted / Ethical Sourcing / Timeless Luxury', 'text', $opts ); ?>
                                         <?php dt_option_textarea( "about_value{$__av}_text", "Card {$__av} Description", 'Short text shown inside this value card', $opts ); ?>
                                     </div>
                                     <?php endfor; ?>
                                 </div>
 
-                                <div style="border:1px solid #2a2a2a;border-radius:6px;padding:16px 20px;background:#111;">
-                                    <p style="font-weight:600;color:#C8A46A;margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;">🔗 Call to Action Section</p>
+                                <div style="border:1px solid #e2e6ea;border-radius:6px;padding:16px 20px;background:#f8f9fa;">
+                                    <p style="font-weight:700;color:#b08d55;margin:0 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;">🔗 Call to Action Section</p>
                                     <?php dt_option_row( 'about_cta_heading', 'CTA Heading', 'e.g. Discover Our Collection', 'text', $opts ); ?>
-                                    <?php dt_option_row( 'about_cta_subtext', 'CTA Subtext', 'Short line below the heading (e.g. Handpicked luxury woven for the modern connoisseur.)', 'text', $opts ); ?>
+                                    <?php dt_option_row( 'about_cta_subtext', 'CTA Subtext', 'Short line below the heading', 'text', $opts ); ?>
                                     <?php dt_option_row( 'about_cta_btn_text', 'CTA Button Label', 'e.g. Shop the Collection', 'text', $opts ); ?>
                                     <?php dt_option_row( 'about_cta_btn_url', 'CTA Button Link URL', 'Where the CTA button goes', 'text', $opts ); ?>
                                 </div>
@@ -953,7 +953,7 @@ function dt_render_theme_options_page(): void {
                             <!-- ── CONTACT PAGE ───────────────────────────────────────── -->
                             <div class="dt-section">
                                 <div class="dt-section-title">📞 Contact Page</div>
-                                <p class="description" style="margin-bottom:16px;">Email, phone, address and business hours are managed in the <strong>Social &amp; Contact</strong> tab. Additional contact page controls are below.</p>
+                                <p class="description" style="margin-bottom:16px;color:#6b7280;">Email, phone, address and business hours are managed in the <strong>Social &amp; Contact</strong> tab. Additional contact page controls are below.</p>
                                 <?php dt_option_row( 'contact_page_subtitle', 'Contact Page Subtitle', 'Subheading below the page title (e.g. We\'d love to hear from you...)', 'text', $opts ); ?>
                                 <?php dt_option_row( 'contact_page_phone2', 'Second Phone Number', 'Optional additional phone number shown on the contact page', 'text', $opts ); ?>
                                 <?php dt_option_row( 'contact_whatsapp_label', 'WhatsApp Link Label', 'Label for the WhatsApp CTA (e.g. Chat on WhatsApp)', 'text', $opts ); ?>
@@ -965,14 +965,14 @@ function dt_render_theme_options_page(): void {
                             <!-- ── FAQ PAGE ───────────────────────────────────────────── -->
                             <div class="dt-section">
                                 <div class="dt-section-title">❓ FAQ Page</div>
-                                <p class="description" style="margin-bottom:16px;">Add up to 10 FAQ accordion items. Leave a question blank to hide that item.</p>
+                                <p class="description" style="margin-bottom:16px;color:#6b7280;">Add up to 10 FAQ accordion items. Leave a question blank to hide that item.</p>
                                 <?php dt_option_row( 'faq_hero_subtitle', 'FAQ Page Subtitle', 'Subtext shown under the FAQ heading (e.g. Everything you need to know...)', 'text', $opts ); ?>
                                 <?php dt_option_row( 'faq_contact_url', '"Contact Support" Button URL', 'Link for the button at the bottom of the FAQ page', 'text', $opts ); ?>
                                 <?php dt_option_row( 'faq_contact_btn_label', '"Contact Support" Button Label', 'Label for the button at the bottom of the FAQ page (e.g. Contact Support)', 'text', $opts ); ?>
                                 <div style="margin-top:16px;">
                                 <?php for ( $__fi = 1; $__fi <= 10; $__fi++ ) : ?>
-                                    <div style="border:1px solid #2a2a2a;border-radius:6px;padding:14px 18px;margin-bottom:10px;background:#111;">
-                                        <p style="font-weight:600;color:#C8A46A;margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;">FAQ Item <?php echo $__fi; ?></p>
+                                    <div style="border:1px solid #e2e6ea;border-radius:6px;padding:14px 18px;margin-bottom:10px;background:#f8f9fa;">
+                                        <p style="font-weight:700;color:#b08d55;margin:0 0 10px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;">FAQ Item <?php echo $__fi; ?></p>
                                         <?php dt_option_row( "faq_{$__fi}_q", 'Question', 'Accordion heading / question text', 'text', $opts ); ?>
                                         <?php dt_option_textarea( "faq_{$__fi}_a", 'Answer', 'Answer displayed when the accordion is opened', $opts ); ?>
                                     </div>
@@ -983,21 +983,22 @@ function dt_render_theme_options_page(): void {
                             <!-- ── SHIPPING POLICY PAGE ───────────────────────────────── -->
                             <div class="dt-section">
                                 <div class="dt-section-title">🚚 Shipping Policy Page</div>
-                                <p class="description" style="margin-bottom:16px;">Controls all text on the Shipping Policy page template.</p>
+                                <p class="description" style="margin-bottom:16px;color:#6b7280;">Controls all text on the Shipping Policy page template.</p>
                                 <?php dt_option_row( 'ship_hero_subtitle', 'Page Subtitle', 'Subtext under "Shipping Policy" heading', 'text', $opts ); ?>
 
-                                <div style="border:1px solid #2a2a2a;border-radius:6px;padding:16px 20px;margin-bottom:14px;background:#111;">
-                                    <p style="font-weight:600;color:#C8A46A;margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;">📊 Stats Cards (3 cards)</p>
+                                <div style="border:1px solid #e2e6ea;border-radius:6px;padding:16px 20px;margin-bottom:14px;background:#f8f9fa;">
+                                    <p style="font-weight:700;color:#b08d55;margin:0 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;">📊 Stats Cards (3 cards)</p>
                                     <?php for ( $__ss = 1; $__ss <= 3; $__ss++ ) : ?>
-                                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;">
-                                        <?php dt_option_row( "ship_stat{$__ss}_label", "Stat {$__ss} — Label", 'e.g. Ships to / Delivery / Free Shipping', 'text', $opts ); ?>
-                                        <?php dt_option_row( "ship_stat{$__ss}_value", "Stat {$__ss} — Value", 'e.g. 40+ Countries / 3-7 Days / Above ₹999', 'text', $opts ); ?>
+                                    <div style="border:1px solid #e2e6ea;border-radius:4px;padding:10px 14px;margin-bottom:8px;background:#fff;">
+                                        <p style="color:#6b7280;font-size:11px;font-weight:600;margin:0 0 6px;text-transform:uppercase;letter-spacing:.05em;">Stat Card <?php echo $__ss; ?></p>
+                                        <?php dt_option_row( "ship_stat{$__ss}_label", "Label", 'e.g. Ships to / Delivery / Free Shipping', 'text', $opts ); ?>
+                                        <?php dt_option_row( "ship_stat{$__ss}_value", "Value", 'e.g. 40+ Countries / 3-7 Days / Above ₹999', 'text', $opts ); ?>
                                     </div>
                                     <?php endfor; ?>
                                 </div>
 
-                                <div style="border:1px solid #2a2a2a;border-radius:6px;padding:16px 20px;margin-bottom:14px;background:#111;">
-                                    <p style="font-weight:600;color:#C8A46A;margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;">🇮🇳 Domestic Delivery (India)</p>
+                                <div style="border:1px solid #e2e6ea;border-radius:6px;padding:16px 20px;margin-bottom:14px;background:#f8f9fa;">
+                                    <p style="font-weight:700;color:#b08d55;margin:0 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;">🇮🇳 Domestic Delivery (India)</p>
                                     <?php dt_option_row( 'ship_dom_std_label', 'Standard Shipping — Label', 'e.g. Standard Shipping:', 'text', $opts ); ?>
                                     <?php dt_option_row( 'ship_dom_std_text',  'Standard Shipping — Details', 'e.g. FREE on orders above ₹999 · 3-5 business days', 'text', $opts ); ?>
                                     <?php dt_option_row( 'ship_dom_exp_label', 'Express Shipping — Label', 'e.g. Express Shipping:', 'text', $opts ); ?>
@@ -1006,8 +1007,8 @@ function dt_render_theme_options_page(): void {
                                     <?php dt_option_row( 'ship_dom_cod_text',  'Cash on Delivery — Details', 'e.g. Available across India (₹49 processing fee)', 'text', $opts ); ?>
                                 </div>
 
-                                <div style="border:1px solid #2a2a2a;border-radius:6px;padding:16px 20px;margin-bottom:14px;background:#111;">
-                                    <p style="font-weight:600;color:#C8A46A;margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;">🌍 International Delivery</p>
+                                <div style="border:1px solid #e2e6ea;border-radius:6px;padding:16px 20px;margin-bottom:14px;background:#f8f9fa;">
+                                    <p style="font-weight:700;color:#b08d55;margin:0 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;">🌍 International Delivery</p>
                                     <?php dt_option_row( 'ship_intl_free_label',    'Free Intl Shipping — Label',   'e.g. Free Worldwide Shipping:', 'text', $opts ); ?>
                                     <?php dt_option_row( 'ship_intl_free_text',     'Free Intl Shipping — Details', 'e.g. On all orders above ₹5,000', 'text', $opts ); ?>
                                     <?php dt_option_row( 'ship_intl_time_label',    'Delivery Time — Label',        'e.g. Delivery Time:', 'text', $opts ); ?>
@@ -1024,16 +1025,16 @@ function dt_render_theme_options_page(): void {
                             <!-- ── OUR STORY PAGE ─────────────────────────────────────── -->
                             <div class="dt-section">
                                 <div class="dt-section-title">📖 Our Story Page</div>
-                                <p class="description" style="margin-bottom:16px;">Controls all content on the Our Story page including the timeline.</p>
+                                <p class="description" style="margin-bottom:16px;color:#6b7280;">Controls all content on the Our Story page including the timeline.</p>
                                 <?php dt_option_row( 'story_hero_badge', 'Hero Eyebrow Text', 'Small gold text above the page heading (e.g. The Journey)', 'text', $opts ); ?>
                                 <?php dt_option_row( 'story_hero_title', 'Hero Main Heading', 'e.g. Our Story', 'text', $opts ); ?>
                                 <?php dt_option_textarea( 'story_hero_text', 'Hero Subtitle Paragraph', 'Paragraph shown under the main heading in the hero', $opts ); ?>
 
-                                <div style="border:1px solid #2a2a2a;border-radius:6px;padding:16px 20px;margin:14px 0;background:#111;">
-                                    <p style="font-weight:600;color:#C8A46A;margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;">⏳ Timeline Entries (up to 4)</p>
+                                <div style="border:1px solid #e2e6ea;border-radius:6px;padding:16px 20px;margin:14px 0;background:#f8f9fa;">
+                                    <p style="font-weight:700;color:#b08d55;margin:0 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;">⏳ Timeline Entries (up to 4)</p>
                                     <?php for ( $__ti = 1; $__ti <= 4; $__ti++ ) : ?>
-                                    <div style="border:1px solid #1a1a1a;border-radius:4px;padding:12px 16px;margin-bottom:10px;background:#0c0c0c;">
-                                        <p style="color:#a3a3a3;font-size:11px;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">Timeline Entry <?php echo $__ti; ?></p>
+                                    <div style="border:1px solid #e2e6ea;border-radius:4px;padding:12px 16px;margin-bottom:10px;background:#fff;">
+                                        <p style="color:#6b7280;font-size:11px;font-weight:600;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;">Timeline Entry <?php echo $__ti; ?></p>
                                         <?php dt_option_row( "story_t{$__ti}_year",    'Year / Era Label', 'e.g. 2010 or "Today"', 'text', $opts ); ?>
                                         <?php dt_option_row( "story_t{$__ti}_heading", 'Entry Heading',    'e.g. The Beginning', 'text', $opts ); ?>
                                         <?php dt_option_textarea( "story_t{$__ti}_text", 'Entry Body Text', 'Paragraph describing this milestone', $opts ); ?>
@@ -1041,8 +1042,8 @@ function dt_render_theme_options_page(): void {
                                     <?php endfor; ?>
                                 </div>
 
-                                <div style="border:1px solid #2a2a2a;border-radius:6px;padding:16px 20px;background:#111;">
-                                    <p style="font-weight:600;color:#C8A46A;margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;">🔗 Call to Action</p>
+                                <div style="border:1px solid #e2e6ea;border-radius:6px;padding:16px 20px;background:#f8f9fa;">
+                                    <p style="font-weight:700;color:#b08d55;margin:0 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;">🔗 Call to Action</p>
                                     <?php dt_option_row( 'story_cta_heading', 'CTA Heading', 'e.g. Be Part of Our Story', 'text', $opts ); ?>
                                     <?php dt_option_textarea( 'story_cta_text', 'CTA Supporting Text', 'Paragraph below the CTA heading', $opts ); ?>
                                     <?php dt_option_row( 'story_cta_btn_text', 'CTA Button Label', 'e.g. Explore Collection', 'text', $opts ); ?>
@@ -1053,7 +1054,7 @@ function dt_render_theme_options_page(): void {
                             <!-- ── PRIVACY POLICY PAGE ───────────────────────────────── -->
                             <div class="dt-section">
                                 <div class="dt-section-title">🔒 Privacy Policy Page</div>
-                                <p class="description" style="margin-bottom:16px;">Full content for the Privacy Policy page (template: <strong>Privacy Policy</strong>). Supports HTML formatting.</p>
+                                <p class="description" style="margin-bottom:16px;color:#6b7280;">Full content for the Privacy Policy page (template: <strong>Privacy Policy</strong>). Supports HTML formatting.</p>
                                 <?php dt_option_row( 'privacy_hero_subtitle', 'Privacy Page Subtitle', 'Subtext under the Privacy Policy heading', 'text', $opts ); ?>
                                 <?php dt_option_row( 'privacy_last_updated', 'Last Updated Date', 'e.g. January 1, 2025', 'text', $opts ); ?>
                                 <?php dt_option_html_block( 'privacy_page_content', 'Privacy Policy Full Content (HTML)', 'Paste or type your full privacy policy. Supports &lt;p&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;h3&gt;, &lt;a&gt;, &lt;br&gt;', $opts ); ?>
@@ -1062,7 +1063,7 @@ function dt_render_theme_options_page(): void {
                             <!-- ── RETURN & REFUND POLICY PAGE ───────────────────────── -->
                             <div class="dt-section">
                                 <div class="dt-section-title">↩️ Return &amp; Refund Policy Page</div>
-                                <p class="description" style="margin-bottom:16px;">Full content for the Return &amp; Refund Policy page (template: <strong>Return Policy</strong>). Supports HTML formatting.</p>
+                                <p class="description" style="margin-bottom:16px;color:#6b7280;">Full content for the Return &amp; Refund Policy page (template: <strong>Return Policy</strong>). Supports HTML formatting.</p>
                                 <?php dt_option_row( 'return_hero_subtitle', 'Return Policy Subtitle', 'Subtext under the Return Policy heading', 'text', $opts ); ?>
                                 <?php dt_option_row( 'return_last_updated', 'Last Updated Date', 'e.g. January 1, 2025', 'text', $opts ); ?>
                                 <?php dt_option_html_block( 'return_page_content', 'Return & Refund Policy Full Content (HTML)', 'Paste or type your full return policy. Supports &lt;p&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;h3&gt;, &lt;a&gt;, &lt;br&gt;', $opts ); ?>
