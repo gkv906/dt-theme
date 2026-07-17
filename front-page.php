@@ -326,7 +326,7 @@ ob_start();
         <div class="container mx-auto px-4">
             <div class="text-center mb-10 reveal-on-scroll">
                 <span class="text-xs uppercase tracking-[0.35em] text-[#C8A46A]/60 block mb-2 font-medium"><?php esc_html_e( 'Artisan Textures', 'dt-ecommerce-theme' ); ?></span>
-                <h3 class="font-serif text-3xl md:text-5xl font-bold animate-gold-gradient select-none"><?php esc_html_e( 'Shop by Fabric', 'dt-ecommerce-theme' ); ?></h3>
+                <h3 class="font-serif text-3xl md:text-5xl font-bold text-[#C8A46A] select-none" style="background:none;-webkit-text-fill-color:#C8A46A;"><?php esc_html_e( 'Shop by Fabric', 'dt-ecommerce-theme' ); ?></h3>
                 <div class="flex items-center justify-center gap-4 mt-3">
                     <div class="w-12 h-px bg-gradient-to-r from-transparent to-[#C8A46A]/40"></div>
                     <i data-lucide="sparkles" class="w-3 h-3 text-[#C8A46A]/80 animate-pulse"></i>
@@ -587,7 +587,7 @@ if ( $show_top_sellers ) {
             <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 reveal-on-scroll">
                 <div class="text-center md:text-left">
                     <span class="text-xs uppercase tracking-[0.35em] text-[#C8A46A]/60 block mb-2 font-medium"><?php esc_html_e( 'Atelier Favorites', 'dt-ecommerce-theme' ); ?></span>
-                    <h2 class="font-serif text-4xl md:text-5xl font-bold animate-gold-gradient select-none leading-tight"><?php esc_html_e( 'Top Selling Styles', 'dt-ecommerce-theme' ); ?></h2>
+                    <h2 class="font-serif text-4xl md:text-5xl font-bold text-[#C8A46A] select-none leading-tight" style="background:none;-webkit-text-fill-color:#C8A46A;"><?php esc_html_e( 'Top Selling Styles', 'dt-ecommerce-theme' ); ?></h2>
                     <div class="flex items-center justify-center md:justify-start gap-3 mt-3">
                         <div class="w-16 h-px bg-gradient-to-r from-[#C8A46A]/60 to-transparent"></div>
                         <i data-lucide="crown" class="w-3.5 h-3.5 text-[#C8A46A] animate-pulse"></i>
@@ -681,7 +681,7 @@ ob_start();
                     <span class="text-xs uppercase tracking-[0.4em] text-[#C8A46A]/70 block mb-4 font-medium"><?php esc_html_e( 'The Arshman Promise', 'dt-ecommerce-theme' ); ?></span>
                     <h2 class="font-serif text-4xl md:text-6xl leading-[1.05] mb-6">
                         <span class="text-white">Why </span>
-                        <span class="animate-gold-gradient">Choose Us</span>
+                        <span class="text-[#C8A46A]" style="background:none;-webkit-text-fill-color:#C8A46A;">Choose Us</span>
                     </h2>
                     <div class="w-20 h-px bg-gradient-to-r from-[#C8A46A] to-transparent"></div>
                 </div>
