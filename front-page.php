@@ -883,10 +883,13 @@ if ( $show_reviews ) {
             </div>
 
             <div class="relative reveal-on-scroll" id="reviews-carousel-wrap">
-                <div id="reviews-track" class="reviews-track flex gap-6 md:gap-8">
-                    <!-- Loaded dynamically via JS -->
+                <!-- Inner clip wrapper — overflow:hidden here, NOT on the outer so abs buttons aren't clipped -->
+                <div id="reviews-track-wrap" class="overflow-hidden">
+                    <div id="reviews-track" class="reviews-track flex gap-6 md:gap-8">
+                        <!-- Loaded dynamically via JS -->
+                    </div>
                 </div>
-                <!-- Controls -->
+                <!-- Desktop-only absolute nav buttons (positioned outside clip wrapper via parent) -->
                 <button onclick="reviewsNav(-1)" id="reviews-prev" title="Previous Slide" aria-label="Previous Slide" class="hidden md:flex slider-nav-btn absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 lg:-translate-x-6 w-12 h-12 rounded-full border border-[#C8A46A]/40 text-[#C8A46A] items-center justify-center bg-black/60 z-10">
                     <i data-lucide="arrow-left" class="w-5 h-5"></i>
                 </button>
@@ -895,7 +898,18 @@ if ( $show_reviews ) {
                 </button>
             </div>
 
-            <div class="flex flex-col items-center gap-4 mt-12">
+            <!-- Mobile prev/next + dots row (inline, below carousel) -->
+            <div class="flex items-center justify-between mt-6 px-2 md:hidden">
+                <button onclick="reviewsNav(-1)" class="mobile-slider-btn" aria-label="Previous review">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <div id="reviews-dots-mobile" class="flex items-center gap-2"></div>
+                <button onclick="reviewsNav(1)" class="mobile-slider-btn" aria-label="Next review">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+
+            <div class="flex flex-col items-center gap-4 mt-6 hidden md:flex">
                 <div id="reviews-dots" class="flex items-center gap-3"></div>
                 <div class="flex items-center gap-2 text-[10px] uppercase tracking-widest text-gray-500">
                     <span id="reviews-play-icon" class="w-1.5 h-1.5 rounded-full bg-[#C8A46A] animate-pulse"></span>

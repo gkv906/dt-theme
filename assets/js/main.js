@@ -1453,7 +1453,9 @@ function initCheckoutEnhancements() {
 document.addEventListener('DOMContentLoaded', initCheckoutEnhancements);
 
 // =============================================================
-// REVIEWS — 50+ Authentic Indian Customer Reviews
+
+// =============================================================
+// REVIEWS — 52 Authentic Indian Customer Reviews
 // =============================================================
 const REVIEWS = [
   { name:"Priya Sharma", city:"Mumbai, Maharashtra", product:"Banarasi Silk Saree", rating:5, text:"Absolutely stunning! The zari work is so intricate and the silk quality is far beyond what I expected. Got so many compliments at my cousin's wedding. Will definitely order again!", date:"12 July 2026" },
@@ -1480,7 +1482,7 @@ const REVIEWS = [
   { name:"Usha Bhatt", city:"Dehradun, Uttarakhand", product:"Silk Saree", rating:5, text:"Bought for my retirement function and it was perfect! The silk is genuine — you can feel it. Everyone asked where I shopped from. Will tell all my friends!", date:"20 June 2026" },
   { name:"Kavita Srivastava", city:"Allahabad, Uttar Pradesh", product:"Banarasi Silk Saree", rating:5, text:"UP mein Banarasi saree ki bohot value hai. Ye saree ekdum asli lagti hai — genuine silk, real zari, beautiful packaging. Koi complaint nahi, sab kuch perfect!", date:"19 June 2026" },
   { name:"Madhuri Tiwari", city:"Bhopal, Madhya Pradesh", product:"Linen Saree", rating:5, text:"Ordered the linen saree for office wear. It drapes beautifully even without starch and the color hasn't faded despite regular washing. Perfect professional look!", date:"18 June 2026" },
-  { name:"Archana Ghosh", city:"Kolkata, West Bengal", product:"Tant Saree", rating:5, text:"A Bengali loves her tant and this one is exceptional! The weave is fine, fabric soft, and the border is traditional jamdani style. Exceptional quality!", date:"17 June 2026" },
+  { name:"Archana Ghosh", city:"Kolkata, West Bengal", product:"Cotton Saree", rating:5, text:"A Bengali loves her tant and this one is exceptional! The weave is fine, fabric soft, and the border is traditional jamdani style. Exceptional quality!", date:"17 June 2026" },
   { name:"Seema Pandey", city:"Varanasi, Uttar Pradesh", product:"Banarasi Saree", rating:5, text:"Main Varanasi se hoon — yahan banarasi saree ki quality samajh aati hai. Ye saree bilkul asli hai! Zari chamakdar, resham smooth. 5 star kum hai iske liye!", date:"16 June 2026" },
   { name:"Jyoti Chatterjee", city:"Siliguri, West Bengal", product:"Cotton Kurti", rating:4, text:"Simple and elegant cotton kurti for everyday wear. The print is subtle and classy. Sizing is accurate and delivery was on time. Good product overall!", date:"15 June 2026" },
   { name:"Vidya Kulkarni", city:"Nasik, Maharashtra", product:"Organza Saree", rating:5, text:"Organza saree is absolutely gorgeous for festive occasions! The peach color with gold embroidery is divine. Wore it for Ganesh Chaturthi and got so many compliments!", date:"14 June 2026" },
@@ -1510,36 +1512,51 @@ const REVIEWS = [
   { name:"Radha Krishnan", city:"Madurai, Tamil Nadu", product:"Cotton Kurti", rating:5, text:"Perfect kurti for temple visits! Cotton fabric is appropriate and the traditional print makes it look very respectful. Size chart is accurate. Very happy!", date:"21 May 2026" }
 ];
 
-// Review state
+// ── Review state ──────────────────────────────────────────────
 let reviewIdx = 0;
 let reviewsAutoTimer = null;
 let reviewsPaused = false;
 
-function buildReviewCard(r, i) {
-  const stars = Array.from({length:5},(_,s)=>`<svg class="w-4 h-4 ${s < r.rating ? 'text-[#C8A46A] fill-[#C8A46A]' : 'text-gray-600'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.907c.961 0 1.36 1.252.583 1.828l-3.978 2.89a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.978-2.89a1 1 0 00-1.176 0l-3.978 2.89c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118l-3.978-2.89c-.777-.576-.378-1.828.583-1.828h4.907a1 1 0 00.95-.69l1.519-4.674z"/></svg>`).join('');
+function buildReviewCard(r) {
+  const stars = Array.from({length:5},(_,s)=>`<svg class="w-4 h-4 ${s<r.rating?'fill-[#C8A46A] text-[#C8A46A]':'text-gray-600'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.907c.961 0 1.36 1.252.583 1.828l-3.978 2.89a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.978-2.89a1 1 0 00-1.176 0l-3.978 2.89c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118l-3.978-2.89c-.777-.576-.378-1.828.583-1.828h4.907a1 1 0 00.95-.69l1.519-4.674z"/></svg>`).join('');
   const initials = r.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
-  return `<div class="review-card"><div class="flex items-center gap-3 mb-4"><div class="review-avatar">${initials}</div><div><div class="text-sm font-semibold text-[#F7F4EE]">${r.name}</div><div class="text-[10px] text-[#C8A46A]/70 uppercase tracking-widest mt-0.5">${r.city}</div></div><div class="ml-auto flex gap-0.5">${stars}</div></div><div class="review-category-badge">${r.product}</div><p class="review-text">"${r.text}"</p><div class="review-meta">${r.date} · Verified Purchase ✓</div></div>`;
+  return `<div class="review-card"><div class="flex items-center gap-3 mb-4"><div class="review-avatar">${initials}</div><div class="flex-1 min-w-0"><div class="text-sm font-semibold text-[#F7F4EE] truncate">${r.name}</div><div class="text-[10px] text-[#C8A46A]/70 uppercase tracking-widest mt-0.5 truncate">${r.city}</div></div><div class="flex gap-0.5 shrink-0">${stars}</div></div><div class="review-category-badge">${r.product}</div><p class="review-text">"${r.text}"</p><div class="review-meta">${r.date} · Verified Purchase ✓</div></div>`;
 }
 
 function setReviewIndex(idx) {
   const track = document.getElementById('reviews-track');
-  if (!track) return;
+  const wrap  = document.getElementById('reviews-carousel-wrap');
+  if (!track || !wrap) return;
   const cards = track.querySelectorAll('.review-card');
   if (!cards.length) return;
   const isMobile = window.innerWidth < 768;
-  const perView = isMobile ? 1 : (window.innerWidth < 1024 ? 2 : 3);
-  const maxIdx = Math.max(0, REVIEWS.length - perView);
-  reviewIdx = Math.max(0, Math.min(idx, maxIdx));
-  const gap = isMobile ? 0 : 32;
-  const cardW = cards[0].offsetWidth + gap;
-  track.style.transform = `translateX(-${reviewIdx * cardW}px)`;
-  document.querySelectorAll('.review-dot').forEach((d,i) => d.classList.toggle('active', i === reviewIdx));
+  const perView  = isMobile ? 1 : (window.innerWidth < 1024 ? 2 : 3);
+  const maxIdx   = Math.max(0, REVIEWS.length - perView);
+  reviewIdx      = Math.max(0, Math.min(idx, maxIdx));
+  let tx;
+  if (isMobile) {
+    // On mobile: zero gap, each card = wrap width → clean 1-per-step snap
+    const wrapW = clipEl.offsetWidth;
+    track.style.gap = '0px';
+    cards.forEach(c => { c.style.width = wrapW + 'px'; c.style.minWidth = wrapW + 'px'; c.style.maxWidth = wrapW + 'px'; });
+    tx = reviewIdx * wrapW;
+  } else {
+    const gapPx = window.innerWidth < 1024 ? 24 : 32;
+    const cardW  = cards[0].getBoundingClientRect().width;
+    tx = reviewIdx * (cardW + gapPx);
+  }
+  track.style.transform = `translateX(-${tx}px)`;
+  // Update all dot containers (desktop + mobile)
+  [document.getElementById('reviews-dots'), document.getElementById('reviews-dots-mobile')]
+    .forEach(container => {
+      if (container) container.querySelectorAll('.review-dot').forEach((d,i) => d.classList.toggle('active', i === reviewIdx));
+    });
 }
 
 function reviewsNav(dir) {
   const isMobile = window.innerWidth < 768;
-  const perView = isMobile ? 1 : (window.innerWidth < 1024 ? 2 : 3);
-  const maxIdx = Math.max(0, REVIEWS.length - perView);
+  const perView  = isMobile ? 1 : (window.innerWidth < 1024 ? 2 : 3);
+  const maxIdx   = Math.max(0, REVIEWS.length - perView);
   let n = reviewIdx + dir;
   if (n < 0) n = maxIdx;
   if (n > maxIdx) n = 0;
@@ -1551,35 +1568,44 @@ function startReviewsAuto() {
   clearInterval(reviewsAutoTimer);
   reviewsAutoTimer = setInterval(() => { if (!reviewsPaused) reviewsNav(1); }, 4000);
 }
-function restartReviewsAuto() {
-  clearInterval(reviewsAutoTimer);
-  startReviewsAuto();
-}
+function restartReviewsAuto() { clearInterval(reviewsAutoTimer); startReviewsAuto(); }
 
 // =============================================================
-// MOBILE SLIDERS — New Arrivals (1-col), Top Sellers (2-col),
-//                  Why Choose (1-col step)
+// MOBILE SLIDERS — pixel-based, container-width-aware
+//   Usage: initMobileSlider('na', 3200)
+//          mobileSliderNav('na', 1)   — called from HTML buttons
 // =============================================================
 const _mobileSliders = {};
 
 function initMobileSlider(id, intervalMs) {
   const track = document.getElementById(id + '-mobile-track');
   if (!track) return;
-  const slides = track.children;
+  const outer = track.parentElement;  // the overflow-hidden div
+  if (!outer) return;
+  const slideW = outer.offsetWidth;
+  if (!slideW) return;
+  const slides = Array.from(track.children);
   if (!slides.length) return;
-  _mobileSliders[id] = { idx: 0, total: slides.length };
+  // Give every slide an exact pixel width = container width
+  slides.forEach(s => {
+    s.style.width     = slideW + 'px';
+    s.style.minWidth  = slideW + 'px';
+    s.style.maxWidth  = slideW + 'px';
+    s.style.flexShrink = '0';
+  });
+  _mobileSliders[id] = { idx: 0, total: slides.length, slideW, timer: null };
   _renderMsDots(id);
-  // Touch / swipe
+  // Swipe support
   let tStart = null;
-  track.parentElement.addEventListener('touchstart', e => { tStart = e.touches[0].clientX; }, { passive: true });
-  track.parentElement.addEventListener('touchend', e => {
+  outer.addEventListener('touchstart', e => { tStart = e.touches[0].clientX; }, { passive: true });
+  outer.addEventListener('touchend',   e => {
     if (tStart === null) return;
     const diff = tStart - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 40) mobileSliderNav(id, diff > 0 ? 1 : -1);
     tStart = null;
   }, { passive: true });
   // Auto-advance
-  if (intervalMs) {
+  if (intervalMs && slides.length > 1) {
     _mobileSliders[id].timer = setInterval(() => mobileSliderNav(id, 1), intervalMs);
   }
 }
@@ -1589,82 +1615,119 @@ function mobileSliderNav(id, dir) {
   if (!s) return;
   s.idx = (s.idx + dir + s.total) % s.total;
   const track = document.getElementById(id + '-mobile-track');
-  if (track) track.style.transform = `translateX(-${s.idx * 100}%)`;
+  if (track) track.style.transform = `translateX(-${s.idx * s.slideW}px)`;
   _renderMsDots(id);
-  // Reset auto timer
+  // Restart auto after manual input
   if (s.timer) {
     clearInterval(s.timer);
-    s.timer = setInterval(() => mobileSliderNav(id, 1), id === 'wc' ? 3500 : 3000);
+    const ms = id === 'wc' ? 3500 : (id === 'na' ? 3200 : 3000);
+    s.timer = setInterval(() => mobileSliderNav(id, 1), ms);
   }
 }
 
 function mobileSliderGoTo(id, idx) {
   const s = _mobileSliders[id];
   if (!s) return;
-  s.idx = idx;
+  s.idx = Math.max(0, Math.min(idx, s.total - 1));
   const track = document.getElementById(id + '-mobile-track');
-  if (track) track.style.transform = `translateX(-${s.idx * 100}%)`;
+  if (track) track.style.transform = `translateX(-${s.idx * s.slideW}px)`;
   _renderMsDots(id);
 }
 
 function _renderMsDots(id) {
-  const s = _mobileSliders[id];
+  const s  = _mobileSliders[id];
   const el = document.getElementById(id + '-dots');
   if (!s || !el) return;
-  el.innerHTML = Array.from({length: s.total}, (_,i) =>
-    `<button class="mobile-slider-dot ${i===s.idx?'active':''}" onclick="mobileSliderGoTo('${id}',${i})" aria-label="Slide ${i+1}"></button>`
+  el.innerHTML = Array.from({length: s.total}, (_, i) =>
+    `<button class="mobile-slider-dot${i===s.idx?' active':''}" onclick="mobileSliderGoTo('${id}',${i})" aria-label="Slide ${i+1}"></button>`
   ).join('');
 }
 
-// Init all mobile sliders on DOM ready
+// =============================================================
+// DOMContentLoaded — Bootstrap everything
+// =============================================================
 document.addEventListener('DOMContentLoaded', () => {
-  if (window.innerWidth < 768) {
-    initMobileSlider('na', 3200);   // New Arrivals 1-col
-    initMobileSlider('ts', 3000);   // Top Sellers 2-col paged
-    initMobileSlider('wc', 3500);   // Why Choose Us steps
-  }
+  // ── Mobile product sliders ──────────────────────────────────
+  // Always init — CSS (md:hidden) controls visibility per breakpoint
+  // setTimeout ensures fonts/images haven't shifted layout yet
+  setTimeout(() => {
+    initMobileSlider('na', 3200);  // New Arrivals: 1-per-slide
+    initMobileSlider('ts', 3000);  // Top Sellers:  2-per-slide page
+    initMobileSlider('wc', 3500);  // Why Choose:   1-per-slide
+  }, 120);
 
-  // Reviews init
+  // ── Reviews ─────────────────────────────────────────────────
   const reviewsTrack = document.getElementById('reviews-track');
   const reviewsDots  = document.getElementById('reviews-dots');
   const reviewsWrap  = document.getElementById('reviews-carousel-wrap');
-  if (reviewsTrack && reviewsDots) {
-    reviewsTrack.innerHTML = REVIEWS.map((r,i) => buildReviewCard(r,i)).join('');
-    const isMobile = window.innerWidth < 768;
-    const perView  = isMobile ? 1 : (window.innerWidth < 1024 ? 2 : 3);
-    const dotCount = REVIEWS.length - perView + 1;
-    reviewsDots.innerHTML = Array.from({length: dotCount}, (_,i) =>
-      `<span class="review-dot ${i===0?'active':''}" onclick="setReviewIndex(${i}); restartReviewsAuto();"></span>`
-    ).join('');
-    setTimeout(() => { setReviewIndex(0); startReviewsAuto(); }, 200);
+  const rPrev = document.getElementById('reviews-prev');
+  const rNext = document.getElementById('reviews-next');
 
+  // Show prev/next on mobile (they have class="hidden md:flex" but we force them)
+  if (rPrev) { rPrev.classList.remove('hidden'); rPrev.style.cssText += 'display:flex!important;'; }
+  if (rNext) { rNext.classList.remove('hidden'); rNext.style.cssText += 'display:flex!important;'; }
+
+  if (reviewsTrack && reviewsDots) {
+    reviewsTrack.innerHTML = REVIEWS.map(r => buildReviewCard(r)).join('');
+
+    setTimeout(() => {
+      const isMobile = window.innerWidth < 768;
+      const perView  = isMobile ? 1 : (window.innerWidth < 1024 ? 2 : 3);
+      const dotCount = REVIEWS.length - perView + 1;
+
+      const _dotHtml = Array.from({length: dotCount}, (_,i) =>
+        `<span class="review-dot${i===0?' active':''}" onclick="setReviewIndex(${i});restartReviewsAuto();"></span>`
+      ).join('');
+      reviewsDots.innerHTML = _dotHtml;
+      const _mDots = document.getElementById('reviews-dots-mobile');
+      if (_mDots) _mDots.innerHTML = _dotHtml;
+
+      setReviewIndex(0);
+      startReviewsAuto();
+    }, 160);
+
+    // Pause on hover/touch focus
     if (reviewsWrap) {
       reviewsWrap.addEventListener('mouseenter', () => {
         reviewsPaused = true;
         const pl = document.getElementById('reviews-play-label');
         const pi = document.getElementById('reviews-play-icon');
         if (pl) pl.textContent = 'Paused';
-        if (pi) { pi.classList.remove('animate-pulse'); pi.style.background='#666'; }
+        if (pi) { pi.classList.remove('animate-pulse'); pi.style.background = '#666'; }
       });
       reviewsWrap.addEventListener('mouseleave', () => {
         reviewsPaused = false;
         const pl = document.getElementById('reviews-play-label');
         const pi = document.getElementById('reviews-play-icon');
         if (pl) pl.textContent = 'Auto-playing';
-        if (pi) { pi.classList.add('animate-pulse'); pi.style.background='#C8A46A'; }
+        if (pi) { pi.classList.add('animate-pulse'); pi.style.background = '#C8A46A'; }
       });
     }
 
-    window.addEventListener('resize', () => { setReviewIndex(reviewIdx); });
+    // Recalculate on resize (portrait↔landscape flip)
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        const nm = window.innerWidth < 768;
+        if (!nm) {
+          reviewsTrack.style.gap = '';
+          reviewsTrack.querySelectorAll('.review-card').forEach(c => {
+            c.style.width = ''; c.style.minWidth = ''; c.style.maxWidth = '';
+          });
+        }
+        setReviewIndex(reviewIdx);
+      }, 200);
+    });
+
+    // Touch swipe on reviews
     let rTouchStart = null;
-    if (reviewsTrack) {
-      reviewsTrack.addEventListener('touchstart', e => { rTouchStart = e.touches[0].clientX; }, { passive: true });
-      reviewsTrack.addEventListener('touchend', e => {
-        if (rTouchStart === null) return;
-        const diff = rTouchStart - e.changedTouches[0].clientX;
-        if (Math.abs(diff) > 40) reviewsNav(diff > 0 ? 1 : -1);
-        rTouchStart = null;
-      }, { passive: true });
-    }
+    reviewsTrack.addEventListener('touchstart', e => { rTouchStart = e.touches[0].clientX; }, { passive: true });
+    reviewsTrack.addEventListener('touchend', e => {
+      if (rTouchStart === null) return;
+      const diff = rTouchStart - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) reviewsNav(diff > 0 ? 1 : -1);
+      rTouchStart = null;
+    }, { passive: true });
   }
 });

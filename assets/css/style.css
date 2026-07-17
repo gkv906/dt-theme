@@ -9760,8 +9760,8 @@ body.woocommerce-checkout .woocommerce-message {
   overflow: hidden;
 }
 @media (max-width: 767px) {
-  .review-card { width: calc(100vw - 3rem); }
-  #reviews-track { overflow: hidden; }
+  /* review card width set by JS to exact container width */
+  #reviews-track { overflow: visible !important; }
 }
 .review-card::before {
   content: '';
@@ -9827,21 +9827,42 @@ body.woocommerce-checkout .woocommerce-message {
   box-shadow: 0 0 8px rgba(200,164,106,0.5);
 }
 .review-dot.paused { opacity: 0.5; }
+/* Reviews: only the inner track-wrap clips; outer wrap stays visible for abs nav buttons */
+#reviews-carousel-wrap { position: relative; overflow: visible; }
+#reviews-track-wrap { overflow: hidden; position: relative; }
 #reviews-track {
   transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
   will-change: transform;
+  overflow: visible;
 }
-/* Reviews nav — show on mobile too */
-#reviews-prev, #reviews-next {
-  display: flex !important;
-}
+#reviews-prev, #reviews-next { display: flex !important; }
 @media (max-width: 767px) {
-  #reviews-prev { position: static; transform: none !important; }
-  #reviews-next { position: static; transform: none !important; }
-  #reviews-carousel-wrap { overflow: hidden; }
+  #reviews-prev, #reviews-next {
+    position: static !important;
+    transform: none !important;
+  }
 }
 
 /* ── wc-card mobile min-height ── */
 @media (max-width: 767px) {
-  .wc-card { min-height: 240px; }
+  .wc-card { min-height: 220px; }
+}
+/* ── Mobile slider containers: no extra gaps ── */
+@media (max-width: 767px) {
+  #na-mobile-wrap .overflow-hidden,
+  #ts-mobile-wrap .overflow-hidden,
+  #wc-mobile-wrap .overflow-hidden {
+    width: 100%; position: relative;
+  }
+  .na-mobile-slide, .ts-mobile-slide, .wc-mobile-slide {
+    flex-shrink: 0 !important;
+  }
+  #ts-mobile-track .ts-mobile-slide .grid {
+    gap: 0.5rem;
+  }
+  /* Remove any bottom gap between slides */
+  .na-mobile-slide .arrival-card,
+  .ts-mobile-slide .arrival-card {
+    margin-bottom: 0 !important;
+  }
 }
