@@ -325,12 +325,12 @@ ob_start();
     <section class="pt-6 pb-16 border-b border-[#C8A46A]/10 bg-black">
         <div class="container mx-auto px-4">
             <div class="text-center mb-10 reveal-on-scroll">
-                <span class="text-xs uppercase tracking-[0.35em] text-[#C8A46A]/60 block mb-2 font-medium"><?php esc_html_e( 'Artisan Textures', 'dt-ecommerce-theme' ); ?></span>
+                <span class="text-xs uppercase tracking-[0.35em] text-[#C8A46A]/70 block mb-2 font-medium"><?php esc_html_e( 'Artisan Textures', 'dt-ecommerce-theme' ); ?></span>
                 <h3 class="font-serif text-3xl md:text-5xl font-bold text-[#C8A46A] select-none" style="background:none;-webkit-text-fill-color:#C8A46A;"><?php esc_html_e( 'Shop by Fabric', 'dt-ecommerce-theme' ); ?></h3>
-                <div class="flex items-center justify-center gap-4 mt-3">
-                    <div class="w-12 h-px bg-gradient-to-r from-transparent to-[#C8A46A]/40"></div>
-                    <i data-lucide="sparkles" class="w-3 h-3 text-[#C8A46A]/80 animate-pulse"></i>
-                    <div class="w-12 h-px bg-gradient-to-l from-transparent to-[#C8A46A]/40"></div>
+                <div class="flex items-center justify-center gap-3 mt-4">
+                    <div class="w-20 h-px bg-gradient-to-r from-transparent to-[#C8A46A]/60"></div>
+                    <i data-lucide="sparkles" class="w-4 h-4 text-[#C8A46A] animate-pulse"></i>
+                    <div class="w-20 h-px bg-gradient-to-l from-transparent to-[#C8A46A]/60"></div>
                 </div>
             </div>
             
