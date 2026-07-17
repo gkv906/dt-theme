@@ -237,7 +237,13 @@ $has_elementor_footer = ( ! $hide_main_footer && function_exists( 'elementor_the
     </footer>
 <?php endif; ?>
 
-<?php $hide_mobile_bottom_nav = function_exists( 'is_product' ) && is_product(); ?>
+<?php
+$hide_mobile_bottom_nav = (
+    ( function_exists( 'is_product' ) && is_product() )
+    || ( function_exists( 'is_shop' ) && is_shop() )
+    || ( function_exists( 'is_product_category' ) && is_product_category() )
+);
+?>
 <div id="mobile-bottom-nav" class="fixed bottom-0 left-0 w-full bg-[#0a0a0a]/90 backdrop-blur-lg border-t border-[#C8A46A]/20 md:hidden z-50 px-2 py-2 safe-area-bottom <?php echo $hide_mobile_bottom_nav ? 'hidden' : ''; ?>">
     <div class="flex items-end justify-around">
         <button onclick="toggleMobileMenuDrawer(true)" class="flex flex-col items-center justify-center w-16 gap-1 text-gray-400 hover:text-white transition-colors">

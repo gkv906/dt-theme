@@ -111,8 +111,8 @@ $clear_filters_url = get_permalink( wc_get_page_id( 'shop' ) );
                 </span>
             </div>
 
-            <!-- Sort Select -->
-            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+            <!-- Sort Select (hidden on mobile — handled by bottom Filter/Sort bar) -->
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 <span class="text-xs text-[#F7F4EE]/50 uppercase tracking-widest hidden sm:inline"><?php esc_html_e( 'Sort By', 'dt-ecommerce-theme' ); ?></span>
                 <form class="woocommerce-ordering" method="get">
                     <select name="orderby" class="bg-[#111] border border-[#C8A46A]/30 text-[#F7F4EE] text-xs uppercase tracking-wider py-2 px-3 focus:outline-none focus:border-[#C8A46A]" onchange="this.form.submit()">
@@ -168,7 +168,7 @@ $clear_filters_url = get_permalink( wc_get_page_id( 'shop' ) );
 </div>
 
 <!-- Mobile Bottom Bar for Shop (Filter & Sort) -->
-<div class="fixed left-0 w-full bg-[#0a0a0a]/95 backdrop-blur-lg border-t border-[#C8A46A]/30 md:hidden z-40" style="bottom: calc(66px + env(safe-area-inset-bottom, 0px));">
+<div class="fixed left-0 w-full bg-[#0a0a0a]/95 backdrop-blur-lg border-t border-[#C8A46A]/30 md:hidden z-50" style="bottom: env(safe-area-inset-bottom, 0px);">
     <div class="grid grid-cols-2 divide-x divide-[#C8A46A]/20 py-3.5 text-center">
         <button onclick="toggleMobileFilterDrawer(true)" class="flex items-center justify-center gap-2 text-gray-300 hover:text-[#C8A46A] active:text-[#C8A46A] transition-colors py-1">
             <i data-lucide="sliders-horizontal" class="w-4 h-4 text-[#C8A46A]"></i>
