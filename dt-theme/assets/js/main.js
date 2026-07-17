@@ -1181,20 +1181,26 @@ function getAjaxSuggestionRowHTML(prod) {
 }
 
 // Mobile Search Overlay Helpers
+// The PHP template sets style="display:none" inline, so both the class AND
+// the inline style must be cleared when opening; likewise closed by setting both.
 function toggleMobileSearchOverlay(open) {
   const overlay = document.getElementById('mobile-search-overlay');
   if (!overlay) return;
 
   if (open) {
+    overlay.style.display = 'flex';   // clear PHP's inline display:none
     overlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
     const input = document.getElementById('overlay-search-input');
     if (input) {
       input.value = '';
-      input.focus();
+      setTimeout(() => input.focus(), 80);
     }
-    renderOverlaySearchSuggestions('');
+    if (typeof renderOverlaySearchSuggestions === 'function') renderOverlaySearchSuggestions('');
   } else {
+    overlay.style.display = 'none';
     overlay.classList.add('hidden');
+    document.body.style.overflow = '';
   }
 }
 
@@ -1325,23 +1331,43 @@ function getAjaxOverlayRowHTML(prod) {
 }
 
 // Mobile Side Menu Drawer Logic (Slides in from left)
+// Supports two DOM structures:
+//   PHP template:  #mobile-menu-overlay (outer backdrop) + #mobile-menu-drawer (inner sliding panel)
+//   HTML-only mode: #mobile-menu-drawer (outer backdrop) + #mobile-menu-panel (inner sliding panel)
 function toggleMobileMenuDrawer(open) {
-  const drawer = document.getElementById('mobile-menu-drawer');
-  const panel = document.getElementById('mobile-menu-panel');
-  if (!drawer || !panel) return;
+  const overlay = document.getElementById('mobile-menu-overlay');
+  const drawer  = document.getElementById('mobile-menu-drawer');
+  const panel   = document.getElementById('mobile-menu-panel');
 
-  if (open) {
-    drawer.classList.remove('hidden');
-    updateMobileMenuAuth();
-    setTimeout(() => {
-      panel.classList.remove('-translate-x-full');
-    }, 10);
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-  } else {
-    panel.classList.add('-translate-x-full');
-    setTimeout(() => {
-      drawer.classList.add('hidden');
-    }, 300);
+  if (overlay && drawer) {
+    // ── PHP / WordPress template structure ───────────────────
+    if (open) {
+      overlay.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        overlay.classList.remove('opacity-0');
+        overlay.classList.add('opacity-100');
+        drawer.classList.remove('-translate-x-full');
+      });
+      document.body.style.overflow = 'hidden';
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    } else {
+      overlay.classList.add('opacity-0');
+      overlay.classList.remove('opacity-100');
+      drawer.classList.add('-translate-x-full');
+      setTimeout(() => { overlay.classList.add('hidden'); }, 300);
+      document.body.style.overflow = '';
+    }
+  } else if (drawer && panel) {
+    // ── Standalone HTML mode (JS-injected structure) ──────────
+    if (open) {
+      drawer.classList.remove('hidden');
+      updateMobileMenuAuth();
+      setTimeout(() => panel.classList.remove('-translate-x-full'), 10);
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    } else {
+      panel.classList.add('-translate-x-full');
+      setTimeout(() => drawer.classList.add('hidden'), 300);
+    }
   }
 }
 
