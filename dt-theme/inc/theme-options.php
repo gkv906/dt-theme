@@ -348,10 +348,11 @@ function dt_render_theme_options_page(): void {
                         <div class="dt-tab-content <?php echo ( $active_tab === 'footer' ) ? '' : 'hidden'; ?>" id="dt-tab-footer">
                             <div class="dt-section">
                                 <div class="dt-section-title">🏷️ Footer Brand Identity</div>
-                                <p class="description">Control the brand name, tagline, and logo shown in the footer column. If a logo image is uploaded it replaces the text brand name.</p>
-                                <?php dt_option_media( 'footer_logo_url', 'Footer Brand Logo', 'Upload your brand logo for the footer (leave blank to show text brand name instead)', $opts ); ?>
-                                <?php dt_option_row( 'footer_brand_name', 'Footer Brand Name', 'Brand name displayed in footer (e.g. Frenzy Fusion). Defaults to site name if empty.', 'text', $opts ); ?>
-                                <?php dt_option_row( 'footer_brand_tagline', 'Footer Brand Tagline', 'Short tagline shown beside brand name (e.g. Designs, Studio, Official Store)', 'text', $opts ); ?>
+                                <p class="description">Control the logo shown in the footer. By default it uses your site header logo automatically — upload a custom footer logo to override it.</p>
+                                <?php dt_option_checkbox( 'footer_use_site_logo', 'Use Site Header Logo (auto)', 'Automatically use the same logo set in Appearance → Customize → Site Identity. Uncheck to show text brand name or upload a custom footer logo below.', $opts ); ?>
+                                <?php dt_option_media( 'footer_logo_url', 'Custom Footer Logo', 'Upload a different logo specifically for the footer (overrides site logo above). Leave blank to use site logo.', $opts ); ?>
+                                <?php dt_option_row( 'footer_brand_name', 'Footer Brand Name', 'Shown as text if no logo is available. Defaults to site name.', 'text', $opts ); ?>
+                                <?php dt_option_row( 'footer_brand_tagline', 'Footer Brand Tagline', 'Short tagline beside the text brand name (e.g. Official Store). Hidden when a logo image is used.', 'text', $opts ); ?>
                             </div>
                             <div class="dt-section">
                                 <div class="dt-section-title">🦶 Footer Column Layout</div>

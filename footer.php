@@ -26,8 +26,25 @@ $instagram        = dt_get_theme_option( 'instagram_url', '#' );
 $twitter          = dt_get_theme_option( 'twitter_url', '#' );
 $youtube          = dt_get_theme_option( 'youtube_url', '#' );
 $whatsapp         = dt_get_theme_option( 'whatsapp_url', 'https://wa.me/911234567890' );
-$copyright        = dt_get_theme_option( 'footer_copyright', '&copy; ' . gmdate( 'Y' ) . ' ARSHMAN DESIGNS. All rights reserved.' );
-$email            = dt_get_theme_option( 'contact_email', 'atelier@arshmandesigns.com' );
+$footer_brand_name    = dt_get_theme_option( 'footer_brand_name', get_bloginfo( 'name' ) );
+$footer_brand_tagline = dt_get_theme_option( 'footer_brand_tagline', '' );
+$footer_logo_url      = dt_get_theme_option( 'footer_logo_url', '' );
+$footer_use_site_logo = dt_get_theme_option( 'footer_use_site_logo', '1' );
+
+// Auto-resolve logo: 1) custom footer upload  2) WordPress site logo  3) text fallback
+$resolved_footer_logo = $footer_logo_url;
+if ( empty( $resolved_footer_logo ) && $footer_use_site_logo === '1' ) {
+    $site_logo_id = get_theme_mod( 'custom_logo' );
+    if ( $site_logo_id ) {
+        $logo_src = wp_get_attachment_image_src( $site_logo_id, 'full' );
+        if ( ! empty( $logo_src[0] ) ) {
+            $resolved_footer_logo = $logo_src[0];
+        }
+    }
+}
+
+$copyright        = dt_get_theme_option( 'footer_copyright', '&copy; ' . gmdate( 'Y' ) . ' ' . get_bloginfo( 'name' ) . '. All rights reserved.' );
+$email            = dt_get_theme_option( 'contact_email', 'info@' . wp_parse_url( home_url(), PHP_URL_HOST ) );
 $phone            = dt_get_theme_option( 'contact_phone', '+91 12345 67890' );
 $address          = dt_get_theme_option( 'contact_address', 'Arshman Atelier, Rathyatra Crossing, Varanasi 221010, UP' );
 $footer_about     = dt_get_theme_option( 'footer_about', 'We weave your dreams into reality - curating heirloom silks and modern drapes from India\'s finest looms, since 2010.' );
@@ -89,10 +106,33 @@ $has_elementor_footer = ( ! $hide_main_footer && function_exists( 'elementor_the
 
             <div class="grid grid-cols-1 md:grid-cols-12 gap-y-10 md:gap-x-10 lg:gap-x-14 pb-14 border-b border-[#C8A46A]/15">
                 <div class="md:col-span-12 lg:col-span-4">
+                    <?php if ( ! empty( $resolved_footer_logo ) ) : ?>
+                    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="block mb-5 focus:outline-none" aria-label="<?php echo esc_attr( $footer_brand_name ); ?>">
+                        <img
+                            src="<?php echo esc_url( $resolved_footer_logo ); ?>"
+                            alt="<?php echo esc_attr( $footer_brand_name ); ?>"
+                            class="dt-footer-logo h-10 sm:h-12 md:h-14 lg:h-16 w-auto max-w-[160px] sm:max-w-[200px] object-contain"
+                            loading="lazy"
+                            decoding="async"
+                        >
+                    </a>
+                    <?php else : ?>
                     <div class="flex items-baseline gap-3 mb-3">
-                        <h2 class="font-serif text-3xl md:text-4xl tracking-[0.15em] text-white"><span class="text-[#C8A46A]">A</span>RSHMAN</h2>
-                        <span class="text-[10px] uppercase tracking-[0.3em] text-[#C8A46A]/60"><?php esc_html_e( 'Designs', 'dt-ecommerce-theme' ); ?></span>
+                        <?php
+                        $bn    = esc_html( $footer_brand_name );
+                        $first = mb_substr( $bn, 0, 1 );
+                        $rest  = mb_substr( $bn, 1 );
+                        ?>
+                        <h2 class="dt-footer-brand-name font-serif text-3xl md:text-4xl tracking-[0.15em] text-white">
+                            <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="hover:text-[#C8A46A] transition-colors duration-200">
+                                <span class="text-[#C8A46A]"><?php echo $first; ?></span><?php echo $rest; ?>
+                            </a>
+                        </h2>
+                        <?php if ( ! empty( $footer_brand_tagline ) ) : ?>
+                        <span class="dt-footer-brand-tagline text-[10px] uppercase tracking-[0.3em] text-[#C8A46A]/60"><?php echo esc_html( $footer_brand_tagline ); ?></span>
+                        <?php endif; ?>
                     </div>
+                    <?php endif; ?>
                     <p class="dt-footer-about text-gray-400 text-sm md:text-[15px] leading-relaxed max-w-md mb-6 font-light"><?php echo esc_html( $footer_about ); ?></p>
 
                     <div class="flex flex-col gap-3 mb-7">

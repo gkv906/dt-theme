@@ -27,8 +27,21 @@ $twitter          = dt_get_theme_option( 'twitter_url', '#' );
 $youtube          = dt_get_theme_option( 'youtube_url', '#' );
 $whatsapp         = dt_get_theme_option( 'whatsapp_url', 'https://wa.me/911234567890' );
 $footer_brand_name    = dt_get_theme_option( 'footer_brand_name', get_bloginfo( 'name' ) );
-$footer_brand_tagline = dt_get_theme_option( 'footer_brand_tagline', get_bloginfo( 'description' ) );
+$footer_brand_tagline = dt_get_theme_option( 'footer_brand_tagline', '' );
 $footer_logo_url      = dt_get_theme_option( 'footer_logo_url', '' );
+$footer_use_site_logo = dt_get_theme_option( 'footer_use_site_logo', '1' );
+
+// Auto-resolve logo: 1) custom footer upload  2) WordPress site logo  3) text fallback
+$resolved_footer_logo = $footer_logo_url;
+if ( empty( $resolved_footer_logo ) && $footer_use_site_logo === '1' ) {
+    $site_logo_id = get_theme_mod( 'custom_logo' );
+    if ( $site_logo_id ) {
+        $logo_src = wp_get_attachment_image_src( $site_logo_id, 'full' );
+        if ( ! empty( $logo_src[0] ) ) {
+            $resolved_footer_logo = $logo_src[0];
+        }
+    }
+}
 $copyright            = dt_get_theme_option( 'footer_copyright', '&copy; ' . gmdate( 'Y' ) . ' ' . get_bloginfo( 'name' ) . '. All rights reserved.' );
 $email                = dt_get_theme_option( 'contact_email', 'info@' . wp_parse_url( home_url(), PHP_URL_HOST ) );
 $phone                = dt_get_theme_option( 'contact_phone', '+91 12345 67890' );
@@ -92,18 +105,30 @@ $has_elementor_footer = ( ! $hide_main_footer && function_exists( 'elementor_the
 
             <div class="grid grid-cols-1 md:grid-cols-12 gap-y-10 md:gap-x-10 lg:gap-x-14 pb-14 border-b border-[#C8A46A]/15">
                 <div class="md:col-span-12 lg:col-span-4">
-                    <?php if ( ! empty( $footer_logo_url ) ) : ?>
-                    <div class="mb-4">
-                        <img src="<?php echo esc_url( $footer_logo_url ); ?>" alt="<?php echo esc_attr( $footer_brand_name ); ?>" class="dt-footer-logo" style="max-height:60px;width:auto;">
-                    </div>
+                    <?php if ( ! empty( $resolved_footer_logo ) ) : ?>
+                    <!-- Footer Logo: auto from site logo or custom upload -->
+                    <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="block mb-5 focus:outline-none" aria-label="<?php echo esc_attr( $footer_brand_name ); ?> – <?php esc_attr_e( 'Home', 'dt-ecommerce-theme' ); ?>">
+                        <img
+                            src="<?php echo esc_url( $resolved_footer_logo ); ?>"
+                            alt="<?php echo esc_attr( $footer_brand_name ); ?>"
+                            class="dt-footer-logo h-10 sm:h-12 md:h-14 lg:h-16 w-auto max-w-[160px] sm:max-w-[200px] object-contain"
+                            loading="lazy"
+                            decoding="async"
+                        >
+                    </a>
                     <?php else : ?>
+                    <!-- Footer Brand Text fallback -->
                     <div class="flex items-baseline gap-3 mb-3">
                         <?php
                         $bn      = esc_html( $footer_brand_name );
                         $first   = mb_substr( $bn, 0, 1 );
                         $rest    = mb_substr( $bn, 1 );
                         ?>
-                        <h2 class="dt-footer-brand-name font-serif text-3xl md:text-4xl tracking-[0.15em] text-white"><span class="text-[#C8A46A]"><?php echo $first; ?></span><?php echo $rest; ?></h2>
+                        <h2 class="dt-footer-brand-name font-serif text-3xl md:text-4xl tracking-[0.15em] text-white">
+                            <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="hover:text-[#C8A46A] transition-colors duration-200">
+                                <span class="text-[#C8A46A]"><?php echo $first; ?></span><?php echo $rest; ?>
+                            </a>
+                        </h2>
                         <?php if ( ! empty( $footer_brand_tagline ) ) : ?>
                         <span class="dt-footer-brand-tagline text-[10px] uppercase tracking-[0.3em] text-[#C8A46A]/60"><?php echo esc_html( $footer_brand_tagline ); ?></span>
                         <?php endif; ?>

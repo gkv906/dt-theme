@@ -19,6 +19,8 @@ $files = [
     'footer.php'           => $repo . '/footer.php',
     'inc/theme-options.php'=> $repo . '/inc/theme-options.php',
     'inc/customizer.php'   => $repo . '/inc/customizer.php',
+    // Root-level server copy (same theme, different repo path)
+    // Note: only updates if this file exists at the same dir level
 ];
 
 $results = [];
