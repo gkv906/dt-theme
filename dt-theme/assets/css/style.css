@@ -10076,3 +10076,238 @@ body.woocommerce-checkout .woocommerce-message {
   border-color: rgba(200,164,106,0.4);
   background: rgba(200,164,106,0.08);
 }
+
+/* ============================================================
+   CART PAGE — Nuclear Dark Overrides
+   Force-eliminate WooCommerce default white/light cart table
+   ============================================================ */
+
+/* Hide WC's default white cart table — we have our own dt-cart-row layout */
+body.woocommerce-cart table.cart,
+body.woocommerce-cart .shop_table.cart,
+body.woocommerce-cart form.woocommerce-cart-form table,
+body.woocommerce-cart .woocommerce-cart-form table {
+  display: none !important;
+}
+
+/* Cart collaterals (default totals box) — hidden, we built our own */
+body.woocommerce-cart .cart-collaterals,
+body.woocommerce-cart .wc-proceed-to-checkout,
+body.woocommerce-cart .cart_totals:not(.dt-cart-totals) {
+  display: none !important;
+}
+
+/* Base page background */
+body.woocommerce-cart {
+  background: #050505 !important;
+  color: #F7F4EE !important;
+}
+
+/* WC notices on cart page */
+body.woocommerce-cart .woocommerce-message,
+body.woocommerce-cart .woocommerce-info,
+body.woocommerce-cart .woocommerce-error {
+  background: #101010 !important;
+  border-top: 2px solid #C8A46A !important;
+  border-left: 0 !important;
+  color: #F7F4EE !important;
+  border-radius: 0 !important;
+  list-style: none !important;
+}
+body.woocommerce-cart .woocommerce-message a,
+body.woocommerce-cart .woocommerce-info a,
+body.woocommerce-cart .woocommerce-error a {
+  color: #C8A46A !important;
+}
+body.woocommerce-cart .woocommerce-message::before,
+body.woocommerce-cart .woocommerce-info::before {
+  color: #C8A46A !important;
+}
+
+/* Cart item data (variation info) */
+.dt-cart-row .woocommerce-cart-item-variation,
+.dt-cart-row dl.variation {
+  font-size: 11px;
+  color: rgba(247,244,238,0.45);
+  margin: 3px 0 0;
+}
+.dt-cart-row dl.variation dt { font-weight: 600; }
+
+/* Shipping calculator */
+body.woocommerce-cart .shipping-calculator-form {
+  background: rgba(200,164,106,0.05) !important;
+  border: 1px solid rgba(200,164,106,0.2) !important;
+  padding: 16px !important;
+  margin-top: 12px;
+}
+body.woocommerce-cart .shipping-calculator-form input,
+body.woocommerce-cart .shipping-calculator-form select {
+  background: #0b0b0b !important;
+  border: 1px solid rgba(200,164,106,0.25) !important;
+  color: #F7F4EE !important;
+  padding: 10px 12px !important;
+  width: 100% !important;
+  margin-bottom: 10px;
+}
+body.woocommerce-cart .shipping-calculator-form button[type="submit"] {
+  background: #C8A46A !important;
+  color: #000 !important;
+  border: none !important;
+  padding: 12px 20px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase;
+  font-size: 11px !important;
+  cursor: pointer;
+}
+
+/* ============================================================
+   CHECKOUT — Extra nuclear field overrides for specificity wars
+   ============================================================ */
+
+/* WooCommerce injects its own stylesheet with high-specificity
+   light backgrounds — these !important rules beat them all */
+.woocommerce-checkout input[type="text"],
+.woocommerce-checkout input[type="email"],
+.woocommerce-checkout input[type="tel"],
+.woocommerce-checkout input[type="number"],
+.woocommerce-checkout input[type="password"],
+.woocommerce-checkout input.input-text,
+.woocommerce-checkout textarea.input-text,
+.woocommerce-checkout textarea,
+.woocommerce-checkout select,
+.woocommerce input[type="text"].input-text,
+.woocommerce input[type="email"].input-text,
+.woocommerce input[type="tel"].input-text,
+.woocommerce textarea.input-text,
+.woocommerce-page input[type="text"],
+.woocommerce-page input[type="email"],
+.woocommerce-page input[type="tel"],
+.woocommerce-page select,
+.woocommerce-page textarea {
+  background-color: #0b0b0b !important;
+  background: #0b0b0b !important;
+  border: 1px solid rgba(200,164,106,0.28) !important;
+  color: #F7F4EE !important;
+  border-radius: 2px !important;
+}
+
+.woocommerce-checkout input[type="text"]:focus,
+.woocommerce-checkout input[type="email"]:focus,
+.woocommerce-checkout input[type="tel"]:focus,
+.woocommerce-checkout input[type="password"]:focus,
+.woocommerce-checkout input.input-text:focus,
+.woocommerce-checkout textarea:focus,
+.woocommerce-checkout select:focus {
+  background: #111 !important;
+  border-color: #C8A46A !important;
+  box-shadow: 0 0 0 3px rgba(200,164,106,0.14) !important;
+  outline: none !important;
+}
+
+.woocommerce-checkout input::placeholder,
+.woocommerce-checkout textarea::placeholder {
+  color: rgba(247,244,238,0.32) !important;
+}
+
+/* Select2 dropdowns */
+.woocommerce-checkout .select2-container--default .select2-selection--single {
+  background: #0b0b0b !important;
+  border: 1px solid rgba(200,164,106,0.28) !important;
+  color: #F7F4EE !important;
+  border-radius: 2px !important;
+  height: 48px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+.woocommerce-checkout .select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: #F7F4EE !important;
+  padding-left: 14px !important;
+  line-height: 48px !important;
+}
+.woocommerce-checkout .select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 46px !important;
+  top: 0 !important;
+}
+.woocommerce-checkout .select2-dropdown {
+  background: #111 !important;
+  border: 1px solid rgba(200,164,106,0.3) !important;
+}
+.woocommerce-checkout .select2-results__option {
+  color: #F7F4EE !important;
+  padding: 10px 14px !important;
+}
+.woocommerce-checkout .select2-results__option--highlighted,
+.woocommerce-checkout .select2-results__option:hover {
+  background: rgba(200,164,106,0.14) !important;
+  color: #C8A46A !important;
+}
+.woocommerce-checkout .select2-search--dropdown .select2-search__field {
+  background: #0a0a0a !important;
+  border: 1px solid rgba(200,164,106,0.25) !important;
+  color: #F7F4EE !important;
+}
+
+/* Validation error states */
+.woocommerce-checkout .woocommerce-invalid input.input-text,
+.woocommerce-checkout .woocommerce-invalid select {
+  border-color: #f87171 !important;
+}
+.woocommerce-checkout .woocommerce-validated input.input-text,
+.woocommerce-checkout .woocommerce-validated select {
+  border-color: rgba(74,222,128,0.55) !important;
+}
+
+/* Payment section */
+body.woocommerce-checkout #payment {
+  background: transparent !important;
+}
+body.woocommerce-checkout #payment .payment_methods {
+  background: transparent !important;
+  border: 0 !important;
+}
+body.woocommerce-checkout #payment .payment_methods li {
+  background: rgba(255,255,255,0.025) !important;
+}
+body.woocommerce-checkout #payment .payment_methods li label {
+  color: #F7F4EE !important;
+}
+body.woocommerce-checkout #payment div.payment_box {
+  background: #080808 !important;
+  color: rgba(247,244,238,0.65) !important;
+}
+
+/* WC ajax loading overlay */
+body.woocommerce-checkout form.processing::after {
+  background: rgba(0,0,0,0.6) !important;
+}
+
+/* WC inline error notices */
+.woocommerce-checkout-payment .woocommerce-privacy-policy-text p,
+.woocommerce-checkout-payment .woocommerce-terms-and-conditions-wrapper {
+  color: rgba(247,244,238,0.55) !important;
+  font-size: 12px !important;
+}
+
+/* My Account pages */
+body.woocommerce-account {
+  background: #050505 !important;
+}
+body.woocommerce-account input[type="text"],
+body.woocommerce-account input[type="email"],
+body.woocommerce-account input[type="password"],
+body.woocommerce-account input[type="tel"],
+body.woocommerce-account textarea,
+body.woocommerce-account select {
+  background: #0b0b0b !important;
+  border: 1px solid rgba(200,164,106,0.25) !important;
+  color: #F7F4EE !important;
+}
+body.woocommerce-account input:focus,
+body.woocommerce-account textarea:focus,
+body.woocommerce-account select:focus {
+  border-color: #C8A46A !important;
+  outline: none !important;
+}
+
+/* ── End Cart + Checkout Overrides ── */
