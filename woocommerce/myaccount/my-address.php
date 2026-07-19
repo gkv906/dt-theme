@@ -5,7 +5,7 @@
  *
  * @package DT_Ecommerce_Theme
  * @see     https://woocommerce.com/document/template-structure/
- * @version 2.6.0
+ * @version 9.3.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

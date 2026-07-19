@@ -4,6 +4,8 @@
  * Custom override for DT Ecommerce Theme — Premium Arshman Design
  *
  * @package DT_Ecommerce_Theme
+ * @see     https://woocommerce.com/document/template-structure/
+ * @version 7.0.1
  */
 
 defined( 'ABSPATH' ) || exit;

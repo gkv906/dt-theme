@@ -26,6 +26,44 @@ require_once get_template_directory() . '/inc/colors.php';
 require_once get_template_directory() . '/inc/settings-persistence.php';
 require_once get_template_directory() . '/setup/demo-import.php';
 
+// ── WooCommerce HPOS (High-Performance Order Storage) compatibility ───────────
+// Declared before 'before_woocommerce_init' fires so WooCommerce picks it up.
+add_action( 'before_woocommerce_init', function () {
+    if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+            'custom_order_tables',
+            __FILE__,
+            true   // compatible = true
+        );
+        // Also declare Cart & Checkout Blocks compatibility
+        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+            'cart_checkout_blocks',
+            __FILE__,
+            true
+        );
+    }
+} );
+
+// ── Ensure WooCommerce scheduled actions are registered if cron is missing ────
+add_action( 'wp', function () {
+    if ( ! class_exists( 'WooCommerce' ) ) {
+        return;
+    }
+    // Re-schedule WooCommerce daily events if they somehow got cleared
+    if ( ! wp_next_scheduled( 'woocommerce_scheduled_sales' ) ) {
+        wp_schedule_event( time(), 'daily', 'woocommerce_scheduled_sales' );
+    }
+    if ( ! wp_next_scheduled( 'woocommerce_cleanup_sessions' ) ) {
+        wp_schedule_event( time(), 'twicedaily', 'woocommerce_cleanup_sessions' );
+    }
+    if ( ! wp_next_scheduled( 'woocommerce_cleanup_personal_data' ) ) {
+        wp_schedule_event( time(), 'daily', 'woocommerce_cleanup_personal_data' );
+    }
+    if ( ! wp_next_scheduled( 'woocommerce_tracker_send_event' ) ) {
+        wp_schedule_event( time(), 'weekly', 'woocommerce_tracker_send_event' );
+    }
+} );
+
 // Theme Setup
 function dt_theme_setup() {
     // Add theme support
