@@ -26,11 +26,14 @@ $instagram        = dt_get_theme_option( 'instagram_url', '#' );
 $twitter          = dt_get_theme_option( 'twitter_url', '#' );
 $youtube          = dt_get_theme_option( 'youtube_url', '#' );
 $whatsapp         = dt_get_theme_option( 'whatsapp_url', 'https://wa.me/911234567890' );
-$copyright        = dt_get_theme_option( 'footer_copyright', '&copy; ' . gmdate( 'Y' ) . ' ARSHMAN DESIGNS. All rights reserved.' );
-$email            = dt_get_theme_option( 'contact_email', 'atelier@arshmandesigns.com' );
-$phone            = dt_get_theme_option( 'contact_phone', '+91 12345 67890' );
-$address          = dt_get_theme_option( 'contact_address', 'Arshman Atelier, Rathyatra Crossing, Varanasi 221010, UP' );
-$footer_about     = dt_get_theme_option( 'footer_about', 'We weave your dreams into reality - curating heirloom silks and modern drapes from India\'s finest looms, since 2010.' );
+$footer_brand_name    = dt_get_theme_option( 'footer_brand_name', get_bloginfo( 'name' ) );
+$footer_brand_tagline = dt_get_theme_option( 'footer_brand_tagline', get_bloginfo( 'description' ) );
+$footer_logo_url      = dt_get_theme_option( 'footer_logo_url', '' );
+$copyright            = dt_get_theme_option( 'footer_copyright', '&copy; ' . gmdate( 'Y' ) . ' ' . get_bloginfo( 'name' ) . '. All rights reserved.' );
+$email                = dt_get_theme_option( 'contact_email', 'info@' . wp_parse_url( home_url(), PHP_URL_HOST ) );
+$phone                = dt_get_theme_option( 'contact_phone', '+91 12345 67890' );
+$address              = dt_get_theme_option( 'contact_address', '' );
+$footer_about         = dt_get_theme_option( 'footer_about', 'We weave your dreams into reality - curating heirloom silks and modern drapes from India\'s finest looms, since 2010.' );
 $show_newsletter  = dt_get_theme_option( 'newsletter_enabled', '1' ) === '1';
 $newsletter_title = dt_get_theme_option( 'newsletter_title', 'Join The Atelier' );
 $newsletter_desc  = dt_get_theme_option( 'newsletter_desc', 'Receive priority access to bridal collections, insider styling notes, and a 10% welcome discount on your first drape.' );
@@ -89,10 +92,23 @@ $has_elementor_footer = ( ! $hide_main_footer && function_exists( 'elementor_the
 
             <div class="grid grid-cols-1 md:grid-cols-12 gap-y-10 md:gap-x-10 lg:gap-x-14 pb-14 border-b border-[#C8A46A]/15">
                 <div class="md:col-span-12 lg:col-span-4">
-                    <div class="flex items-baseline gap-3 mb-3">
-                        <h2 class="font-serif text-3xl md:text-4xl tracking-[0.15em] text-white"><span class="text-[#C8A46A]">A</span>RSHMAN</h2>
-                        <span class="text-[10px] uppercase tracking-[0.3em] text-[#C8A46A]/60"><?php esc_html_e( 'Designs', 'dt-ecommerce-theme' ); ?></span>
+                    <?php if ( ! empty( $footer_logo_url ) ) : ?>
+                    <div class="mb-4">
+                        <img src="<?php echo esc_url( $footer_logo_url ); ?>" alt="<?php echo esc_attr( $footer_brand_name ); ?>" class="dt-footer-logo" style="max-height:60px;width:auto;">
                     </div>
+                    <?php else : ?>
+                    <div class="flex items-baseline gap-3 mb-3">
+                        <?php
+                        $bn      = esc_html( $footer_brand_name );
+                        $first   = mb_substr( $bn, 0, 1 );
+                        $rest    = mb_substr( $bn, 1 );
+                        ?>
+                        <h2 class="dt-footer-brand-name font-serif text-3xl md:text-4xl tracking-[0.15em] text-white"><span class="text-[#C8A46A]"><?php echo $first; ?></span><?php echo $rest; ?></h2>
+                        <?php if ( ! empty( $footer_brand_tagline ) ) : ?>
+                        <span class="dt-footer-brand-tagline text-[10px] uppercase tracking-[0.3em] text-[#C8A46A]/60"><?php echo esc_html( $footer_brand_tagline ); ?></span>
+                        <?php endif; ?>
+                    </div>
+                    <?php endif; ?>
                     <p class="dt-footer-about text-gray-400 text-sm md:text-[15px] leading-relaxed max-w-md mb-6 font-light"><?php echo esc_html( $footer_about ); ?></p>
 
                     <div class="flex flex-col gap-3 mb-7">

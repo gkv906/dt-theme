@@ -143,10 +143,40 @@ function dt_customize_register( WP_Customize_Manager $wp_customize ): void {
         'priority' => 45,
     ) );
 
+    // Footer Brand Name
+    $wp_customize->add_setting( 'dt_theme_options[footer_brand_name]', array(
+        'type'              => 'option',
+        'default'           => '',
+        'sanitize_callback' => 'sanitize_text_field',
+        'transport'         => 'postMessage',
+    ) );
+    $wp_customize->add_control( 'dt_footer_brand_name_control', array(
+        'label'       => __( 'Footer Brand Name', 'dt-ecommerce-theme' ),
+        'description' => __( 'Brand name shown in the footer (defaults to site name if left blank)', 'dt-ecommerce-theme' ),
+        'section'     => 'dt_footer_section',
+        'settings'    => 'dt_theme_options[footer_brand_name]',
+        'type'        => 'text',
+    ) );
+
+    // Footer Brand Tagline
+    $wp_customize->add_setting( 'dt_theme_options[footer_brand_tagline]', array(
+        'type'              => 'option',
+        'default'           => '',
+        'sanitize_callback' => 'sanitize_text_field',
+        'transport'         => 'postMessage',
+    ) );
+    $wp_customize->add_control( 'dt_footer_brand_tagline_control', array(
+        'label'       => __( 'Footer Brand Tagline', 'dt-ecommerce-theme' ),
+        'description' => __( 'Short tagline shown next to the brand name (e.g. Designs, Studio)', 'dt-ecommerce-theme' ),
+        'section'     => 'dt_footer_section',
+        'settings'    => 'dt_theme_options[footer_brand_tagline]',
+        'type'        => 'text',
+    ) );
+
     // Copyright
     $wp_customize->add_setting( 'dt_theme_options[footer_copyright]', array(
         'type'              => 'option',
-        'default'           => '© 2026 ARSHMAN DESIGNS. All rights reserved.',
+        'default'           => '',
         'sanitize_callback' => 'sanitize_text_field',
         'transport'         => 'postMessage',
     ) );

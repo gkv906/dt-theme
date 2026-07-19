@@ -347,6 +347,13 @@ function dt_render_theme_options_page(): void {
                         <!-- ==================== TAB: FOOTER BUILDER ==================== -->
                         <div class="dt-tab-content <?php echo ( $active_tab === 'footer' ) ? '' : 'hidden'; ?>" id="dt-tab-footer">
                             <div class="dt-section">
+                                <div class="dt-section-title">🏷️ Footer Brand Identity</div>
+                                <p class="description">Control the brand name, tagline, and logo shown in the footer column. If a logo image is uploaded it replaces the text brand name.</p>
+                                <?php dt_option_media( 'footer_logo_url', 'Footer Brand Logo', 'Upload your brand logo for the footer (leave blank to show text brand name instead)', $opts ); ?>
+                                <?php dt_option_row( 'footer_brand_name', 'Footer Brand Name', 'Brand name displayed in footer (e.g. Frenzy Fusion). Defaults to site name if empty.', 'text', $opts ); ?>
+                                <?php dt_option_row( 'footer_brand_tagline', 'Footer Brand Tagline', 'Short tagline shown beside brand name (e.g. Designs, Studio, Official Store)', 'text', $opts ); ?>
+                            </div>
+                            <div class="dt-section">
                                 <div class="dt-section-title">🦶 Footer Column Layout</div>
                                 <?php dt_option_select( 'footer_layout', 'Widget Columns Grid', 'Default footer column layouts style', array(
                                     'cols-4' => '4 Columns Layout (Recommended)',
