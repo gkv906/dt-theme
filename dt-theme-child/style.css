@@ -1,0 +1,21 @@
+/*
+Theme Name: DT Ecommerce Theme Child
+Theme URI: https://frenzyfusion.shop
+Template:  dt-theme-master
+Author:    DT Ecommerce Team
+Author URI: https://frenzyfusion.shop
+Description: Child theme for DT Ecommerce Theme. Install and activate this child theme to make safe customisations that survive parent theme updates. All WooCommerce template overrides live in the parent theme; this child simply enqueues the parent stylesheet and provides a safe place for per-site tweaks.
+Version: 1.0.0
+Requires at least: 6.0
+Requires PHP: 8.0
+WC requires at least: 7.0
+WC tested up to: 10.9.4
+Text Domain: dt-ecommerce-child
+Tags: e-commerce, woocommerce, child-theme
+*/
+
+/* ── Custom per-site overrides go below this line ───────────────────────────
+   Do NOT paste changes here that should go in the parent theme — those
+   belong in /wp-content/themes/dt-theme-master/ (or its admin panel).
+   This file is for minor CSS tweaks specific to frenzyfusion.shop only.
+   ────────────────────────────────────────────────────────────────────────── */

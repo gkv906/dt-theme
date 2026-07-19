@@ -1,10 +1,14 @@
 /*
 Theme Name: DT Ecommerce Theme
-Theme URI: https://example.com/dt-ecommerce-theme
+Theme URI: https://frenzyfusion.shop
 Author: DT Ecommerce Team
-Author URI: https://example.com
-Description: Enterprise-Level Premium WordPress + WooCommerce Theme.
-Version: 1.0
+Author URI: https://frenzyfusion.shop
+Description: Enterprise-Level Premium WordPress + WooCommerce Theme with dynamic colour system, Myntra-style wishlist, HPOS-compatible order management, and full luxury dark design.
+Version: 2.0.0
+Requires at least: 6.0
+Requires PHP: 8.0
+WC requires at least: 7.0
+WC tested up to: 10.9.4
 Text Domain: dt-ecommerce-theme
-Tags: e-commerce, two-columns, left-sidebar, right-sidebar, custom-background, custom-colors, custom-header, custom-menu, featured-images, full-width-template, translation-ready
+Tags: e-commerce, woocommerce, custom-colors, custom-menu, featured-images, full-width-template, translation-ready
 */

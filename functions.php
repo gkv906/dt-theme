@@ -44,25 +44,41 @@ add_action( 'before_woocommerce_init', function () {
     }
 } );
 
-// ── Ensure WooCommerce scheduled actions are registered if cron is missing ────
-add_action( 'wp', function () {
-    if ( ! class_exists( 'WooCommerce' ) ) {
-        return;
+// ── WooCommerce scheduled cron repair ─────────────────────────────────────────
+// Fires on woocommerce_init (after WC is fully loaded) so WC_Install is
+// available. Uses WC_Install::setup_scheduled_jobs() — the canonical method —
+// which registers every WC cron event and clears the "Daily Cron ❌" warning
+// in WooCommerce → Status. Guarded so it only runs when a job is actually
+// missing (i.e. zero overhead on normal page loads).
+add_action( 'woocommerce_init', function () {
+    // Check the event WooCommerce Status specifically looks for.
+    if ( wp_next_scheduled( 'woocommerce_scheduled_sales' ) ) {
+        return; // Already registered — nothing to do.
     }
-    // Re-schedule WooCommerce daily events if they somehow got cleared
-    if ( ! wp_next_scheduled( 'woocommerce_scheduled_sales' ) ) {
-        wp_schedule_event( time(), 'daily', 'woocommerce_scheduled_sales' );
-    }
-    if ( ! wp_next_scheduled( 'woocommerce_cleanup_sessions' ) ) {
-        wp_schedule_event( time(), 'twicedaily', 'woocommerce_cleanup_sessions' );
-    }
-    if ( ! wp_next_scheduled( 'woocommerce_cleanup_personal_data' ) ) {
-        wp_schedule_event( time(), 'daily', 'woocommerce_cleanup_personal_data' );
-    }
-    if ( ! wp_next_scheduled( 'woocommerce_tracker_send_event' ) ) {
-        wp_schedule_event( time(), 'weekly', 'woocommerce_tracker_send_event' );
+    if ( class_exists( 'WC_Install' ) && method_exists( 'WC_Install', 'setup_scheduled_jobs' ) ) {
+        WC_Install::setup_scheduled_jobs();
+    } else {
+        // Fallback: register the core events manually.
+        $jobs = array(
+            array( 'woocommerce_scheduled_sales',       'daily'      ),
+            array( 'woocommerce_cleanup_sessions',      'twicedaily' ),
+            array( 'woocommerce_cleanup_personal_data', 'daily'      ),
+            array( 'woocommerce_tracker_send_event',    'weekly'     ),
+        );
+        foreach ( $jobs as [ $hook, $recurrence ] ) {
+            if ( ! wp_next_scheduled( $hook ) ) {
+                wp_schedule_event( time(), $recurrence, $hook );
+            }
+        }
     }
 } );
+
+// ── Force SSL on WooCommerce checkout & account pages ────────────────────────
+// Mirrors WooCommerce Admin → Settings → Advanced → Force secure checkout.
+// Safe to add here: has no effect when the request is already HTTPS (no loop).
+add_filter( 'woocommerce_force_ssl_checkout', '__return_true' );
+// Also ensure WC considers the current page secure so it won't redirect HTTPS→HTTP.
+add_filter( 'woocommerce_unforce_ssl_checkout', '__return_false' );
 
 // Theme Setup
 function dt_theme_setup() {
