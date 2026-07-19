@@ -563,7 +563,7 @@ if ( $show_new_arrivals ) {
                 </div>
                 <!-- Slider Navigation -->
                 <div class="hidden md:flex items-center gap-3">
-                    <span id="arrivals-progress" class="text-[10px] uppercase tracking-widest text-[#C8A46A]/60 font-medium mr-4">01 / 08</span>
+                    <span id="arrivals-progress" class="text-[10px] uppercase tracking-widest text-[#C8A46A]/60 font-medium mr-4">01 / 20</span>
                     <button onclick="scrollArrivals(-1)" id="arrivals-prev-btn" title="Previous Slide" aria-label="Previous Slide" class="slider-nav-btn w-11 h-11 rounded-full border border-[#C8A46A]/40 text-[#C8A46A] flex items-center justify-center bg-black/40">
                         <i data-lucide="arrow-left" class="w-4 h-4"></i>
                     </button>
@@ -579,7 +579,7 @@ if ( $show_new_arrivals ) {
                 $args = array(
                     'post_type'      => 'product',
                     'post_status'    => 'publish',
-                    'posts_per_page' => 8,
+                    'posts_per_page' => 20,
                     'orderby'        => 'date',
                     'order'          => 'DESC',
                     'fields'         => 'ids'
@@ -786,7 +786,7 @@ if ( $show_top_sellers ) {
                 </div>
                 <!-- Slider Navigation -->
                 <div class="hidden md:flex items-center gap-3">
-                    <span id="topsellers-progress" class="text-[10px] uppercase tracking-widest text-[#C8A46A]/60 font-medium mr-4">01 / 08</span>
+                    <span id="topsellers-progress" class="text-[10px] uppercase tracking-widest text-[#C8A46A]/60 font-medium mr-4">01 / 20</span>
                     <button onclick="scrollTopSellers(-1)" id="topsellers-prev-btn" title="Previous Slide" aria-label="Previous Slide" class="slider-nav-btn w-11 h-11 rounded-full border border-[#C8A46A]/40 text-[#C8A46A] flex items-center justify-center bg-black/40">
                         <i data-lucide="arrow-left" class="w-4 h-4"></i>
                     </button>
@@ -802,7 +802,7 @@ if ( $show_top_sellers ) {
                 $args = array(
                     'post_type'      => 'product',
                     'post_status'    => 'publish',
-                    'posts_per_page' => 8,
+                    'posts_per_page' => 20,
                     'meta_key'       => 'total_sales',
                     'orderby'        => 'meta_value_num',
                     'order'          => 'DESC',

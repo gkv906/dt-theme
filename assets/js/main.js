@@ -277,11 +277,6 @@ function updateWishlistButtons(productId) {
 
 // Cart Drawer Injection and Toggling
 function toggleCartDrawer(open) {
-  if (_isWP && open) {
-    window.location.href = _URL.cart;
-    return;
-  }
-
   const drawer = document.getElementById('cart-drawer-overlay');
   if (!drawer) return;
 
@@ -1703,6 +1698,74 @@ function startReviewsAuto() {
 function restartReviewsAuto() { clearInterval(reviewsAutoTimer); startReviewsAuto(); }
 
 // =============================================================
+// DESKTOP SLIDERS — New Arrivals & Top Sellers auto-slide
+// Both sliders use overflow-x-auto (scroll-based) on desktop.
+// scrollArrivals / scrollTopSellers are called from onclick buttons in PHP.
+// =============================================================
+const _deskSliders = {};
+
+function _initDeskSlider(id, containerId, progressId, intervalMs) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const cards = Array.from(el.children);
+  if (!cards.length) return;
+  requestAnimationFrame(() => {
+    const style   = window.getComputedStyle(el);
+    const gap     = parseFloat(style.gap) || 24;
+    const cardW   = cards[0].getBoundingClientRect().width;
+    const step    = cardW + gap;
+    const visible = Math.max(1, Math.floor(el.offsetWidth / step));
+    const maxIdx  = Math.max(0, cards.length - visible);
+    _deskSliders[id] = { idx: 0, total: cards.length, step, maxIdx, paused: false, timer: null };
+    _updateDeskProgress(id, progressId);
+    el.addEventListener('mouseenter', () => { _deskSliders[id].paused = true; });
+    el.addEventListener('mouseleave', () => { _deskSliders[id].paused = false; });
+    if (intervalMs && maxIdx > 0) {
+      _deskSliders[id].timer = setInterval(() => {
+        if (!_deskSliders[id].paused) _stepDeskSlider(id, containerId, progressId, 1);
+      }, intervalMs);
+    }
+  });
+}
+
+function _stepDeskSlider(id, containerId, progressId, dir) {
+  const s = _deskSliders[id];
+  if (!s) return;
+  s.idx += dir;
+  if (s.idx < 0) s.idx = s.maxIdx;
+  if (s.idx > s.maxIdx) s.idx = 0;
+  const el = document.getElementById(containerId);
+  if (el) el.scrollTo({ left: s.idx * s.step, behavior: 'smooth' });
+  _updateDeskProgress(id, progressId);
+  if (s.timer) {
+    clearInterval(s.timer);
+    const ms = id === 'na-d' ? 3500 : 4000;
+    s.timer = setInterval(() => {
+      if (!_deskSliders[id].paused) _stepDeskSlider(id, containerId, progressId, 1);
+    }, ms);
+  }
+}
+
+function _updateDeskProgress(id, progressId) {
+  const s  = _deskSliders[id];
+  const el = document.getElementById(progressId);
+  if (!s || !el) return;
+  el.textContent = String(s.idx + 1).padStart(2, '0') + ' / ' + String(s.total).padStart(2, '0');
+}
+
+function scrollArrivals(dir) {
+  if (_deskSliders['na-d']) {
+    _stepDeskSlider('na-d', 'new-arrivals-slider', 'arrivals-progress', dir);
+  }
+}
+
+function scrollTopSellers(dir) {
+  if (_deskSliders['ts-d']) {
+    _stepDeskSlider('ts-d', 'top-sellers-slider', 'topsellers-progress', dir);
+  }
+}
+
+// =============================================================
 // MOBILE SLIDERS — pixel-based, container-width-aware
 //   Usage: initMobileSlider('na', 3200)
 //          mobileSliderNav('na', 1)   — called from HTML buttons
@@ -1910,14 +1973,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Search bar: bind immediately for WordPress (header already in DOM) ──
   setupSearchBar();
 
+  // ── Desktop product sliders (auto-slide) ─────────────────────
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      _initDeskSlider('na-d', 'new-arrivals-slider', 'arrivals-progress',   3500);
+      _initDeskSlider('ts-d', 'top-sellers-slider',  'topsellers-progress', 4000);
+    }, 100);
+  });
+
   // ── Mobile product sliders ──────────────────────────────────
   // Always init — CSS (md:hidden) controls visibility per breakpoint
   // setTimeout ensures fonts/images haven't shifted layout yet
   // Use requestAnimationFrame + small delay so slides render at correct width
   requestAnimationFrame(() => {
     setTimeout(() => {
-      initMobileSlider('na', 3200, 2);  // New Arrivals: 2-per-view (was 3, too cramped)
-      initMobileSlider('ts', 3000);     // Top Sellers:  2-per-slide page
+      initMobileSlider('na', 3200, 2);  // New Arrivals: 2-per-view (2 cards side-by-side)
+      initMobileSlider('ts', 3000);     // Top Sellers:  1 slide = 2-col grid
       initMobileSlider('wc', 3500);     // Why Choose:   1-per-slide
     }, 60);
   });
