@@ -10311,3 +10311,362 @@ body.woocommerce-account select:focus {
 }
 
 /* ── End Cart + Checkout Overrides ── */
+
+/* ============================================================
+   CART DRAWER — Empty State + Recommendation Slider
+   ============================================================ */
+
+/* ── Empty State Container ── */
+.dt-ec-state {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 0 0 24px;
+}
+
+/* ── Hero / Bag area ── */
+.dt-ec-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 28px 20px 22px;
+}
+.dt-ec-bag-wrap {
+  position: relative;
+  width: 88px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.dt-ec-bag-glow {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,164,106,0.18) 0%, transparent 68%);
+  animation: ec-glow-pulse 2.8s ease-in-out infinite;
+}
+.dt-ec-bag-svg {
+  position: relative;
+  width: 64px;
+  height: 76px;
+  animation: ec-bag-float 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 14px rgba(200,164,106,0.22));
+}
+@keyframes ec-bag-float {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+.dt-ec-kicker {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(200,164,106,0.65);
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+.dt-ec-headline {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #F7F4EE;
+  margin: 0 0 8px;
+  line-height: 1.2;
+}
+.dt-ec-sub {
+  font-size: 12px;
+  color: rgba(247,244,238,0.42);
+  margin: 0 0 20px;
+  line-height: 1.55;
+  max-width: 240px;
+}
+.dt-ec-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 26px;
+  background: linear-gradient(110deg, #b08d55, #d8ba82, #C8A46A);
+  color: #000 !important;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: opacity 0.2s, transform 0.2s;
+  box-shadow: 0 6px 22px rgba(200,164,106,0.22);
+}
+.dt-ec-cta:hover { opacity: 0.88; transform: translateY(-1px); }
+
+/* ── Trust Badges ── */
+.dt-ec-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0 16px 18px;
+  border: 1px solid rgba(200,164,106,0.14);
+  background: rgba(200,164,106,0.04);
+  overflow: hidden;
+}
+.dt-ec-badge {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(200,164,106,0.1);
+  transition: background 0.2s;
+}
+.dt-ec-badge:last-child { border-bottom: 0; }
+.dt-ec-badge:hover { background: rgba(200,164,106,0.06); }
+.dt-ec-badge-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: 1px solid rgba(200,164,106,0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(200,164,106,0.07);
+}
+.dt-ec-badge-title {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #F7F4EE;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+}
+.dt-ec-badge-sub {
+  display: block;
+  font-size: 10px;
+  color: rgba(247,244,238,0.42);
+  letter-spacing: 0.02em;
+  margin-top: 1px;
+}
+
+/* ── Recommendation Slider Section ── */
+.dt-rec-section {
+  margin: 0 16px 0;
+}
+.dt-rec-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.dt-rec-kicker {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(200,164,106,0.65);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.dt-rec-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #F7F4EE;
+  margin: 0;
+  flex: 1;
+  white-space: nowrap;
+}
+.dt-rec-nav {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.dt-rec-btn {
+  width: 26px;
+  height: 26px;
+  border: 1px solid rgba(200,164,106,0.35);
+  background: transparent;
+  color: rgba(200,164,106,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+  flex-shrink: 0;
+}
+.dt-rec-btn:hover { background: #C8A46A; color: #000; border-color: #C8A46A; }
+.dt-rec-btn:disabled { opacity: 0.28; pointer-events: none; }
+
+/* Track */
+.dt-rec-track-wrap {
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+}
+.dt-rec-track-wrap:active { cursor: grabbing; }
+.dt-rec-track {
+  display: flex;
+  gap: 10px;
+  transition: transform 0.38s cubic-bezier(0.4,0,0.2,1);
+  will-change: transform;
+}
+
+/* Card */
+.dt-rec-card {
+  flex: 0 0 calc(50% - 5px);
+  min-width: 0;
+  background: #0e0e0e;
+  border: 1px solid rgba(200,164,106,0.14);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.dt-rec-card:hover { border-color: rgba(200,164,106,0.45); }
+
+.dt-rec-img-wrap {
+  display: block;
+  position: relative;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  background: #080808;
+}
+.dt-rec-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.4s ease;
+  display: block;
+}
+.dt-rec-card:hover .dt-rec-img { transform: scale(1.05); }
+.dt-rec-img-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.38);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.dt-rec-card:hover .dt-rec-img-overlay { opacity: 1; }
+.dt-rec-view {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #C8A46A;
+  border: 1px solid #C8A46A;
+  padding: 5px 12px;
+  font-weight: 700;
+  background: rgba(0,0,0,0.6);
+}
+
+.dt-rec-info {
+  padding: 8px 9px 10px;
+}
+.dt-rec-cat {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(200,164,106,0.65);
+  margin-bottom: 3px;
+}
+.dt-rec-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: #F7F4EE;
+  margin: 0 0 6px;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dt-rec-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+.dt-rec-price {
+  font-size: 11px;
+  font-weight: 700;
+  color: #C8A46A;
+}
+.dt-rec-price .woocommerce-Price-amount { color: #C8A46A !important; }
+.dt-rec-price del .woocommerce-Price-amount { color: rgba(247,244,238,0.3) !important; font-size: 9px; }
+.dt-rec-add {
+  width: 24px;
+  height: 24px;
+  background: rgba(200,164,106,0.12);
+  border: 1px solid rgba(200,164,106,0.35);
+  color: #C8A46A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  flex-shrink: 0;
+}
+.dt-rec-add:hover { background: #C8A46A; color: #000; border-color: #C8A46A; }
+
+/* Dots */
+.dt-rec-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 12px;
+  min-height: 16px;
+}
+.dt-rec-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 99px;
+  background: rgba(200,164,106,0.22);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+.dt-rec-dot.active {
+  background: #C8A46A;
+  width: 18px;
+  box-shadow: 0 0 6px rgba(200,164,106,0.5);
+}
+
+/* ── Cart Drawer Footer Trust Strip (has-items) ── */
+.dt-drawer-trust-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 9px 14px;
+  background: rgba(200,164,106,0.05);
+  border-bottom: 1px solid rgba(200,164,106,0.1);
+  font-size: 9.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(247,244,238,0.5);
+}
+.dt-drawer-trust-strip span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.dt-trust-dot { color: rgba(200,164,106,0.35); font-size: 8px; }
+
+/* ── Checkout CTA Button ── */
+.dt-checkout-cta {
+  background: linear-gradient(110deg, #b08d55 0%, #d8ba82 40%, #C8A46A 60%, #d8ba82 80%, #b08d55 100%);
+  background-size: 200% auto;
+  color: #000 !important;
+  text-decoration: none;
+  transition: background-position 0.4s ease, box-shadow 0.3s ease;
+  box-shadow: 0 6px 20px rgba(200,164,106,0.2);
+}
+.dt-checkout-cta:hover {
+  background-position: right center;
+  box-shadow: 0 8px 28px rgba(200,164,106,0.35);
+}
+
+/* ── End Empty Cart / Rec Slider Styles ── */

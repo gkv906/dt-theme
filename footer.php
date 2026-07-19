@@ -313,22 +313,157 @@ $hide_mobile_bottom_nav = (
                     </div>
                 <?php endforeach; ?>
             <?php else : ?>
-                <div class="flex flex-col items-center justify-center h-full text-center py-12">
-                    <i data-lucide="shopping-bag" class="w-12 h-12 text-[#C8A46A]/20 mb-4"></i>
-                    <p class="text-[#a3a3a3] text-sm mb-6"><?php esc_html_e( 'Your cart is empty', 'dt-ecommerce-theme' ); ?></p>
-                    <a href="<?php echo esc_url( $shop_url ); ?>" class="btn-gold-shimmer px-8 py-3 uppercase tracking-widest text-xs font-semibold"><?php esc_html_e( 'Start Shopping', 'dt-ecommerce-theme' ); ?></a>
+                <!-- ── EMPTY CART STATE ── -->
+                <div class="dt-ec-state">
+
+                    <!-- Animated bag + headline -->
+                    <div class="dt-ec-hero">
+                        <div class="dt-ec-bag-wrap">
+                            <div class="dt-ec-bag-glow"></div>
+                            <svg class="dt-ec-bag-svg" viewBox="0 0 80 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="4" y="28" width="72" height="60" rx="4" stroke="#C8A46A" stroke-width="2" fill="rgba(200,164,106,0.06)"/>
+                                <path d="M26 28C26 18.059 32.268 10 40 10C47.732 10 54 18.059 54 28" stroke="#C8A46A" stroke-width="2" stroke-linecap="round" fill="none"/>
+                                <circle cx="40" cy="55" r="8" fill="rgba(200,164,106,0.12)" stroke="rgba(200,164,106,0.5)" stroke-width="1.5"/>
+                                <path d="M37 55l2 2 4-4" stroke="#C8A46A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <p class="dt-ec-kicker">Your Bag</p>
+                        <h4 class="dt-ec-headline">Looks a little empty</h4>
+                        <p class="dt-ec-sub">Discover our curated collections and find something you'll love.</p>
+                        <a href="<?php echo esc_url( $shop_url ); ?>" class="dt-ec-cta">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                            Start Shopping
+                        </a>
+                    </div>
+
+                    <!-- Trust Badges -->
+                    <div class="dt-ec-badges">
+                        <div class="dt-ec-badge">
+                            <div class="dt-ec-badge-icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C8A46A" stroke-width="1.8"><path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3m0 0h2l4 4v4h-6m0 0a2 2 0 11-4 0 2 2 0 014 0zm-10 0a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </div>
+                            <div>
+                                <span class="dt-ec-badge-title">Fast Delivery</span>
+                                <span class="dt-ec-badge-sub">2–5 business days</span>
+                            </div>
+                        </div>
+                        <div class="dt-ec-badge">
+                            <div class="dt-ec-badge-icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C8A46A" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </div>
+                            <div>
+                                <span class="dt-ec-badge-title">Premium Quality</span>
+                                <span class="dt-ec-badge-sub">Handpicked fabrics</span>
+                            </div>
+                        </div>
+                        <div class="dt-ec-badge">
+                            <div class="dt-ec-badge-icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C8A46A" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </div>
+                            <div>
+                                <span class="dt-ec-badge-title">24/7 Support</span>
+                                <span class="dt-ec-badge-sub">Always here for you</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Selling Recommendations Slider -->
+                    <?php
+                    $rec_args = array(
+                        'post_type'      => 'product',
+                        'posts_per_page' => 8,
+                        'post_status'    => 'publish',
+                        'meta_key'       => 'total_sales',
+                        'orderby'        => 'meta_value_num',
+                        'order'          => 'DESC',
+                        'meta_query'     => array( array( 'key' => '_stock_status', 'value' => 'instock' ) ),
+                    );
+                    $rec_query = new WP_Query( $rec_args );
+                    if ( $rec_query->have_posts() ) :
+                    ?>
+                    <div class="dt-rec-section">
+                        <div class="dt-rec-header">
+                            <span class="dt-rec-kicker">✦ Trending Now</span>
+                            <h5 class="dt-rec-title">Top Sellers</h5>
+                            <div class="dt-rec-nav">
+                                <button class="dt-rec-btn" id="dt-rec-prev" aria-label="Previous">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </button>
+                                <button class="dt-rec-btn" id="dt-rec-next" aria-label="Next">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="dt-rec-track-wrap" id="dt-rec-track-wrap">
+                            <div class="dt-rec-track" id="dt-rec-track">
+                                <?php while ( $rec_query->have_posts() ) : $rec_query->the_post();
+                                    global $product;
+                                    if ( ! $product || ! $product->is_visible() ) continue;
+                                    $thumb_url = get_the_post_thumbnail_url( get_the_ID(), 'woocommerce_thumbnail' );
+                                    if ( ! $thumb_url ) $thumb_url = wc_placeholder_img_src();
+                                    $price_html = $product->get_price_html();
+                                    $cats = get_the_terms( get_the_ID(), 'product_cat' );
+                                    $cat_name = ( $cats && ! is_wp_error( $cats ) ) ? $cats[0]->name : '';
+                                ?>
+                                <div class="dt-rec-card">
+                                    <a href="<?php the_permalink(); ?>" class="dt-rec-img-wrap">
+                                        <img src="<?php echo esc_url( $thumb_url ); ?>" alt="<?php the_title_attribute(); ?>" class="dt-rec-img" loading="lazy">
+                                        <div class="dt-rec-img-overlay">
+                                            <span class="dt-rec-view">View</span>
+                                        </div>
+                                    </a>
+                                    <div class="dt-rec-info">
+                                        <?php if ( $cat_name ) : ?>
+                                        <span class="dt-rec-cat"><?php echo esc_html( $cat_name ); ?></span>
+                                        <?php endif; ?>
+                                        <h6 class="dt-rec-name"><?php the_title(); ?></h6>
+                                        <div class="dt-rec-price-row">
+                                            <span class="dt-rec-price"><?php echo wp_kses_post( $price_html ); ?></span>
+                                            <?php if ( class_exists('WooCommerce') ) : ?>
+                                            <button
+                                                class="dt-rec-add"
+                                                onclick="addToCart(<?php echo esc_js( get_the_ID() ); ?>, this)"
+                                                aria-label="Add to cart"
+                                                title="Add to bag"
+                                            >
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+                                            </button>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endwhile; wp_reset_postdata(); ?>
+                            </div>
+                        </div>
+
+                        <!-- Dots -->
+                        <div class="dt-rec-dots" id="dt-rec-dots"></div>
+                    </div>
+                    <?php endif; ?>
+
                 </div>
             <?php endif; ?>
         </div>
         <?php if ( class_exists( 'WooCommerce' ) && WC()->cart && ! WC()->cart->is_empty() ) : ?>
-        <div id="cart-drawer-footer" class="p-6 border-t border-[#C8A46A]/10 bg-[#111]">
-            <div class="flex items-center justify-between mb-6 text-sm">
-                <span class="text-[#a3a3a3]"><?php esc_html_e( 'Subtotal', 'dt-ecommerce-theme' ); ?></span>
-                <span id="cart-drawer-subtotal" class="text-white font-semibold text-lg"><?php echo wp_kses_post( WC()->cart->get_cart_subtotal() ); ?></span>
+        <div id="cart-drawer-footer" class="border-t border-[#C8A46A]/10 bg-[#0d0d0d]">
+            <!-- Mini trust strip -->
+            <div class="dt-drawer-trust-strip">
+                <span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C8A46A" stroke-width="2"><path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3m0 0h2l4 4v4h-6m0 0a2 2 0 11-4 0 2 2 0 014 0zm-10 0a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round"/></svg> Fast Delivery</span>
+                <span class="dt-trust-dot">✦</span>
+                <span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C8A46A" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linecap="round" stroke-linejoin="round"/></svg> Secure Payment</span>
+                <span class="dt-trust-dot">✦</span>
+                <span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C8A46A" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke-linecap="round" stroke-linejoin="round"/></svg> 24/7 Support</span>
             </div>
-            <div class="space-y-3">
-                <a href="<?php echo esc_url( $cart_url ); ?>" class="block w-full text-center border border-[#C8A46A] text-[#C8A46A] hover:bg-[#C8A46A] hover:text-black py-3.5 uppercase tracking-widest text-xs font-semibold transition-all"><?php esc_html_e( 'View Cart', 'dt-ecommerce-theme' ); ?></a>
-                <a href="<?php echo esc_url( $checkout_url ); ?>" class="block w-full text-center bg-gradient-to-r from-[#b08d55] via-[#C8A46A] to-[#d8ba82] hover:brightness-110 text-black py-3.5 uppercase tracking-widest text-xs font-bold transition-all"><?php esc_html_e( 'Proceed to Checkout', 'dt-ecommerce-theme' ); ?></a>
+            <div class="p-5">
+                <div class="flex items-center justify-between mb-4 text-sm">
+                    <span class="text-[#a3a3a3] text-xs uppercase tracking-widest font-medium"><?php esc_html_e( 'Subtotal', 'dt-ecommerce-theme' ); ?></span>
+                    <span id="cart-drawer-subtotal" class="text-[#C8A46A] font-bold text-lg"><?php echo wp_kses_post( WC()->cart->get_cart_subtotal() ); ?></span>
+                </div>
+                <div class="space-y-2.5">
+                    <a href="<?php echo esc_url( $cart_url ); ?>" class="block w-full text-center border border-[#C8A46A]/60 text-[#C8A46A] hover:bg-[#C8A46A]/10 py-3 uppercase tracking-widest text-[11px] font-semibold transition-all"><?php esc_html_e( 'View Cart', 'dt-ecommerce-theme' ); ?></a>
+                    <a href="<?php echo esc_url( $checkout_url ); ?>" class="dt-checkout-cta block w-full text-center py-3.5 uppercase tracking-widest text-[11px] font-bold transition-all"><?php esc_html_e( 'Proceed to Checkout', 'dt-ecommerce-theme' ); ?></a>
+                </div>
             </div>
         </div>
         <?php endif; ?>
@@ -425,6 +560,120 @@ $hide_mobile_bottom_nav = (
     window.scrollToTop = function() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
+
+    /* ── Recommendation Slider (empty cart) ── */
+    (function initRecSlider() {
+        var track     = document.getElementById('dt-rec-track');
+        var wrap      = document.getElementById('dt-rec-track-wrap');
+        var prevBtn   = document.getElementById('dt-rec-prev');
+        var nextBtn   = document.getElementById('dt-rec-next');
+        var dotsWrap  = document.getElementById('dt-rec-dots');
+        if (!track || !wrap) return;
+
+        var cards     = track.querySelectorAll('.dt-rec-card');
+        var total     = cards.length;
+        if (total === 0) return;
+
+        var visCount  = 2;           // cards visible at once
+        var cardW     = 0;
+        var gap       = 10;
+        var current   = 0;
+        var maxIdx    = Math.max(0, total - visCount);
+        var autoTimer = null;
+
+        function measure() {
+            if (cards[0]) {
+                cardW = cards[0].getBoundingClientRect().width;
+            }
+        }
+
+        function buildDots() {
+            if (!dotsWrap) return;
+            dotsWrap.innerHTML = '';
+            var pages = Math.ceil(total / visCount);
+            for (var i = 0; i < pages; i++) {
+                var d = document.createElement('button');
+                d.className = 'dt-rec-dot' + (i === 0 ? ' active' : '');
+                d.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+                d.dataset.idx = i * visCount;
+                d.addEventListener('click', function() {
+                    goTo(parseInt(this.dataset.idx));
+                });
+                dotsWrap.appendChild(d);
+            }
+        }
+
+        function updateDots() {
+            if (!dotsWrap) return;
+            var page = Math.floor(current / visCount);
+            dotsWrap.querySelectorAll('.dt-rec-dot').forEach(function(d, i) {
+                d.classList.toggle('active', i === page);
+            });
+        }
+
+        function goTo(idx) {
+            current = Math.max(0, Math.min(idx, maxIdx));
+            measure();
+            track.style.transform = 'translateX(-' + (current * (cardW + gap)) + 'px)';
+            updateDots();
+            if (prevBtn) prevBtn.disabled = current === 0;
+            if (nextBtn) nextBtn.disabled = current >= maxIdx;
+        }
+
+        function startAuto() {
+            stopAuto();
+            autoTimer = setInterval(function() {
+                var next = current + visCount;
+                if (next > maxIdx) next = 0;
+                goTo(next);
+            }, 3400);
+        }
+
+        function stopAuto() {
+            if (autoTimer) clearInterval(autoTimer);
+        }
+
+        /* Touch / swipe */
+        var touchStartX = 0;
+        wrap.addEventListener('touchstart', function(e) {
+            touchStartX = e.touches[0].clientX;
+            stopAuto();
+        }, { passive: true });
+        wrap.addEventListener('touchend', function(e) {
+            var dx = touchStartX - e.changedTouches[0].clientX;
+            if (Math.abs(dx) > 40) {
+                goTo(dx > 0 ? current + 1 : current - 1);
+            }
+            startAuto();
+        }, { passive: true });
+
+        /* Mouse drag */
+        var mouseStartX = 0, isDragging = false;
+        wrap.addEventListener('mousedown', function(e) { mouseStartX = e.clientX; isDragging = true; stopAuto(); });
+        window.addEventListener('mouseup', function(e) {
+            if (!isDragging) return;
+            isDragging = false;
+            var dx = mouseStartX - e.clientX;
+            if (Math.abs(dx) > 40) goTo(dx > 0 ? current + 1 : current - 1);
+            startAuto();
+        });
+
+        if (prevBtn) prevBtn.addEventListener('click', function() { goTo(current - 1); stopAuto(); startAuto(); });
+        if (nextBtn) nextBtn.addEventListener('click', function() { goTo(current + 1); stopAuto(); startAuto(); });
+
+        /* Init */
+        measure();
+        buildDots();
+        goTo(0);
+        startAuto();
+
+        /* Re-measure on resize */
+        window.addEventListener('resize', function() {
+            measure();
+            maxIdx = Math.max(0, total - visCount);
+            goTo(Math.min(current, maxIdx));
+        }, { passive: true });
+    })();
 })();
 </script>
 <?php
