@@ -317,7 +317,10 @@ $hide_mobile_bottom_nav = (
             <i data-lucide="search" class="w-5 h-5"></i><span class="text-[10px] uppercase tracking-wider"><?php esc_html_e( 'Search', 'dt-ecommerce-theme' ); ?></span>
         </button>
         <button onclick="window.location.href='<?php echo esc_url( $shop_url ); ?>'" class="flex flex-col items-center justify-center w-16 -translate-y-3 relative z-10">
-            <div class="font-serif text-[#C8A46A] text-2xl font-bold w-12 h-12 rounded-full flex items-center justify-center bg-black border-2 border-[#C8A46A] shadow-[0_0_15px_rgba(200,164,106,0.4)] hover:scale-105 transition-transform duration-300">A</div>
+            <div class="w-12 h-12 rounded-full flex items-center justify-center bg-black border-2 border-[#C8A46A] shadow-[0_0_15px_rgba(200,164,106,0.4)] hover:scale-105 transition-transform duration-300">
+                <svg class="w-5 h-5 text-[#C8A46A]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+            </div>
+            <span class="text-[10px] uppercase tracking-wider text-[#C8A46A] mt-0.5"><?php esc_html_e( 'Shop', 'dt-ecommerce-theme' ); ?></span>
         </button>
         <button onclick="window.location.href='<?php echo esc_url( $wishlist_url ); ?>'" class="flex flex-col items-center justify-center w-16 gap-1 text-gray-400 hover:text-white transition-colors relative">
             <i data-lucide="heart" class="w-5 h-5"></i>
