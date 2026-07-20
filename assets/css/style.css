@@ -6774,6 +6774,81 @@ body {
   color: #C8A46A;
 }
 
+/* ────────────────────────────────────────────────────────────
+   Product Card — Running Gold-Platinum Corner Line Borders
+   Four L-shaped corner lines that draw themselves on hover.
+   ──────────────────────────────────────────────────────────── */
+.card-corner-wrap {
+  position: relative;
+  display: block;
+}
+
+/* Zero-size anchor points at each corner */
+.cc {
+  position: absolute;
+  pointer-events: none;
+  z-index: 25;
+  width: 0;
+  height: 0;
+}
+
+/* Both lines share the same gold→platinum gradient */
+.cc::before,
+.cc::after {
+  content: '';
+  position: absolute;
+  background: linear-gradient(135deg, #C8A46A 0%, #EAD5A0 50%, #C8A46A 100%);
+  background-size: 200% 200%;
+  opacity: 0;
+  transition:
+    width  0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.3s ease;
+}
+.cc::before { height: 2px; width: 0; }  /* horizontal */
+.cc::after  { width:  2px; height: 0; } /* vertical   */
+
+/* ── corner placements ── */
+.cc-tl          { top: 0;    left: 0;  }
+.cc-tl::before  { top: 0;    left: 0;  }
+.cc-tl::after   { top: 0;    left: 0;  }
+
+.cc-tr          { top: 0;    right: 0; }
+.cc-tr::before  { top: 0;    right: 0; transform: translateX(-100%); }
+.cc-tr::after   { top: 0;    right: 0; }
+
+.cc-bl          { bottom: 0; left: 0;  }
+.cc-bl::before  { bottom: 0; left: 0;  }
+.cc-bl::after   { bottom: 0; left: 0;  transform: translateY(-100%); }
+
+.cc-br          { bottom: 0; right: 0; }
+.cc-br::before  { bottom: 0; right: 0; transform: translateX(-100%); }
+.cc-br::after   { bottom: 0; right: 0; transform: translateY(-100%); }
+
+/* ── hover: draw the lines ── */
+.arrival-card:hover .cc::before { width: 32px;  opacity: 1; }
+.arrival-card:hover .cc::after  { height: 32px; opacity: 1; }
+
+/* ── staggered entrance: TL → TR/BL → BR ── */
+.arrival-card:hover .cc-tl::before,
+.arrival-card:hover .cc-tl::after  { transition-delay: 0s;    }
+.arrival-card:hover .cc-tr::before,
+.arrival-card:hover .cc-tr::after  { transition-delay: 0.06s; }
+.arrival-card:hover .cc-bl::before,
+.arrival-card:hover .cc-bl::after  { transition-delay: 0.06s; }
+.arrival-card:hover .cc-br::before,
+.arrival-card:hover .cc-br::after  { transition-delay: 0.12s; }
+
+/* ── continuous shimmer on active corners ── */
+@keyframes corner-shimmer {
+  0%, 100% { background-position: 0%   50%; }
+  50%       { background-position: 100% 50%; }
+}
+.arrival-card:hover .cc::before,
+.arrival-card:hover .cc::after {
+  animation: corner-shimmer 2.4s ease infinite;
+}
+
 /* ============================================
    REVIEWS - Auto-Sliding Testimonial Carousel
    ============================================ */
