@@ -308,103 +308,40 @@ $hide_mobile_bottom_nav = (
     || ( function_exists( 'is_product_category' ) && is_product_category() )
 );
 ?>
-<!-- ═══ Mobile Bottom Navigation — Elevated-Centre Design ═══ -->
-<div id="mobile-bottom-nav" class="fixed bottom-0 left-0 w-full md:hidden z-50 safe-area-bottom <?php echo $hide_mobile_bottom_nav ? 'hidden' : ''; ?>">
-
-    <!-- curved notch container -->
-    <div class="relative">
-
-        <!-- notch arc cut-out behind the centre button -->
-        <div class="absolute -top-[22px] left-1/2 -translate-x-1/2 w-[68px] h-[34px] bg-black rounded-t-full z-10
-                    shadow-[inset_0_4px_8px_rgba(200,164,106,0.12)]">
-        </div>
-
-        <!-- nav bar -->
-        <nav class="relative bg-black border-t border-[#C8A46A]/25 z-0">
-            <div class="flex items-end justify-around px-1 pt-2 pb-2">
-
-                <!-- MENU -->
-                <button onclick="toggleMobileMenuDrawer(true)"
-                        class="dt-nav-btn group flex flex-col items-center justify-end w-[60px] h-14 gap-1 text-gray-500
-                               hover:text-[#C8A46A] active:text-[#C8A46A] transition-all duration-300">
-                    <span class="dt-nav-icon-wrap flex items-center justify-center w-10 h-7
-                                  rounded-lg group-hover:bg-[#C8A46A]/10 transition-colors duration-300">
-                        <i data-lucide="menu" class="w-[18px] h-[18px]"></i>
-                    </span>
-                    <span class="text-[9px] uppercase tracking-widest leading-none pb-0.5"><?php esc_html_e( 'Menu', 'dt-ecommerce-theme' ); ?></span>
-                </button>
-
-                <!-- SEARCH -->
-                <button onclick="toggleMobileSearchOverlay(true)"
-                        class="dt-nav-btn group flex flex-col items-center justify-end w-[60px] h-14 gap-1 text-gray-500
-                               hover:text-[#C8A46A] active:text-[#C8A46A] transition-all duration-300">
-                    <span class="dt-nav-icon-wrap flex items-center justify-center w-10 h-7
-                                  rounded-lg group-hover:bg-[#C8A46A]/10 transition-colors duration-300">
-                        <i data-lucide="search" class="w-[18px] h-[18px]"></i>
-                    </span>
-                    <span class="text-[9px] uppercase tracking-widest leading-none pb-0.5"><?php esc_html_e( 'Search', 'dt-ecommerce-theme' ); ?></span>
-                </button>
-
-                <!-- SHOP — elevated centre button -->
-                <div class="relative flex flex-col items-center w-[68px] z-20">
-                    <button onclick="window.location.href='<?php echo esc_url( $shop_url ); ?>'"
-                            class="group absolute -top-[34px] left-1/2 -translate-x-1/2
-                                   w-14 h-14 rounded-full
-                                   bg-[#C8A46A]
-                                   flex items-center justify-center
-                                   shadow-[0_4px_20px_rgba(200,164,106,0.55)]
-                                   hover:bg-[#d9b87a]
-                                   hover:shadow-[0_6px_28px_rgba(200,164,106,0.75)]
-                                   hover:scale-110
-                                   active:scale-95
-                                   transition-all duration-300">
-                        <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5
-                                     m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25
-                                     a1.125 1.125 0 01-1.12-1.243l1.264-12
-                                     A1.125 1.125 0 015.513 7.5h12.974
-                                     c.576 0 1.059.435 1.119 1.007z"/>
-                        </svg>
-                    </button>
-                    <!-- label sits in normal flow below the bar -->
-                    <span class="text-[9px] uppercase tracking-widest text-[#C8A46A] leading-none mt-auto pt-[36px] pb-0.5"><?php esc_html_e( 'Shop', 'dt-ecommerce-theme' ); ?></span>
-                </div>
-
-                <!-- WISHLIST -->
-                <button onclick="window.location.href='<?php echo esc_url( $wishlist_url ); ?>'"
-                        class="dt-nav-btn group flex flex-col items-center justify-end w-[60px] h-14 gap-1 text-gray-500
-                               hover:text-[#C8A46A] active:text-[#C8A46A] transition-all duration-300 relative">
-                    <span class="dt-nav-icon-wrap relative flex items-center justify-center w-10 h-7
-                                  rounded-lg group-hover:bg-[#C8A46A]/10 transition-colors duration-300">
-                        <i data-lucide="heart" class="w-[18px] h-[18px]"></i>
-                        <?php
-                        $wishlist_count = function_exists( 'dt_get_wishlist_count' ) ? dt_get_wishlist_count() : 0;
-                        if ( $wishlist_count > 0 ) {
-                            echo '<span class="absolute -top-1 -right-1 bg-[#C8A46A] text-black text-[7px] font-bold w-3.5 h-3.5 flex items-center justify-center rounded-full">' . esc_html( $wishlist_count ) . '</span>';
-                        }
-                        ?>
-                    </span>
-                    <span class="text-[9px] uppercase tracking-widest leading-none pb-0.5"><?php esc_html_e( 'Wishlist', 'dt-ecommerce-theme' ); ?></span>
-                </button>
-
-                <!-- CART -->
-                <button data-bag-toggle id="mobile-bottom-cart-btn"
-                        class="dt-nav-btn group flex flex-col items-center justify-end w-[60px] h-14 gap-1 text-gray-500
-                               hover:text-[#C8A46A] active:text-[#C8A46A] transition-all duration-300 relative">
-                    <span class="dt-nav-icon-wrap relative flex items-center justify-center w-10 h-7
-                                  rounded-lg group-hover:bg-[#C8A46A]/10 transition-colors duration-300">
-                        <i data-lucide="shopping-bag" class="w-[18px] h-[18px]"></i>
-                        <?php $cart_count = ( class_exists( 'WooCommerce' ) && WC()->cart ) ? WC()->cart->get_cart_contents_count() : 0; ?>
-                        <span class="cart-badge absolute -top-1 -right-1 bg-[#C8A46A] text-black text-[7px] font-bold w-3.5 h-3.5 flex items-center justify-center rounded-full <?php echo $cart_count > 0 ? '' : 'hidden'; ?>"><?php echo esc_html( $cart_count ); ?></span>
-                    </span>
-                    <span class="text-[9px] uppercase tracking-widest leading-none pb-0.5"><?php esc_html_e( 'Cart', 'dt-ecommerce-theme' ); ?></span>
-                </button>
-
-            </div><!-- /flex -->
-        </nav><!-- /nav -->
-    </div><!-- /relative -->
-</div><!-- /#mobile-bottom-nav -->
+<div id="mobile-bottom-nav" class="fixed bottom-0 left-0 w-full bg-[#0a0a0a]/90 backdrop-blur-lg border-t border-[#C8A46A]/20 md:hidden z-50 px-2 py-2 safe-area-bottom <?php echo $hide_mobile_bottom_nav ? 'hidden' : ''; ?>">
+    <div class="flex items-end justify-around">
+        <button onclick="toggleMobileMenuDrawer(true)" class="flex flex-col items-center justify-center w-16 gap-1 text-gray-400 hover:text-white transition-colors">
+            <i data-lucide="menu" class="w-5 h-5"></i><span class="text-[10px] uppercase tracking-wider"><?php esc_html_e( 'Menu', 'dt-ecommerce-theme' ); ?></span>
+        </button>
+        <button onclick="toggleMobileSearchOverlay(true)" class="flex flex-col items-center justify-center w-16 gap-1 text-gray-400 hover:text-white transition-colors">
+            <i data-lucide="search" class="w-5 h-5"></i><span class="text-[10px] uppercase tracking-wider"><?php esc_html_e( 'Search', 'dt-ecommerce-theme' ); ?></span>
+        </button>
+        <button onclick="window.location.href='<?php echo esc_url( $shop_url ); ?>'" class="flex flex-col items-center justify-center w-16 -translate-y-3 relative z-10">
+            <div class="w-12 h-12 rounded-full flex items-center justify-center bg-black border-2 border-[#C8A46A] shadow-[0_0_15px_rgba(200,164,106,0.4)] hover:scale-105 transition-transform duration-300">
+                <svg class="w-5 h-5 text-[#C8A46A]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+            </div>
+            <span class="text-[10px] uppercase tracking-wider text-[#C8A46A] mt-0.5"><?php esc_html_e( 'Shop', 'dt-ecommerce-theme' ); ?></span>
+        </button>
+        <button onclick="window.location.href='<?php echo esc_url( $wishlist_url ); ?>'" class="flex flex-col items-center justify-center w-16 gap-1 text-gray-400 hover:text-white transition-colors relative">
+            <i data-lucide="heart" class="w-5 h-5"></i>
+            <?php
+            $wishlist_count = function_exists( 'dt_get_wishlist_count' ) ? dt_get_wishlist_count() : 0;
+            if ( $wishlist_count > 0 ) {
+                echo '<span class="absolute top-0 right-3 bg-[#C8A46A] text-black text-[8px] font-bold w-3.5 h-3.5 flex items-center justify-center rounded-full">' . esc_html( $wishlist_count ) . '</span>';
+            }
+            ?>
+            <span class="text-[10px] uppercase tracking-wider"><?php esc_html_e( 'Wishlist', 'dt-ecommerce-theme' ); ?></span>
+        </button>
+        <button data-bag-toggle id="mobile-bottom-cart-btn" class="flex flex-col items-center justify-center w-16 gap-1 text-gray-400 hover:text-white transition-colors relative">
+            <div class="relative">
+                <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                <?php $cart_count = ( class_exists( 'WooCommerce' ) && WC()->cart ) ? WC()->cart->get_cart_contents_count() : 0; ?>
+                <span class="cart-badge absolute -top-1 -right-2 bg-[#C8A46A] text-black text-[9px] font-bold w-3.5 h-3.5 flex items-center justify-center rounded-full <?php echo $cart_count > 0 ? '' : 'hidden'; ?>"><?php echo esc_html( $cart_count ); ?></span>
+            </div>
+            <span class="text-[10px] uppercase tracking-wider"><?php esc_html_e( 'Cart', 'dt-ecommerce-theme' ); ?></span>
+        </button>
+    </div>
+</div>
 
 <div id="cart-drawer-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] transition-opacity hidden" onclick="closeCartDrawer()">
     <div id="cart-drawer-panel" class="absolute top-0 right-0 w-full max-w-md h-full bg-[#0a0a0a] border-l border-[#C8A46A]/20 flex flex-col shadow-2xl translate-x-full transition-transform duration-300" onclick="event.stopPropagation()">
