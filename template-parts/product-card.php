@@ -93,11 +93,11 @@ if ( dt_get_theme_option( 'woo_hover_zoom', '1' ) === '1' ) {
 ?>
 
 <div onclick="window.location.href='<?php echo esc_url( $product_url ); ?>'" class="<?php echo esc_attr( $card_class ); ?>">
-  <div class="card-corner-wrap">
-    <span class="cc cc-tl" aria-hidden="true"></span>
-    <span class="cc cc-tr" aria-hidden="true"></span>
-    <span class="cc cc-bl" aria-hidden="true"></span>
-    <span class="cc cc-br" aria-hidden="true"></span>
+  <!-- Running gold-platinum corner borders: span the full card (image + details) -->
+  <span class="cc cc-tl" aria-hidden="true"></span>
+  <span class="cc cc-tr" aria-hidden="true"></span>
+  <span class="cc cc-bl" aria-hidden="true"></span>
+  <span class="cc cc-br" aria-hidden="true"></span>
   <div class="relative aspect-[3/4] gallery-img-wrap bg-[#111] overflow-hidden">
     <?php echo $badge_html; ?>
     <div class="absolute top-3 right-3 z-20">
@@ -122,7 +122,6 @@ if ( dt_get_theme_option( 'woo_hover_zoom', '1' ) === '1' ) {
       </button>
     </div>
   </div><!-- /gallery-img-wrap -->
-  </div><!-- /card-corner-wrap -->
   <div class="flex flex-col gap-1 items-center text-center">
     <span class="text-[#C8A46A] text-[10px] md:text-xs uppercase tracking-widest"><?php echo esc_html( $fabric_label ); ?></span>
     <h4 class="font-serif text-base md:text-lg text-[#F7F4EE] arrival-title transition-colors"><?php echo esc_html( $product_title ); ?></h4>

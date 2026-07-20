@@ -6774,16 +6774,13 @@ body {
   color: #C8A46A;
 }
 
-/* ────────────────────────────────────────────────────────────
+/* ────────────────────────────────────────────────────────────────
    Product Card — Running Gold-Platinum Corner Line Borders
-   Four L-shaped corner lines that draw themselves on hover.
-   ──────────────────────────────────────────────────────────── */
-.card-corner-wrap {
-  position: relative;
-  display: block;
-}
+   Spans the ENTIRE card (image + details). .arrival-card is
+   already position:relative so .cc anchors relative to it.
+   ──────────────────────────────────────────────────────────────── */
 
-/* Zero-size anchor points at each corner */
+/* Zero-size corner anchors, positioned relative to .arrival-card */
 .cc {
   position: absolute;
   pointer-events: none;
@@ -6792,61 +6789,78 @@ body {
   height: 0;
 }
 
-/* Both lines share the same gold→platinum gradient */
+/* Shared: gold → platinum shimmering gradient lines */
 .cc::before,
 .cc::after {
   content: '';
   position: absolute;
-  background: linear-gradient(135deg, #C8A46A 0%, #EAD5A0 50%, #C8A46A 100%);
-  background-size: 200% 200%;
+  background: linear-gradient(
+    90deg,
+    #C8A46A 0%,
+    #F0E0B0 35%,
+    #E8E0D0 55%,
+    #C8A46A 100%
+  );
+  background-size: 300% 100%;
   opacity: 0;
   transition:
-    width  0.45s cubic-bezier(0.16, 1, 0.3, 1),
-    height 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.3s ease;
+    width   0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    height  0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.35s ease;
 }
-.cc::before { height: 2px; width: 0; }  /* horizontal */
-.cc::after  { width:  2px; height: 0; } /* vertical   */
+.cc::before { height: 2px; width: 0; }  /* horizontal arm */
+.cc::after  { width:  2px; height: 0; } /* vertical   arm */
 
-/* ── corner placements ── */
-.cc-tl          { top: 0;    left: 0;  }
-.cc-tl::before  { top: 0;    left: 0;  }
-.cc-tl::after   { top: 0;    left: 0;  }
+/* ── four corners of the full card ── */
+.cc-tl         { top: 0;    left: 0;  }
+.cc-tl::before { top: 0;    left: 0;  }
+.cc-tl::after  { top: 0;    left: 0;  }
 
-.cc-tr          { top: 0;    right: 0; }
-.cc-tr::before  { top: 0;    right: 0; transform: translateX(-100%); }
-.cc-tr::after   { top: 0;    right: 0; }
+.cc-tr         { top: 0;    right: 0; }
+.cc-tr::before { top: 0;    right: 0; transform: translateX(-100%); }
+.cc-tr::after  { top: 0;    right: 0; }
 
-.cc-bl          { bottom: 0; left: 0;  }
-.cc-bl::before  { bottom: 0; left: 0;  }
-.cc-bl::after   { bottom: 0; left: 0;  transform: translateY(-100%); }
+.cc-bl         { bottom: 0; left: 0;  }
+.cc-bl::before { bottom: 0; left: 0;  }
+.cc-bl::after  { bottom: 0; left: 0;  transform: translateY(-100%); }
 
-.cc-br          { bottom: 0; right: 0; }
-.cc-br::before  { bottom: 0; right: 0; transform: translateX(-100%); }
-.cc-br::after   { bottom: 0; right: 0; transform: translateY(-100%); }
+.cc-br         { bottom: 0; right: 0; }
+.cc-br::before { bottom: 0; right: 0; transform: translateX(-100%); }
+.cc-br::after  { bottom: 0; right: 0; transform: translateY(-100%); }
 
-/* ── hover: draw the lines ── */
-.arrival-card:hover .cc::before { width: 32px;  opacity: 1; }
-.arrival-card:hover .cc::after  { height: 32px; opacity: 1; }
+/* ── on hover: draw lines across full card width/height ── */
+.arrival-card:hover .cc::before { width: 50px;  opacity: 1; }
+.arrival-card:hover .cc::after  { height: 50px; opacity: 1; }
 
-/* ── staggered entrance: TL → TR/BL → BR ── */
+/* ── staggered: TL first → TR & BL → BR last ── */
 .arrival-card:hover .cc-tl::before,
 .arrival-card:hover .cc-tl::after  { transition-delay: 0s;    }
 .arrival-card:hover .cc-tr::before,
-.arrival-card:hover .cc-tr::after  { transition-delay: 0.06s; }
+.arrival-card:hover .cc-tr::after  { transition-delay: 0.07s; }
 .arrival-card:hover .cc-bl::before,
-.arrival-card:hover .cc-bl::after  { transition-delay: 0.06s; }
+.arrival-card:hover .cc-bl::after  { transition-delay: 0.07s; }
 .arrival-card:hover .cc-br::before,
-.arrival-card:hover .cc-br::after  { transition-delay: 0.12s; }
+.arrival-card:hover .cc-br::after  { transition-delay: 0.14s; }
 
-/* ── continuous shimmer on active corners ── */
+/* ── continuous gold→platinum shimmer while hovered ── */
 @keyframes corner-shimmer {
-  0%, 100% { background-position: 0%   50%; }
-  50%       { background-position: 100% 50%; }
+  0%   { background-position: 0%   0%; }
+  50%  { background-position: 100% 0%; }
+  100% { background-position: 0%   0%; }
 }
 .arrival-card:hover .cc::before,
 .arrival-card:hover .cc::after {
-  animation: corner-shimmer 2.4s ease infinite;
+  animation: corner-shimmer 2s linear infinite;
+}
+
+/* ── subtle outer glow on the full card on hover ── */
+.arrival-card {
+  border: 1px solid transparent;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.arrival-card:hover {
+  border-color: rgba(200, 164, 106, 0.18);
+  box-shadow: 0 0 0 1px rgba(200,164,106,0.12), 0 24px 60px -20px rgba(200,164,106,0.25);
 }
 
 /* ============================================
