@@ -103,9 +103,9 @@ $gallery_urls = array( $img1 );
 
                     <!-- Thumbnails -->
                     <?php if ( count( $gallery_urls ) > 1 ) : ?>
-                        <div class="grid grid-cols-4 gap-4" id="product-thumbnails">
+                        <div class="flex overflow-x-auto gap-3 no-scrollbar snap-x snap-mandatory py-1" id="product-thumbnails">
                             <?php foreach ( $gallery_urls as $idx => $url ) : ?>
-                                <div onclick="changeMainImage(<?php echo $idx; ?>)" class="thumbnail-wrapper aspect-[3/4] overflow-hidden border <?php echo 0 === $idx ? 'border-[#C8A46A]' : 'border-[#C8A46A]/20'; ?> hover:border-[#C8A46A] cursor-pointer bg-[#111] rounded-sm transition-colors">
+                                <div onclick="changeMainImage(<?php echo $idx; ?>)" class="thumbnail-wrapper flex-shrink-0 w-[72px] snap-start aspect-[3/4] overflow-hidden border <?php echo 0 === $idx ? 'border-[#C8A46A]' : 'border-[#C8A46A]/20'; ?> hover:border-[#C8A46A] cursor-pointer bg-[#111] rounded-sm transition-colors">
                                     <img src="<?php echo esc_url( $url ); ?>" alt="Thumbnail <?php echo $idx; ?>" class="w-full h-full object-cover object-top">
                                 </div>
                             <?php endforeach; ?>
@@ -504,15 +504,21 @@ $gallery_urls = array( $img1 );
         if (mainImg && galleryUrls[idx]) {
             mainImg.src = galleryUrls[idx];
         }
+        let activeThumb = null;
         document.querySelectorAll('#product-thumbnails .thumbnail-wrapper').forEach((thumb, i) => {
             if (i === idx) {
                 thumb.classList.add('border-[#C8A46A]');
                 thumb.classList.remove('border-[#C8A46A]/20');
+                activeThumb = thumb;
             } else {
                 thumb.classList.remove('border-[#C8A46A]');
                 thumb.classList.add('border-[#C8A46A]/20');
             }
         });
+        // Scroll active thumbnail into view inside the horizontal strip
+        if (activeThumb) {
+            activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
     }
 
     function prevImage() {
@@ -524,6 +530,18 @@ $gallery_urls = array( $img1 );
     function nextImage() {
         let newIdx = (selectedImageIndex + 1) % galleryUrls.length;
         changeMainImage(newIdx);
+    }
+
+    // ── Auto-slide gallery (3 s interval, pauses on hover) ──
+    let _galleryTimer = null;
+    function startGalleryAutoSlide() {
+        if (galleryUrls.length <= 1) return;
+        stopGalleryAutoSlide();
+        _galleryTimer = setInterval(() => nextImage(), 3000);
+    }
+    function stopGalleryAutoSlide() {
+        clearInterval(_galleryTimer);
+        _galleryTimer = null;
     }
 
     function selectColor(colorId, colorLabel) {
@@ -1062,6 +1080,16 @@ $gallery_urls = array( $img1 );
         initReviews();
         updateWishlistBtnState();
         initVariationChoiceButtons();
+
+        // Start auto-slide; pause when user hovers the main image or thumbnails
+        startGalleryAutoSlide();
+        const thumbsEl  = document.getElementById('product-thumbnails');
+        const mainImgEl = document.getElementById('product-main-img');
+        const mainWrap  = mainImgEl ? mainImgEl.closest('.group') : null;
+        [thumbsEl, mainWrap].filter(Boolean).forEach(el => {
+            el.addEventListener('mouseenter', stopGalleryAutoSlide);
+            el.addEventListener('mouseleave', startGalleryAutoSlide);
+        });
     });
 </script>
 
